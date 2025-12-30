@@ -1,0 +1,37 @@
+body {
+    font-family: "Inter", sans-serif;
+  }
+.body-bg{
+background-color: #f3f4f6;
+}
+.bg-brand{
+    background-color: #1f2937;
+}
+.bg-brand:hover{
+    background-color: #111827;
+}
+.text-brand{
+    color: #1f2937;
+}
+.text-brand:hover{
+    color: #111827;
+}
+.bg-brand-secondary{
+    background-color: #1f2937;
+}
+.text-brand-secondary{
+    color: #1f2937;
+}
+.bg-brand-secondary:hover{
+    background-color: #111827;
+}
+.text-brand-secondary:hover{
+    color: #111827;
+}
+.text-custom{
+    color: #854d0e;
+}
+.border-brand{
+    border: 1px solid #9ca3af;
+}
+

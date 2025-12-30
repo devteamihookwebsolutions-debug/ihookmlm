@@ -1,0 +1,28 @@
+body {
+    font-family: "Inter", sans-serif;
+  }
+  .iti.iti--allow-dropdown {
+    width: 100%;
+    }
+.top-n-4{
+  position: relative;
+  top: -12px;
+}
+.brand-color{
+  background-color: #FF5D19;
+}
+.brand-text-color{
+  color: #FF5D19;
+}
+.locked{
+filter: grayscale(1);
+}
+.unlocked{
+  filter: grayscale(0);
+}
+.active{
+  color: #FF5D19;
+}
+select.datatable-selector {
+  padding: 10px;
+}

@@ -75,6 +75,17 @@ class MatrixConfigurationController extends Controller
             // }
             $output['default_sponsor1'] = MDefaultMatrix::getDefaultSponsor($output['errval']['default_sponsor'] ?? '', $matrixId) ?: 1;
 
+
+            $output['default_sponsor1'] = MDefaultMatrix::getDefaultSponsor($output['errval']['default_sponsor'] ?? '', $matrixId);
+
+
+            $output['package'] = MMatrixPackageDetails::getMatrixPackageDetails($output['errval']??'', $matrixId);
+
+
+
+
+     $output['default_sponsor1'] = MDefaultMatrix::getDefaultSponsor($output['errval']['default_sponsor'] ?? '', $matrixId) ?: 1;
+
             $output['package'] = MMatrixPackageDetails::getMatrixPackageDetails($output['errval']??'', $matrixId);
 
             //wallet type - step -3

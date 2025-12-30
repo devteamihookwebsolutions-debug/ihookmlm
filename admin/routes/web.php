@@ -501,7 +501,11 @@ Route::get('/genealogy/viewtree/gettabularview/{matrixId}/{memberId?}',
   Route::get('epinhistorydata', [EpinManagementController::class, 'getEpinManagementRecords'])->name('epinhistorydata');
 
   //settings login
-   Route::get('showbanners/login', [BannerSettingsController::class, 'showBanners'])->name('showbanners/login');
+  Route::get('showbanners/{action}', [BannerSettingsController::class, 'showBanners'])
+    ->whereIn('action', ['login', 'register'])
+    ->name('showbanners');
+
+
 Route::get('editbanner/{action}/{id}', [BannerSettingsController::class, 'showEditBanner'])
     ->name('editbanner');
 

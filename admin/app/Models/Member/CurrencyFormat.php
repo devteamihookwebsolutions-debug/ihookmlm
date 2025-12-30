@@ -6,6 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class currencyformat extends Model
 {
-
    protected $table = 'ihook_currencyformat';
 }

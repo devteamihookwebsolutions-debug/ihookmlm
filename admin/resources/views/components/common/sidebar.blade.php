@@ -1182,12 +1182,17 @@
                                                         <a href="{{route('showbanners/login')}}"
                                                             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                             Login/Forget Password Banners
+                                                        <a href="{{ route('showbanners', 'login') }}"
+                                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                            Login / Forgot Password Banners
                                                         </a>
                                                     </li>
 
                                                     <li>
                                                         <a href="{{route('showbanners/register')}}"
                                                             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <a href="{{ route('showbanners', 'register') }}"
+                                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                             Register Banners
                                                         </a>
                                                     </li>

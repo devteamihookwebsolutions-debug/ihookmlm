@@ -27,26 +27,30 @@ use Exception;
 class BannerSettingsController extends Controller
 {
 
-    // public static function showBanners()
-    // {
-    //     //    $output['banners'] = MBannerSettings::showBanners();
+// public function showBanners(Request $request)
+// {
+//     $action = $request->query('action', 'login');
+//     $banners = MBannerSettings::showBanners($action);
 
-    //        return view('factories.banners');
+//       return view('factories.banners', [
+//         'banners' => $banners,
+//         'action'  => $action
+//     ]);
+// }
 
-
-    // }
-    // BannerSettingsController.php
-public function showBanners(Request $request)
+public function showBanners($action = 'login')
 {
-    $action = $request->query('action', 'login');
+    if (!in_array($action, ['login', 'register'])) {
+        abort(404);
+    }
+
     $banners = MBannerSettings::showBanners($action);
 
-      return view('factories.banners', [
+    return view('factories.banners', [
         'banners' => $banners,
         'action'  => $action
     ]);
 }
-
 
 public function showEditBanner($action, $id)
 {
@@ -68,10 +72,9 @@ public function showEditBanner($action, $id)
         ]);
 
     } catch (Exception $e) {
+return redirect()->route('showbanners', 'login');
 
-        return redirect()
-            ->route('showbanners/login')
-            ->with('error_message', $e->getMessage());
+
     }
 }
 
@@ -85,7 +88,7 @@ public function validateEditBanner(Request $request, $action, $id)
     MBannerSettings::updateBanner($request, $action, $id);
 
     return redirect()
-        ->route('showbanners/login', ['action' => $action])
+        ->route('showbanners', ['action' => $action])
         ->with('success', 'Banner updated successfully.');
 }
 

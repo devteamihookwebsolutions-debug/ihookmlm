@@ -55,6 +55,13 @@
                                 stroke-width="2" d="m10 16 4-4-4-4" />
                         </svg>
                         <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Login/Forgot Password Banners</span>
+                          <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                               @if($action == 'login')
+                                    {{ __("Login/Forgot Password Banners") }}
+                                @else
+                                    {{ __("Register Banner") }}
+                                @endif
+                        </span>
                     </div>
                 </li>
             </ol>

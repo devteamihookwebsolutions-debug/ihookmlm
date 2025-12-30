@@ -97,7 +97,7 @@ class MatrixController extends Controller
                     'matrix_name' => $matrixData['matrix_name'],
                     'matrix_type_id' => $matrixData['matrix_type_id'],
                     'matrix_status' => $validated['status'] ?? 0, // Default to 0 if not provided
-                    'matrix_default' => 0, // Default value if required
+                    'matrix_default' => 1, // Default value if required
                     'created_by' => auth()->id() ?? 1,
                     'created_on' => now(),
                     'updated_by' => auth()->id() ?? 1,

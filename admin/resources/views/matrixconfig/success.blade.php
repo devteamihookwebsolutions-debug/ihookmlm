@@ -1,6 +1,6 @@
 @extends('admin::components.common.main')
 @section('content')
-    <div class="flex mb-4" aria-label="Breadcrumb">
+         <div class="flex mb-4" aria-label="Breadcrumb">
               <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
                 <li class="inline-flex items-center">
                   <a href="/admin/dashboard"
@@ -43,16 +43,11 @@
                   </div>
                 </li>
               </ol>
-            </div>
+        </div>
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 ml-2 mt-10">
+        <main>
         <div class="flex-1 p-6 ml-3 mt-10 px-6">
             <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center mx-auto">
-                @if (session('success_message'))
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        {{ session('success_message') }}
-                    </div>
-                @endif
                 <div class="flex justify-center mb-4">
                     <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">

@@ -2,7 +2,7 @@
 
 namespace Admin\App\Models\LeadPage;
 use Illuminate\Support\Facades\DB;
-use Admin\App\Models\Member\currencyformat;
+use Admin\App\Models\Member\currencyFormat;
 use Admin\App\Models\Member\CurrencySetting;
 use Admin\App\Display\LeadPage\DLeadContacts;
 use Illuminate\Support\Facades\Session;
@@ -11,7 +11,7 @@ class MLeadContacts
 public static function getcurrencyformat()
 {
     // Fetch the first record with id = 1
-    $record = currencyformat::find(1);
+    $record = currencyFormat::find(1);
 // dd($record);
     // Return the record
     return $record; // or return as JSON if for API: return response()->json($record);

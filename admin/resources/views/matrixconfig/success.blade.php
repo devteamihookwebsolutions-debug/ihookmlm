@@ -1,6 +1,5 @@
 @extends('admin::components.common.main')
 @section('content')
-    <div class="flex mb-4" aria-label="Breadcrumb">
          <div class="flex mb-4" aria-label="Breadcrumb">
 
               <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
@@ -47,17 +46,6 @@
               </ol>
 
             </div>
-        <!-- Main Content Area -->
-        <main class="flex-1 p-6 ml-2 mt-10">
-        <div class="flex-1 p-6 ml-3 mt-10 px-6">
-            <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center mx-auto">
-                @if (session('success_message'))
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        {{ session('success_message') }}
-                    </div>
-                @endif
-
-        </div>
         <!-- Main Content Area -->
         <main>
         <div class="flex-1 p-6 ml-3 mt-10 px-6">

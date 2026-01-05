@@ -1,7 +1,7 @@
 <?php
 
 // Get base URL from .env
-$base = rtrim(config('app.url'), '/') . '/';
+$base = rtrim(config('app.url'), '/');
 
 return [
 

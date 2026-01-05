@@ -885,7 +885,7 @@ function deletePackage (id){
 
 function setPackageLevelCommission(pid) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    const url = `{{config('app.ADMINPATH')}}/matrix/packagelevel/{{$matrix_id}}/${pid}`;
+    const url = `/admin/matrix/packagelevel/{{$matrix_id}}/${pid}`;
     let currentLevel = 0;
 
      fetch(url, {

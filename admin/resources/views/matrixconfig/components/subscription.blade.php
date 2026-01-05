@@ -62,7 +62,7 @@
         <div class="flex justify-end pt-4 pb-6">
             <!-- Modal toggle -->
             <button onclick="showModal('addpackage-modal')"
-                class="px-4 py-2 bg-gray-800 text-xs text-white hover:bg-gray-900 rounded-lg dark:bg-blue-500 dark:hover:bg-blue-600">
+                class="px-4 py-2 bg-gray-800 text-xs text-white hover:bg-gray-900 rounded-lg dark:bg-blue-500 dark:hover:bg-blue-600" type="button">
                 {{ __('Add') }}
             </button>
         </div>

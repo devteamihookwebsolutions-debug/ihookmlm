@@ -37,6 +37,7 @@ private static function buildNodeRecursive($memberId, $matrix_id)
         'name'  => $details['membername'] ?? 'Unknown',
         'link'  => env('BCPATH') . '/userdetails/show/' . $memberId,
     ];
+    // dd($node);
 
     $left  = MBinaryMembersPosition::getBinaryMembersPosition($memberId, $matrix_id, '1');
     $right = MBinaryMembersPosition::getBinaryMembersPosition($memberId, $matrix_id, '2');
@@ -51,17 +52,6 @@ private static function buildNodeRecursive($memberId, $matrix_id)
     // Right child
     if ($right > 0) {
         $children[] = self::buildNodeRecursive($right, $matrix_id);
-    }
-
-    // Agar dono taraf koi real downline nahi hai, to "Empty" placeholder add karo
-    if (empty($children)) {
-        $children[] = [
-            'name'      => 'Empty',
-            'title'     => 'This member has no downlines',
-            'image'     => 'uploads/avatar/empty-small.png', // optional, agar image support hai
-            'className' => 'no-downline-msg',               // CSS class for styling
-            'link'      => 'javascript:void(0)'
-        ];
     }
 
     $node['children'] = $children;

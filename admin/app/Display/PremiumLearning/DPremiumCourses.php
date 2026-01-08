@@ -4,6 +4,7 @@ namespace Admin\App\Display\PremiumLearning;
 
 use Admin\App\Models\Middleware\MAmazonCloudFront;
 use Admin\App\Models\PremiumLearning\MPremiumCourses;
+use DB;
 use Illuminate\Support\Collection;
 
 class DPremiumCourses
@@ -127,8 +128,8 @@ class DPremiumCourses
         $output .= '</select></div>';
 
         // Rank Dropdown (from ihook_ranksetting)
-        $prefix = config('ihook.prefix', 'ihook');
-        $ranks = \Illuminate\Support\Facades\DB::table($prefix . '_ranksetting')
+        $prefix = config('services.ihook.prefix', 'ihook');
+        $ranks = DB::table($prefix . '_ranksetting')
             ->where('matrix_id', $matrixId)
             ->groupBy('rank_id')
             ->get();

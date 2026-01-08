@@ -170,7 +170,7 @@
                                                 <!-- Unilevel Genealogy -->
                                         @if($matrix_type_id == 3)
                                             <li>
-                                                <a href="{{ route('') }}"
+                                                <a href="{{ route('user.directdownlinegenealogy.viewtree', ['encrypted' => $encryptedToken]) }}"
                                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                     Unilevel Genealogy
                                                 </a>

@@ -31,6 +31,7 @@
         nodeBinding: {
             field_0: "name",
             field_1: "title",
+            field_2: "downlinecount",
             img_0: "img",
             field_number_children: "field_number_children"
         },

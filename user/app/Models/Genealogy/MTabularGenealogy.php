@@ -65,9 +65,6 @@ class MTabularGenealogy
                 return response()->json($data);
             }
 
-            // ========================================
-            // 2. CHILDREN OF ANY NODE (Expand)
-            // ========================================
             else {
                 $parentId = (int)$parentParam;
 

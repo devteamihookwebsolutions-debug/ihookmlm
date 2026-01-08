@@ -3,6 +3,7 @@
 namespace Admin\App\Http\Controllers\Genealogy;
 
 use Admin\App\Http\Controllers\Controller;
+use Admin\App\Models\Genealogy\MCollapseGenealogy;
 use Admin\App\Models\Genealogy\MGenealogy;
 use Admin\App\Models\Middleware\MMemberDetails;
 use Admin\App\Models\Middleware\MMatrixDetails;
@@ -25,7 +26,7 @@ public function viewGenealogyTree(Request $request, $matrixId, $memberId = null)
 //    dd($memberId);
 
 
-    try {
+
         // 1 Decrypt URL params from ?sub1=...
         // $decryptUrl = MURLCrypt::getDecryptURL($request->query('sub1'));
         // $members_id = $decryptUrl[0];
@@ -45,28 +46,27 @@ public function viewGenealogyTree(Request $request, $matrixId, $memberId = null)
         $memberDetails = MMemberDetails::getPartMembersDetails('members_username', $memberId);
         // dd($memberDetails);
         $matrixDetails = MMatrixDetails::getMatrixDetails($matrixId);
-        
+
         $matrixList    = MMatrixDetails::getAllActiveMatrices(); // Now real arrays
 
-$output = [
-    'members_username' => $memberDetails['members_username'] ?? 'User',
-    'matrix_name'      => ucfirst($matrixDetails->matrix_name ?? ''),
-    'matrix_type_id'   => $matrixDetails->matrix_type_id ?? 1,
-    'matrixId'         => $matrixId,
-    'defaultmatrix'    => $matrixList
-
-];
+        $output = [
+            'members_username' => $memberDetails['members_username'] ?? 'User',
+            'matrix_name'      => ucfirst($matrixDetails->matrix_name ?? ''),
+            'matrix_type_id'   => $matrixDetails->matrix_type_id ?? 1,
+            'matrixId'         => $matrixId,
+            'defaultmatrix'    => $matrixList
+        ];
         // dd($output);
 
         // $matrix_type_id = $matrix->matrix_type_id ?? null;
        $matrixName = $matrixDetails['matrix_name'];
-    //    dd($matrixName);
+        // dd($matrixName);
             $matrix_type_id = $matrixDetails['matrix_type_id'];
                 //  dd($matrix_type_id);
         // 4 Handle each matrix type
         if ($matrix_type_id != 6) {
 
-            if ($matrix_type_id == 1) {
+            if ($matrix_type_id == 3) {
                 // Binary Matrix
                 $output['flag'] = 0;
 
@@ -77,7 +77,7 @@ $output = [
                     $output['flag'] = 1;
                 }
               }
- 
+
                     $bottomUser = MBinaryBottomUser::getBottomUser($memberId, $matrixId);
                     $output['bottomuser'] = $bottomUser;
 
@@ -91,19 +91,14 @@ $output = [
                 // dd('funciton reacche');
                 //  dd($output);
                 return view('genealogy.binary_collapse', $output);
-            } 
+            }
             else {
                 $output['genealogy'] = MCollapseGenealogy::updateGenealogyDetails($memberId, $matrixId);
+                $output['selectedMatrixId'] = $matrixId;
+
+                return view('genealogy.collapse', $output);
             }
         }
-
-        // If matrix_type_id == 6 or invalid
-        return redirect('/dashboard')->with('error_message', 'Invalid matrix type.');
-
-    } catch (Exception $e) {
-        session()->flash('error_message', $e->getMessage());
-        return redirect('/genealogy/viewtree');
     }
 
-}
 }

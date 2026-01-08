@@ -26,70 +26,47 @@ class MCollapseGenealogy
      * @param int $matrix_id
      * @return bool
     */
-   public static function updateGenealogyDetails($members_id, $matrix_id)
+    public static function updateGenealogyDetails($members_id, $matrix_id)
     {
-        $userdetails          = MMemberDetails::getPartMembersDetails('members_username',$members_id);
-        $members_username     = $userdetails['members_username'];
-        $output               = '{ "name" : "' . $members_username . '",';
-        $where                = 'spillover_id="' . $members_id . '" AND matrix_id="' . $matrix_id . '"
-         ORDER BY position  ASC ';
+        $userdetails = MMemberDetails::getPartMembersDetails('members_username', $members_id);
+        $members_username = $userdetails['members_username'];
 
+        $children = [];
+        $referralslinkdetails = MMatrixMemberLink::getMatrixLinkDetail($members_id, $matrix_id);
 
-        $referralslinkdetails = MMatrixMemberLink::getMatrixLinkDetails($where);
-        $output .= '"children":[';
-        if (count((array)$referralslinkdetails) > '0') {
-             $cnt=count((array)$referralslinkdetails);
-             for ($i=0; $i < $cnt; $i++) {
-
-                $userdetails      = MMemberDetails::getPartMembersDetails('members_username',$referralslinkdetails[$i]['members_id']);
-                $members_username = $userdetails['members_username'];
-                $count            = 0;
-                $output .= '{
-                    "name" : "' . $members_username . '","link" :"' . $_ENV['BCPATH'] . '/collapsegenealogy/viewtree/' . $matrix_id . '/' . $referralslinkdetails[$i]['members_id'] . '/' . $referralslinkdetails[$i]['members_id'] . '",';
-                $output .= self::getDepthGenelogyDetails($referralslinkdetails[$i]['members_id'], $matrix_id, $count);
-                $output .= '},';
-            }
-        } else {
-            $output .= '{"name" :"Empty"}';
+        foreach ($referralslinkdetails as $ref) {
+            $children[] = self::buildNode($ref['members_id'], $matrix_id);
         }
-        $output .= ']};';
-        $output    = 'var treeData=' . $output . '';
-	   /*
-        $upladfile = fopen("../".$_ENV['CURRENT_UPATH']."/shift/usercoll" . $members_id . "" . $matrix_id . ".js", "w");
-        fwrite($upladfile, $output);
-        fclose($upladfile);
-        start:amazonupload
-        $flnm          = '../'.$_ENV['CURRENT_UPATH'].'/shift/usercoll' . $members_id . $matrix_id . ".js";
-        $amaname       = 'usercoll' . $members_id . $matrix_id . ".js";
-        $genealogyfile = 'uploads/genealogydata/' . $amaname;
-        MAmazonS3::amazonFileCreation($flnm, 'text/js', $genealogyfile);
-        end:amazonupload*/
-        return $output;
+
+        return [
+            'name' => $members_username,
+            'children' => $children ?: []
+        ];
     }
-    public static function getDepthGenelogyDetails($members_id, $matrix_id,$count)
-    {
-        if ($count < 6) {
-            $where                = 'spillover_id="' . $members_id . '" AND matrix_id="' . $matrix_id . '"
-            ORDER BY position ASC ';
-            $referralslinkdetails = MMatrixMemberLink::getMatrixLinkDetails($where);
-            if (count((array)$referralslinkdetails) > '0') {
-                $output .= '"children":[';
 
-               $cnt=count((array)$referralslinkdetails);
-               for ($i=0; $i < $cnt; $i++) {
-                    $userdetails      = MMemberDetails::getPartMembersDetails('members_username',$referralslinkdetails[$i]['members_id']);
-                    $members_username = $userdetails['members_username'];
-                    $count            = $count + 1;
-                    $output .= '{
-                        "name" : "' . $members_username . '","link" :"' . $_ENV['BCPATH'] . '/collapsegenealogy/viewtree/' . $matrix_id . '/' . $referralslinkdetails[$i]['members_id'] . '/' . $referralslinkdetails[$i]['members_id'] . '",';
-                    $output .= self::getDepthGenelogyDetails($referralslinkdetails[$i]['members_id'], $matrix_id, $count);
-                    $output .= '},';
-                }
-                $output .= ']';
+    private static function buildNode($members_id, $matrix_id, $depth = 0)
+    {
+        $userdetails = MMemberDetails::getPartMembersDetails('members_username', $members_id);
+        $members_username = $userdetails['members_username'];
+
+        $node = [
+            'name' => $members_username,
+            'link' => $_ENV['BCPATH'] . '/collapsegenealogy/viewtree/' . $matrix_id . '/' . $members_id . '/' . $members_id,
+        ];
+
+        if ($depth < 6) {
+            $children = [];
+            $referrals = MMatrixMemberLink::getMatrixLinkDetail($members_id, $matrix_id);
+            foreach ($referrals as $ref) {
+                $children[] = self::buildNode($ref['members_id'], $matrix_id, $depth + 1);
             }
-            return $output;
+            if (!empty($children)) {
+                $node['children'] = $children;
+            }
         }
+
+        return $node;
     }
 
 }
-?>
+

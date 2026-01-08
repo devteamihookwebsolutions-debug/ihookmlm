@@ -108,17 +108,12 @@
                         <input type="hidden" id="matrix_id" value="{{ $matrixId }}">
                             <a aria-label="link" id="fullscreen" href="#" title="Full screen"
                                 title="Full screen">
-                                <button type="button" onclick="applyTemplate()"
-                                    class=" bg-green-500 text-white hover:bg-green-600 focus:ring-2 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-3 py-3 text-center">
-                                    <svg class="w-5 h-5 " aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
-                                            d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z">
-                                        </path>
-                                    </svg></button>
+                                <button type="button" onclick="applyTemplate()" class="px-3 py-3">
+                                <svg class="w-6 h-6 text-black dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H4m0 0v4m0-4 5 5m7-5h4m0 0v4m0-4-5 5M8 20H4m0 0v-4m0 4 5-5m7 5h4m0 0v-4m0 4-5-5"/>
+                                    </svg>
+                                </button>
                             </a>
-
                         </div>
                     </div>
                     <div class="relative ">

@@ -66,5 +66,5 @@
     </div>
 </div>
 </main>
-@include('user::genealogy.components.bi_graphical_count_script')
+@include('user::genealogy.components.bi_graphical_rank_script')
 @endsection

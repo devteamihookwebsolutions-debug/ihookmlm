@@ -67,23 +67,21 @@ class CollapseGenealogyController extends Controller
                         $output['flag'] = 1;
                     }
                 }
-
                 $output['memberslinkdetails'] = $membersLinkDetails;
             }
-
             $output['bottomuser'] = MBinaryBottomUser::getBottomUser($members_id, $matrix_id);
             $output['genealogy']  = MBinaryCollapseGenealogy::getBinaryGenealogyDetails($members_id, $matrix_id);
-// dd($output['genealogy']);
+        // dd($output['genealogy']);
             return view('user::genealogy.binary_collapse', $output);
         }
 
 
         $output['genealogy'] = MCollapseGenealogy::updateGenealogyDetails($members_id, $matrix_id);
 
-           return view('user::genealogy.binary_collapse', [
+           return view('user::genealogy.collapse', [
             'members_username' => $get($membersDetails, 'members_username', 'Unknown'),
             'matrix_name'      => ucfirst($get($matrixDetails, 'matrix_name', 'Binary')),
-            // 'genealogy'   => json_encode($output, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
+            'genealogy'        => $output['genealogy'],
         ]);
     }
 }

@@ -1,16 +1,11 @@
-@include('components.common.header')
-<!-- custom styles start-->
-<!-- <link href="{{$_ENV['UI_ASSET_URL']}}/assets/vendors/jstree/dist/themes/default/style.css" rel="stylesheet" type="text/css" /> -->
+@extends('admin::components.common.main')
+@section('content')
+<link href="{{$_ENV['UI_ASSET_URL']}}/assets/vendors/jstree/dist/themes/default/style.css" rel="stylesheet" type="text/css" />
 <!-- custom styles end-->
-@include('components.common.topbars')
 
-<div class="py-5 lg:py-1">
-    <div class="flex justify-between items-center py-3 flex-wrap w-[95%] mx-auto">
-        <div class="me-5 mb-5 lg:mb-0">
-        <h2 class="text-lg font-medium text-black dark:text-white  mb-2">{{ __('Downline Count') }}</h2>
-            <nav class="flex" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                     <li class="inline-flex items-center">
+ <div class="flex mb-4" aria-label="Breadcrumb">
+                            <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
+                                <li class="inline-flex items-center">
                                     <a href="/admin/dashboard"
                                         class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white">
                                         <div class="relative w-5 h-5 flex items-center justify-center">
@@ -28,33 +23,31 @@
                                         </div>
                                     </a>
                                 </li>
-                    <li aria-current="page">
-                      <div class="flex items-center">
-                          <svg class="rtl:rotate-180 w-2 h-2 text-neutral-400 mx-1" aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                  stroke-width="2" d="m1 9 4-4-4-4" />
-                          </svg>
-                          <span
-                              class="ms-1 text-xs font-medium text-black md:ms-2 dark:text-white">{{ __('Network') }}</span>
-                      </div>
-                  </li>
-                    <li aria-current="page">
-                        <div class="flex items-center">
-                            <svg class="rtl:rotate-180 w-2 h-2 text-neutral-400 mx-1" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m1 9 4-4-4-4" />
-                            </svg>
-                            <span
-                                class="ms-1 text-xs font-medium text-black md:ms-2 dark:text-white">{{ __('Downline Count') }}</span>
+                                <li>
+                                    <div class="flex items-center">
+                                        <svg class="rtl:rotate-180 w-5 h-5 text-gray-500 dark:text-gray-400"
+                                            aria-hidden="true" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="m10 16 4-4-4-4" />
+                                        </svg>
+
+                                        <a href="#"
+                                            class=" text-xs font-medium text-gray-500 hover:text-blue-600  dark:text-gray-400 dark:hover:text-white">Networks</a>
+                                    </div>
+                                </li>
+                                <li aria-current="page">
+                                    <div class="flex items-center">
+                                        <svg class="rtl:rotate-180 w-5 h-5 text-gray-500 dark:text-gray-400"
+                                            aria-hidden="true" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="m10 16 4-4-4-4" />
+                                        </svg>
+                                        <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Downline
+                                            Count</span>
+                                    </div>
+                                </li>
+                            </ol>
                         </div>
-                    </li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-</div>
 <!-- breadcrub navs end-->
 <!-- Content area -->
 <main class="flex-grow">
@@ -94,12 +87,14 @@
                     </select>
 
                 <!-- Button -->
-                    <button type="button" onclick="applyTemplate()" class="px-3 py-3">
-                        <svg class="w-[23px] h-[23px] text-black dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 1 0-18c1.052 0 2.062.18 3 .512M7 9.577l3.923 3.923 8.5-8.5M17 14v6m-3-3h6"/>
-                          </svg>
-
-                    </button>
+                      <button type="button" onclick="applyTemplate()"
+                            class=" bg-green-500 text-white hover:bg-green-600 focus:ring-2 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-3 py-3 text-center">
+                            <svg class="w-5 h-5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                    d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path>
+                            </svg>
+                        </button>
                 </div>
 
             </div>
@@ -111,7 +106,5 @@
         </div>
     </div>
 </main>
-@include('components.common.footer')
-@include('components.common.footer_scripts')
 @include('genealogy.components.graphical_count_script')
-@include('components.common.footer_end')
+@endsection

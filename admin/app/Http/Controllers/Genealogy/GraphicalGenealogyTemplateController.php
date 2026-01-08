@@ -4,6 +4,7 @@ namespace Admin\App\Http\Controllers\Genealogy;
 
 use Admin\App\Http\Controllers\Controller;
 use Admin\App\Models\Genealogy\MGraphicalGenealogyTemplate;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\Middleware\MURLCrypt;

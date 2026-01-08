@@ -16,6 +16,8 @@ class MMatrix extends Model
         'matrix_type_id',
         'matrix_status',
         'matrix_default',
+        'created_on',
+        'created_by',
     ];
 
 

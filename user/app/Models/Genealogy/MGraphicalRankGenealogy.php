@@ -1,211 +1,135 @@
 <?php
-/**
- * This class contains public static functions related to graphical genealogy
- *
- * @package         MGraphicalGenealogy
- * @category        Model
- * @author          Sunsofty Dev Team
- * @link            https://sunsoftny.com
- * @copyright      Copyright (c) 2020 - 2023, Sunsofty.
- * @version        Version 8.1
- */
-/****************************************************************************
-* Licence Agreement:
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@sunsoftny.com.
-*****************************************************************************/
-?><?php
 namespace User\App\Models\Genealogy;
-use Admin\App\Models\Middleware\MMemberDetails;
-use Query\Bin_Query;
-use Model\Middleware\MAmazonS3;
 
-use Model\Middleware\MAmazonCloudFront;
+use Admin\App\Models\Middleware\MMemberDetails;
+use Illuminate\Support\Facades\DB;
+
 class MGraphicalRankGenealogy
 {
-
-
-    public static function updateGenealogyDetails($members_id,$matrix_id)
+    public static function updateGenealogyDetails($members_id, $matrix_id)
     {
-        //getdefault details
-        $sqldefault = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "matrix_members_link_table WHERE matrix_id='" . $matrix_id . "' AND members_id='" . $members_id . "'";
-        $objdefault = new Bin_Query();
-        $objdefault->executeQuery($sqldefault);
-        $recordsdefault     = $objdefault->records;
-        $default_members_id = $recordsdefault[0]['members_id'];
+        $rank_color_css = '';
 
-         $sqlmembers = "SELECT SQL_CALC_FOUND_ROWS a.*,b.members_email,b.members_firstname,b.members_lastname,b.members_image,b.rankgenealogy_name,b.members_phone,b.members_username,c.members_username AS sponsorname,d.rank_key,d.rank_value,e.rank_value AS rank_icon_path,f.rank_value AS rankcolor FROM
-            " . $_ENV['IHOOK_PREFIX'] . "matrix_members_link_table AS a
-            LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "members_table AS b ON a.members_id=b.members_id
-            LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "members_table AS c ON c.members_id=a.direct_id
-            LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "ranksetting AS d ON d.rank_id=a.rankid
-            LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "ranksetting AS e ON (e.rank_id=a.rankid && e.rank_key='rank_icon_path' && e.matrix_id='" . $matrix_id . "')
-            LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "ranksetting AS f ON (f.rank_id=a.rankid AND f.rank_key='rank_color' AND f.matrix_id='" . $matrix_id . "')
-            WHERE (FIND_IN_SET('" . $members_id . "',`members_parents`) || a.members_id='" . $members_id . "')
-            AND a.matrix_id='" . $matrix_id . "'
-            GROUP BY a.link_id ORDER BY a.position ASC LIMIT 1000";
-        $objmembers = new Bin_Query();
-        $objmembers->executeQuery($sqlmembers);
-        $referralslinkdetails = $objmembers->records;
+        $recordDefault = DB::table($_ENV['IHOOK_PREFIX'].'_matrix_members_link_table')
+            ->where('matrix_id', $matrix_id)
+            ->where('members_id', $members_id)
+            ->first();
 
+        if (!$recordDefault) {
+            return [[], '']; // Return empty if member not found
+        }
 
-        $sqldefaultSponsor    = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "matrix_configuration_table WHERE matrix_key='default_sponsor' AND matrix_id=" . $matrix_id . " ";
-        $objSponsor           = new Bin_Query();
-        $objSponsor->executeQuery($sqldefaultSponsor);
-        $dfsponsors      = $objSponsor->records;
-        $default_sponsor = $dfsponsors[0]['matrix_value'];
-        $totalusers      = count((array)$referralslinkdetails);
+        $recordsdefault = (array) $recordDefault;
+        $default_members_id = $recordsdefault['members_id'];
 
-        if (count((array)$referralslinkdetails) > '0') {
-            if ($totalusers > 2000) { //start 2000
-                for($i = 0; $i < count((array)$referralslinkdetails); $i++) {
-                    if ($i < 43) {
-                        $groupTitleColor          = '#4169e1';
-                        $itemTitleColor           = '#4169e1';
-                        $spillover_id             = $referralslinkdetails[$i]['spillover_id'];
-                        $members_email            = $referralslinkdetails[$i]['members_email'];
-                        $members_firstname        = $referralslinkdetails[$i]['members_firstname'];
-                        $members_lastname         = $referralslinkdetails[$i]['members_lastname'];
-                        $memberimage              = $referralslinkdetails[$i]['members_image'];
-                        $memberimage              = $memberimage != '' ?  $memberimage : 'uploads/members/avatar.png';
-				        $memberimage              = $_ENV['CDNCLOUDEXTURL'].'/'.$memberimage;
-                        $members_fullname         = $referralslinkdetails[$i]['members_username'];
-                        $members_phone            = $referralslinkdetails[$i]['members_phone'];
-                        $linkid                   = $referralslinkdetails[$i]['link_id'];
-                        $sponsor_name             = $referralslinkdetails[$i]['sponsorname'];
-                        $rank_value               = $referralslinkdetails[$i]['rank_value'];
-                        $members_passup_id        = $referralslinkdetails[$i]['members_passup_id'];
-                        $members_passup_direct_id = $referralslinkdetails[$i]['members_passup_direct_id'];
-                        if ($members_passup_id > 0) {
-                            $members_passup_id;
-                            $member_details   = MMemberDetails::getPartMembersDetails('members_username',$members_passup_id);
-                            $passupmembername = $member_details['members_username'];
-                            $passupdetails    = ', Passup : ' . $passupmembername . '';
-                        } else {
-                            $passupdetails = '';
-                        }
-                        $sponsor_name   = $sponsor_name == '' ? 'Nil' : $sponsor_name;
-                        $rank           = $rank_value == '' ? 'Nil' : $rank_value;
-                        $rank_icon_path = $referralslinkdetails[$i]['rank_icon_path'];
-                        $rank_icon_path = $rank_icon_path == '' ? '' : $_ENV['CDNCLOUDEXTURL'].'/'.$rank_icon_path;
-                        $rank_color         = $referralslinkdetails[$i]['rankcolor'];
-                        $rankgenealogy_name = $referralslinkdetails[$i]['rankgenealogy_name'];
-                        if ($default_sponsor != $members_id) {
-                            if ($i == 0) {
-                                $spillover_id = 0;
-                            }
-                        } else {
-                            $spillover_id = $spillover_id;
-                        }
-                        $title = $members_firstname . ' ' . $members_lastname;
-                        $title = $title == '' ? 'Nil' : $title;
-                        if ($referralslinkdetails[$i]['rank_icon_path'] != '' && $referralslinkdetails[$i]['rankid'] > 0) {
-                            $output .= '{ id:  "' . $referralslinkdetails[$i]['members_id'] . '", name: "' . $members_fullname . '", pid: ' . $spillover_id . ', title: "' . $title . '", description: "' . __('Sponsor') . ' : ' . $sponsor_name . ' ' . $passupdetails . '", phone: "' . $members_phone . '", email: "' . $members_email . '",rank: "' .  __('Rank') . ' : ' . $rank . '", img: "' . $memberimage . '", rankimage: "' . $rank_icon_path . '", members_id: "' . $referralslinkdetails[$i]['members_id'] . '", matrix_id:  ' . $referralslinkdetails[$i]['matrix_id'] . ', rankgenealogy_name: "' . $rankgenealogy_name . '"},';
-                                 $rank_color_css .= '.node.' . $rankgenealogy_name . ' rect {
-                                        fill: ' . $rank_color . ';
-                                    }';
+        $referralslinkdetails = DB::table($_ENV['IHOOK_PREFIX'].'_matrix_members_link_table as a')
+            ->leftJoin($_ENV['IHOOK_PREFIX'].'_members_table as b', 'a.members_id', '=', 'b.members_id')
+            ->leftJoin($_ENV['IHOOK_PREFIX'].'_members_table as c', 'c.members_id', '=', 'a.direct_id')
+            ->leftJoin($_ENV['IHOOK_PREFIX'].'_ranksetting as d', 'd.rank_id', '=', 'a.rankid')
+            ->leftJoin($_ENV['IHOOK_PREFIX'].'_ranksetting as e', function($join) use ($matrix_id){
+                $join->on('e.rank_id', '=', 'a.rankid')
+                     ->where('e.rank_key', '=', 'rank_icon_path')
+                     ->where('e.matrix_id', '=', $matrix_id);
+            })
+            ->leftJoin($_ENV['IHOOK_PREFIX'].'_ranksetting as f', function($join) use ($matrix_id){
+                $join->on('f.rank_id', '=', 'a.rankid')
+                     ->where('f.rank_key', '=', 'rank_color')
+                     ->where('f.matrix_id', '=', $matrix_id);
+            })
+            ->select(
+                'a.*',
+                'b.members_email',
+                'b.members_firstname',
+                'b.members_lastname',
+                'b.members_image',
+                'b.rankgenealogy_name',
+                'b.members_phone',
+                'b.members_username',
+                'c.members_username as sponsorname',
+                'd.rank_key',
+                'd.rank_value',
+                'e.rank_value as rank_icon_path',
+                'f.rank_value as rankcolor'
+            )
+            ->where(function($query) use ($members_id){
+                $query->whereRaw("FIND_IN_SET(?, members_parents)", [$members_id])
+                      ->orWhere('a.members_id', $members_id);
+            })
+            ->where('a.matrix_id', $matrix_id)
+            ->orderBy('a.position', 'ASC')
+            ->limit(1000)
+            ->get();
 
+        // Convert collection to array
+        $referralslinkdetails = $referralslinkdetails->toArray();
+        $totalusers = count($referralslinkdetails);
 
-                        } else {
-                            $output .= '{ id:  "' . $referralslinkdetails[$i]['members_id'] . '", name: "' . $members_fullname . '", pid: ' . $spillover_id . ', title: "' . $title . '", description: "' . __('Sponsor') . ' : ' . $sponsor_name . ' ' . $passupdetails . '", phone: "' . $members_phone . '", email: "' . $members_email . '",rank: "' .  __('Rank') . ' : ' . $rank . '", img: "' . $memberimage . '",rankimage: "0", members_id: "' . $referralslinkdetails[$i]['members_id'] . '",matrix_id:  ' . $referralslinkdetails[$i]['matrix_id'] . ', rankgenealogy_name: "' . $rankgenealogy_name . '"},';
-                                 $rank_color_css .= '.node.' . $rankgenealogy_name . ' rect {
-                                        fill: ' . $rank_color . ';
-                                    }';
+        $defaultSponsor = DB::table($_ENV['IHOOK_PREFIX'].'_matrix_configuration_table')
+            ->where('matrix_key', 'default_sponsor')
+            ->where('matrix_id', $matrix_id)
+            ->value('matrix_value');
 
+        $output = [];
 
+        foreach ($referralslinkdetails as $i => $row) {
 
-                        }
-                    }
-                }
-            } //end 2000
-            else {
+            if ($totalusers > 2000 && $i >= 43) continue; // replicate original logic for 2000+
 
-$rescont=count((array)$referralslinkdetails);
-for ($i=0; $i < $rescont; $i++) {
+            $spillover_id = $row->spillover_id;
+            if ($defaultSponsor != $members_id && $i == 0) {
+                $spillover_id = 0;
+            }
 
-                    $groupTitleColor          = "#4169e1";
-                    $itemTitleColor           = "#4169e1";
-                    $spillover_id             = $referralslinkdetails[$i]['spillover_id'];
-                    $members_email            = $referralslinkdetails[$i]['members_email'];
-                    $members_firstname        = $referralslinkdetails[$i]['members_firstname'];
-                    $members_lastname         = $referralslinkdetails[$i]['members_lastname'];
-                    $memberimage              = $referralslinkdetails[$i]['members_image'];
-                    $memberimage              = $memberimage != '' ?  $memberimage : 'uploads/members/avatar.png';
-				    $memberimage              = $_ENV['CDNCLOUDEXTURL'].'/'.$memberimage;
-                    $members_fullname         = $referralslinkdetails[$i]['members_username'];
-                    $members_phone            = $referralslinkdetails[$i]['members_phone'];
-                    $linkid                   = $referralslinkdetails[$i]['link_id'];
-                    $sponsor_name             = $referralslinkdetails[$i]['sponsorname'];
-                    $rank_value               = $referralslinkdetails[$i]['rank_value'];
-                    $members_passup_id        = $referralslinkdetails[$i]['members_passup_id'];
-                    $members_passup_direct_id = $referralslinkdetails[$i]['members_passup_direct_id'];
-                    $title                    = $members_firstname . ' ' . $members_lastname;
-                    $title                    = $title == '' ? 'Nil' : $title;
-                    if ($members_passup_id > 0) {
-                        $members_passup_id;
-                        $member_details   = MMemberDetails::getPartMembersDetails('members_username',$members_passup_id);
-                        $passupmembername = $member_details['members_username'];
-                        $passupdetails    = ', Passup : ' . $passupmembername . '';
-                    } else {
-                        $passupdetails = '';
-                    }
-                    $sponsor_name   = $sponsor_name == '' ? 'Nil' : $sponsor_name;
-                    $rank           = $rank_value == '' ? 'Nil' : $rank_value;
-                    $rank_icon_path = $referralslinkdetails[$i]['rank_icon_path'];
-                    $rank_icon_path = $rank_icon_path == '' ? '' :  $rank_icon_path;
-					$rank_icon_path = $_ENV['CDNCLOUDEXTURL'].'/'.$rank_icon_path;
-                    $rank_color         = $referralslinkdetails[$i]['rankcolor'];
-                    $rankgenealogy_name = $referralslinkdetails[$i]['rankgenealogy_name'];
+            $members_passup_id = $row->members_passup_id;
+            $passupdetails = '';
+            if ($members_passup_id > 0) {
+                $member_details = MMemberDetails::getPartMembersDetails('members_username', $members_passup_id);
+                $passupmembername = $member_details['members_username'] ?? '';
+                $passupdetails = ', Passup : ' . $passupmembername;
+            }
 
-                    if ($default_sponsor != $members_id) {
-                        if ($i == 0) {
-                            $spillover_id = 0;
-                        }
-                    } else {
-                        $spillover_id = $spillover_id;
-                    }
-                    $title = $members_firstname . ' ' . $members_lastname;
-                    $title = $title == '' ? 'Nil' : $title;
-                    if ($referralslinkdetails[$i]['rank_icon_path'] != '' && $referralslinkdetails[$i]['rankid'] > 0) {
-                        $output .= '{ id:  "' . $referralslinkdetails[$i]['members_id'] . '", name: "' . $members_fullname . '", pid: ' . $spillover_id . ', title: "' . $title . '", description: "' . __('Sponsor') . ' : ' . $sponsor_name . ' ' . $passupdetails . '", phone: "' . $members_phone . '", email: "' . $members_email . '",rank: "' .  __('Rank') . ' : ' . $rank . '", img: "' . $memberimage . '", rankimage: "' . $rank_icon_path . '", members_id: "' . $referralslinkdetails[$i]['members_id'] . '", matrix_id:  ' . $referralslinkdetails[$i]['matrix_id'] . ', rankgenealogy_name: "' . $rankgenealogy_name . '"},';
-                                 $rank_color_css .= '.node.' . $rankgenealogy_name . ' rect {
-                                        fill: ' . $rank_color . ';
-                                    }';
+            $members_firstname = $row->members_firstname ?? '';
+            $members_lastname  = $row->members_lastname ?? '';
+            $title = trim($members_firstname . ' ' . $members_lastname) ?: 'Nil';
 
+            $members_fullname = $row->members_username ?? '';
+            $members_email    = $row->members_email ?? '';
+            $members_phone    = $row->members_phone ?? '';
+            $rank             = $row->rank_value ?: 'Nil';
+            $sponsor_name     = $row->sponsorname ?: 'Nil';
+            $memberimage      = $row->members_image ?: 'uploads/members/avatar.png';
+            $memberimage      = $_ENV['CDNCLOUDEXTURL'].'/'.$memberimage;
 
-                    } else {
-                        $output .= '{ id:  "' . $referralslinkdetails[$i]['members_id'] . '", name: "' . $members_fullname . '", pid: ' . $spillover_id . ', title: "' . $title . '", description: "' . __('Sponsor') . ' : ' . $sponsor_name . ' ' . $passupdetails . '", phone: "' . $members_phone . '", email: "' . $members_email . '",rank: "' .  __('Rank') . ' : ' . $rank . '", img: "' . $memberimage . '",rankimage: "0", members_id: "' . $referralslinkdetails[$i]['members_id'] . '",matrix_id:  ' . $referralslinkdetails[$i]['matrix_id'] . ', rankgenealogy_name: "' . $rankgenealogy_name . '"},';
-                           $rank_color_css .= '.node.' . $rankgenealogy_name . ' rect {
-                                        fill: ' . $rank_color . ';
-                                    }';
+            $rank_icon_path = $row->rank_icon_path ? $_ENV['CDNCLOUDEXTURL'].'/'.$row->rank_icon_path : '0';
+            $rank_color     = $row->rankcolor ?? '#4169e1';
+            $rankgenealogy_name = $row->rankgenealogy_name ?? '';
 
-                    }
-                }
+            // Optional: Downline count (replicate original logic)
+            $downlinecount = MMembersCount::getDownlineMemberscount($row->members_id, $row->matrix_id);
+
+            $output[] = [
+                'id' => (string) $row->members_id,
+                'pid' => (string) $spillover_id,
+                'name' => $members_fullname,
+                'title' => $title,
+                'description' => 'Sponsor : ' . $sponsor_name . $passupdetails,
+                'phone' => $members_phone,
+                'email' => $members_email,
+                'rank' => 'Rank : ' . $rank,
+                'img' => $memberimage,
+                'rankimage' => $rank_icon_path,
+                'members_id' => $row->members_id,
+                'matrix_id' => $row->matrix_id,
+                'rankgenealogy_name' => $rankgenealogy_name,
+                'downlinecount' => $downlinecount
+            ];
+
+            // Build rank color CSS
+            if ($rankgenealogy_name) {
+                $rank_color_css .= ".node.$rankgenealogy_name rect { fill: $rank_color; }" . PHP_EOL;
             }
         }
-        $output    = 'var data=[' . $output . ']';
-        $returnoutput=array();
-        $returnoutput[0]=$output;
-        $returnoutput[1]=$rank_color_css;
-        /* $upladfile = fopen("../".$_ENV['CURRENT_UPATH']."/shift/usergraphical" . $members_id . "" . $matrix_id . ".js", "w");
-        fwrite($upladfile, $output);
-        fclose($upladfile);
 
-        $flnm          = '../'.$_ENV['CURRENT_UPATH'].'/shift/usergraphical' . $members_id . $matrix_id . ".js";
-        $amaname       = 'usergraphical' . $members_id . $matrix_id . ".js";
-        $genealogyfile = 'uploads/genealogydata/' . $amaname;
-        MAmazonS3::amazonFileCreation($flnm, 'text/js', $genealogyfile);
-       end:amazonupload
-
-            $cssfile = fopen("../".$_ENV['CURRENT_UPATH']."/shift/usergraphical" . $members_id . "" . $matrix_id . ".css", "w");
-            fwrite($cssfile, $rank_color_css);
-            fclose($cssfile);
-            $flnm          = '../'.$_ENV['CURRENT_UPATH'].'/shift/usergraphical' . $members_id . $matrix_id . ".css";
-            $amaname       = 'usergraphical' . $members_id . $matrix_id . ".css";
-            $genealogyfile = 'uploads/genealogydata/' . $amaname;
-            MAmazonS3::amazonFileCreation($flnm, 'text/css', $genealogyfile);
-            end:amazonupload*/
-        return $returnoutput;
-
+        return [$output, $rank_color_css];
     }
 }
-?>

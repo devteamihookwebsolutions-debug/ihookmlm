@@ -132,7 +132,7 @@ class MRegister
             'payment_method' => $paymentMethod,
             'members_id'     => $members_id
             ]);
-            $paymenthistory_id = 1; // dummy positive id to satisfy later checks
+            $paymenthistory_id = 1;
         } else {
             $insertPayment = new MInsertPaymentHistory();
             // Use a safe random token instead of mt_rand with a very large max

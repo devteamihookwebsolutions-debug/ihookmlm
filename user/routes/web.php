@@ -83,15 +83,16 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard/get-rank-details-requirements/{rankId}', [UserDashboardController::class, 'getRankDetailsRequirements'])->name('dashboard.get-rank-details-requirements');
     Route::get('/dashboard/get-rank-percentage', [UserDashboardController::class, 'getRankPercentage'])->name('dashboard.get-rank-percentage');
 
+
+    Route::post('/genealogy/search/{encrypted}', [GenealogyController::class, 'searchMember'])
+        ->name('genealogy.search');
+
     Route::get('/genealogy/viewtree/{encrypted}', [GenealogyController::class, 'viewGenealogyTree'])
         ->name('genealogy.viewtree');
 
     // THESE TWO MUST BE UNDER /user PREFIX
     Route::post('/genealogy/getmembers', [GenealogyController::class, 'getMembers'])
         ->name('genealogy.getmembers');
-
-    Route::post('/genealogy/search/{encrypted}', [GenealogyController::class, 'searchMember'])
-        ->name('genealogy.search');
 
     Route::get('/genealogy/tabularview/{encrypted}', [TabularGenealogyController::class, 'view'])
         ->name('genealogy.tabularview');
@@ -108,11 +109,11 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/rankgenealogy/viewtree/{encrypted}', [GraphicalGenealogyController::class, 'viewTree'])
         ->name('rankgenealogy.viewtree');
 
-    Route::get('/directdownlinegenealogy/viewtree/{encrypted}', [GraphicalGenealogyController::class, 'viewTree'])
-        ->name('directdownlinegenealogy.viewtree');
-
     Route::get('/advancedgenealogy/viewtree/{encrypted}', [GraphicalGenealogyController::class, 'viewTree'])
          ->name('advancedgenealogy.viewtree');
+
+    Route::get('/directdownlinegenealogy/viewtree/{encrypted}', [GraphicalGenealogyController::class, 'viewTree'])
+        ->name('directdownlinegenealogy.viewtree');
 
     // Update template route
     Route::post('/grpgenealogy/updatetemplate', [GraphicalGenealogyController::class, 'updateTemplate'])

@@ -12,7 +12,6 @@ public static function getcurrencyformat()
 {
     // Fetch the first record with id = 1
     $record = currencyformat::find(1);
-    $record = currencyFormat::find(1);
 // dd($record);
     // Return the record
     return $record; // or return as JSON if for API: return response()->json($record);
@@ -46,18 +45,47 @@ public static function insertcurrency($request)
         ->where('currency_value', $currencyValue)
         ->first();
 
+
+
+    //     $currencyRecord  DB::table('ihook_currencysettings_table')
+    // ->updateOrInsert(
+    //     ['set_currency' => 1], // condition: active currency row
+    //     [
+    //         'currency' => $request->currency,
+    //         'thousand_seperator' => $request->thousands_separator,
+    //         'decimal_seperator' => $request->decimal_separator,
+    //         'updated_at' => now(), // current timestamp
+    //     ]
+    // );
+
     if (!$currencyRecord) {
         return back()->with('error_message', 'Selected currency not found.');
     }
 
     $currencySymbol = $currencyRecord->currency_symbol;
 
+
     // Insert/Update site currency
     DB::table('ihook_sitesettings_table')
         ->updateOrInsert(
             ['sitesettings_name' => 'site_currency'],
-            ['sitesettings_value' => $currencySymbol]
+            ['sitesettings_value' => $currencySymbol
+
+
+            ]
+
         );
+
+
+//Insert/Update Curency Format in site setting
+$currvalue = $currencyRecord->currency_value;
+        DB::table('ihook_sitesettings_table')
+        ->updateOrInsert(
+            ['sitesettings_name' => 'currency_format'],
+            ['sitesettings_value' => $currvalue],
+
+        );
+
 
     // Insert/Update currency format
     DB::table('ihook_currencyformat')
@@ -70,7 +98,9 @@ public static function insertcurrency($request)
                 'updated_date' => now(),
             ]
         );
-return back()->with('success_message', 'Format added successfully!');
+return back()->with('success', 'Format added successfully!');
+
 
 }
+
 }

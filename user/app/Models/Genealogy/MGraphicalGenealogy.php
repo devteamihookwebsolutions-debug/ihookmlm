@@ -2,137 +2,143 @@
 
 namespace User\App\Models\Genealogy;
 
-use Admin\App\Models\Middleware\MBinaryMembersPosition;
-use DB;
+use Illuminate\Support\Facades\DB;
+use Admin\App\Models\Middleware\MMemberDetails;
+use Admin\App\Models\Genealogy\MMembersCount;
 
 class MGraphicalGenealogy
 {
-  public static function updateGenealogyDetails($members_id, $matrix_id)
+    public static function updateGenealogyDetails($members_id, $matrix_id)
     {
-        // Get root member details
-        $binaryParentDetails = MBinaryLinkDetails::getBinaryLinkDetails($members_id, $matrix_id, $targetRoot = null);
+        $prefix = config('services.ihook.prefix', 'ihook');
 
-        $directId        = $binaryParentDetails['direct_id'];
-        $memberName      = $binaryParentDetails['membername'];
-        $memberPhone     = $binaryParentDetails['members_phone'];
-        $memberEmail     = $binaryParentDetails['members_email'];
-        $memberImagePath = $binaryParentDetails['members_image'] ? '/'.$binaryParentDetails['members_image'] : '/assets/img/avatar/avatar.png';
-        $memberImage     = asset($memberImagePath);
-        $parentRoot      = $binaryParentDetails['root'];
-        $rankTitle       = $binaryParentDetails['ranktitle'] ?: 'Nil';
-        $sponsorUsername = $directId > 0 ? $binaryParentDetails['sponsor_username'] : 'Nil';
-        $rankIconPath    = $binaryParentDetails['rank_icon_path'] ?: '';
-        $members_id      = $binaryParentDetails['members_id'];
+        // Check if member exists in this matrix
+        $exists = DB::table("{$prefix}_matrix_members_link_table")
+            ->where('matrix_id', $matrix_id)
+            ->where('members_id', $members_id)
+            ->exists();
 
-        $targetRoot = $parentRoot + 3;
+        if (!$exists) {
+            return 'var data = [];';
+        }
 
-        // Get counts
-        $count            = MBinaryMembersCount::getBinaryMembersCount($members_id, $matrix_id);
-        $leftTotalMember  = $count['left'];
-        $rightTotalMember = $count['right'];
-        $downlineCount    = MMembersCount::getDownlineMembersCount($members_id, $matrix_id);
+        // Get default sponsor from matrix config
+        $default_sponsor = DB::table("{$prefix}_matrix_configuration_table")
+            ->where('matrix_key', 'default_sponsor')
+            ->where('matrix_id', $matrix_id)
+            ->value('matrix_value') ?? 0;
 
-        // Initialize data array
-        $data = [];
+        $cdnUrl = env('CDNCLOUDEXTURL', '');
 
-        // Build root node
-        $data[] = [
-            'id'               => $members_id,
-            'name'             => $memberName,
-            'pid'              => 0,
-            'title'            => $memberName,
-            'description'      => "Sponsor : {$sponsorUsername}",
-            'phone'            => $memberPhone,
-            'email'            => $memberEmail,
-            'rank'             => "Rank : {$rankTitle}",
-            'img'              => $memberImage,
-            'rankimage'        => $rankIconPath,
-            'leftmembercount'  => "Left total members : {$leftTotalMember}",
-            'rightmembercount' => "Right total members : {$rightTotalMember}",
-            'members_id'       => $members_id,
-            'downlinecount'    => $downlineCount
-        ];
+        // Fetch all required data with proper GROUP BY to avoid only_full_group_by error
+        $referrals = DB::table("{$prefix}_matrix_members_link_table AS a")
+            ->select([
+                'a.link_id',
+                'a.members_id',
+                'a.spillover_id',
+                'a.direct_id',
+                'a.rankid',
+                'a.members_passup_id',
+                'a.matrix_id',
+                'b.members_email',
+                'b.members_firstname',
+                'b.members_lastname',
+                'b.members_image',
+                'b.members_phone',
+                'b.members_username',
+                'c.members_username AS sponsorname',
+                'd.rank_value',                    // Rank name (e.g., "Diamond")
+                'e.rank_value AS rank_icon_path'   // Icon path from ranksetting
+            ])
+            ->leftJoin("{$prefix}_members_table AS b", 'a.members_id', '=', 'b.members_id')
+            ->leftJoin("{$prefix}_members_table AS c", 'c.members_id', '=', 'a.direct_id')
+            ->leftJoin("{$prefix}_ranksetting AS d", function ($join) {
+                $join->on('d.rank_id', '=', 'a.rankid')
+                     ->where('d.rank_key', '=', 'rank_name'); // Change if your rank display key is different
+            })
+            ->leftJoin("{$prefix}_ranksetting AS e", function ($join) use ($matrix_id) {
+                $join->on('e.rank_id', '=', 'a.rankid')
+                     ->where('e.rank_key', '=', 'rank_icon_path')
+                     ->where('e.matrix_id', '=', $matrix_id);
+            })
+            ->where(function ($query) use ($members_id) {
+                $query->whereRaw("FIND_IN_SET(?, a.members_parents)", [$members_id])
+                      ->orWhere('a.members_id', $members_id);
+            })
+            ->where('a.matrix_id', $matrix_id)
+            ->groupBy([
+                'a.link_id', 'a.members_id', 'a.spillover_id', 'a.direct_id', 'a.rankid',
+                'a.members_passup_id', 'a.matrix_id',
+                'b.members_email', 'b.members_firstname', 'b.members_lastname',
+                'b.members_image', 'b.members_phone', 'b.members_username',
+                'c.members_username', 'd.rank_value', 'e.rank_value'
+            ])
+            ->orderBy('a.spillover_id', 'ASC')
+            ->get();
 
-        // Get direct left & right children
-        $leftUser  = MBinaryMembersPosition::getBinaryMembersPosition($members_id, $matrix_id, '1');
-        $rightUser = MBinaryMembersPosition::getBinaryMembersPosition($members_id, $matrix_id, '2');
+        $nodes = [];
 
-        // Recursively build the tree starting from root
-        self::buildTreeRecursive($data, $members_id, $leftUser, $rightUser, $matrix_id, $targetRoot);
+        foreach ($referrals as $i => $row) {
+            $spillover_id = $row->spillover_id ?? 0;
 
-        // Convert to JS format
-        $output = 'var data = ' . json_encode($data, JSON_PRETTY_PRINT) . ';';
+            // Force root node to have pid = 0 if not placed under default sponsor
+            if ($default_sponsor != $members_id && $i === 0) {
+                $spillover_id = 0;
+            }
 
-        return $output;
-    }
+            $memberImage = !empty($row->members_image)
+                ? $cdnUrl . '/' . $row->members_image
+                : $cdnUrl . '/uploads/members/avatar.png';
 
-    private static function buildTreeRecursive(&$data, $parentId, $leftUser, $rightUser, $matrix_id, $targetroot)
-    {
-        // dd('funciton reached');
-        $positions = [];
-        if ($leftUser > 0)  $positions['1'] = $leftUser;
-        if ($rightUser > 0) $positions['2'] = $rightUser;
+            $fullName     = $row->members_username ?? 'Nil';
+            $title        = trim($row->members_firstname . ' ' . $row->members_lastname);
+            $title        = $title !== '' ? $title : 'Nil';
+            $sponsorName  = $row->sponsorname ?? 'Nil';
+            $rank         = $row->rank_value ?? 'Nil';
 
-        $filledCount = count($positions);
-        // dd($filledCount);
-        // Case 1: Both legs filled
-        if ($filledCount == 2) {
-            foreach (['1' => $leftUser, '2' => $rightUser] as $pos => $childId) {
-                $childDetails = MBinaryLinkDetails::getBinaryLinkDetails($childId, $matrix_id, $targetroot);
-                if ($childDetails['root'] <= $targetroot) {
-                    $data[] = self::buildNodeArray($childDetails, $childId, $parentId);
-                    $childLeft  = MBinaryMembersPosition::getBinaryMembersPosition($childId, $matrix_id, '1');
-                    $childRight = MBinaryMembersPosition::getBinaryMembersPosition($childId, $matrix_id, '2');
-                    self::buildTreeRecursive($data, $childId, $childLeft, $childRight, $matrix_id, $targetroot);
+            // Passup details
+            $passupDetails = '';
+            if ($row->members_passup_id > 0) {
+                $passup = MMemberDetails::getPartMembersDetails('members_username', $row->members_passup_id);
+                $passupName = $passup['members_username'] ?? '';
+                if ($passupName) {
+                    $passupDetails = ', Passup : ' . $passupName;
                 }
             }
-        }
-        // Case 2: Only one leg filled
-        elseif ($filledCount == 1) {
-            $filledPos = key($positions);
-            $childId = $positions[$filledPos];
 
-            $childDetails = MBinaryLinkDetails::getBinaryLinkDetails($childId, $matrix_id, $targetroot);
-            if ($childDetails['root'] <= $targetroot) {
-                $data[] = self::buildNodeArray($childDetails, $childId, $parentId);
-                $childLeft  = MBinaryMembersPosition::getBinaryMembersPosition($childId, $matrix_id, '1');
-                $childRight = MBinaryMembersPosition::getBinaryMembersPosition($childId, $matrix_id, '2');
-                self::buildTreeRecursive($data, $childId, $childLeft, $childRight, $matrix_id, $targetroot);
+            $description = __('Sponsor') . ' : ' . $sponsorName . $passupDetails;
+
+            // Rank icon
+            $rankIconPath = '';
+            if ($row->rank_icon_path && $row->rankid > 0) {
+                $rankIconPath = $cdnUrl . '/' . $row->rank_icon_path;
             }
+            $rankImageField = $rankIconPath ? "'" . addslashes($rankIconPath) . "'" : '"0"';
 
-            // Add empty node for missing leg
+            // Downline count
+            $downlineCount = MMembersCount::getDownlineMemberscount($row->members_id, $row->matrix_id);
+// dd($downlineCount);
+            // Build node safely
+            $nodes[] = "{
+                id: '{$row->members_id}',
+                name: '" . addslashes($fullName) . "',
+                pid: " . (int)$spillover_id . ",
+                title: '" . addslashes($title) . "',
+                description: '" . addslashes($description) . "',
+                phone: '" . addslashes($row->members_phone ?? '') . "',
+                email: '" . addslashes($row->members_email ?? '') . "',
+                rank: '" . addslashes(__('Rank') . ' : ' . $rank) . "',
+                img: '" . addslashes($memberImage) . "',
+                rankimage: {$rankImageField},
+                members_id: '{$row->members_id}',
+                matrix_id: {$row->matrix_id},
+                downlinecount: '{$downlineCount}'
+            }";
         }
 
-    }
+        // Final safe JavaScript output
+        $jsData = $nodes ? implode(",\n", $nodes) : '';
 
-    private static function buildNodeArray($details, $memberId, $pid)
-    {
-        $username = $details['membername'] ?? 'Unknown';
-        $sponsor  = $details['direct_id'] > 0 ? ($details['sponsor_username'] ?? 'Nil') : 'Nil';
-        $rank     = empty($details['ranktitle']) ? 'Nil' : $details['ranktitle'];
-        $image    = asset($details['members_image'] ?? 'uploads/members/avatar.png');
-        // dd($image);
-        $rankImg  = $details['rank_icon_path'] ?? '';
-
-        $count = MBinaryMembersCount::getBinaryMemberscount($memberId, $details['matrix_id'] ?? 1);
-        $downline = MMembersCount::getDownlineMemberscount($memberId, $details['matrix_id'] ?? 1);
-        // dd($downline);
-
-        return [
-            'id'               => (string)$memberId,
-            'pid'              => (string)$pid,
-            'name'             => $username,
-            'title'            => $username,
-            'description'      => "Sponsor: $sponsor",
-            'phone'            => $details['members_phone'] ?? '',
-            'email'            => $details['members_email'] ?? '',
-            'rank'             => "Rank: $rank",
-            'img'              => $image,
-            'rankimage'        => $rankImg,
-            'leftmembercount'  => "Left total members: " . ($count['left'] ?? 0),
-            'rightmembercount' => "Right total members: " . ($count['right'] ?? 0),
-            'members_id'       => (string)$memberId,
-            'downlinecount'    => (string)$downline
-        ];
+        return "var data = [{$jsData}];";
     }
 }

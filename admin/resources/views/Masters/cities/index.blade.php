@@ -41,7 +41,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="m10 16 4-4-4-4" />
                 </svg>
-                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('Cities View') }}</span>
+                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('Cities  View') }}</span>
             </div>
         </li>
     </ol>
@@ -63,6 +63,7 @@
                     <thead class="text-xs uppercase bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                         <tr>
                             <th class="px-6 py-3">
+
                                 <span class="flex items-center">
                                     {{ __('City Name') }}
                                     <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -249,4 +250,8 @@ document.addEventListener('click', function (e) {
     document.getElementById('deleteCityForm').action =
         btn.dataset.action;
 });
+
+
+
+
 </script>

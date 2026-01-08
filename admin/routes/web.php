@@ -13,6 +13,7 @@ use Admin\App\Http\Controllers\Genealogy\CollapseGenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GraphicalGenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GraphicalGenealogyTemplateController;
+use Admin\App\Http\Controllers\LeadPage\CampaignManagementController;
 use Admin\App\Http\Controllers\LeadPage\LeadContactsController;
 use Admin\App\Http\Controllers\Logs\LogManagementController;
 use Admin\App\Http\Controllers\Masters\CityController;
@@ -25,6 +26,7 @@ use Admin\App\Http\Controllers\MatrixConfig\MatrixController;
 use Admin\App\Http\Controllers\MatrixConfig\MatrixPackageController;
 use Admin\App\Http\Controllers\MatrixConfig\PackageLevelCommissionController;
 use Admin\App\Http\Controllers\MemberArea\MemberAreaSummaryController;
+use Admin\App\Http\Controllers\NewsLetter\NewsLetterManagementController;
 use Admin\App\Http\Controllers\PremiumLearning\PremiumCoursePaymentController;
 use Admin\App\Http\Controllers\PremiumLearning\PremiumCoursesController;
 use Admin\App\Http\Controllers\PremiumLearning\PremiumLearningLessonController;
@@ -486,6 +488,8 @@ Route::get('/genealogy/viewtree/gettabularview/{matrixId}/{memberId?}',
     [GraphicalGenealogyController::class, 'viewGenealogyTree'])
     ->name('genealogy.viewtree.countgenealogy');
 
+    Route::get('/directdownlinegenealogy/viewtree/{matrixId}/{memberId?}', [GraphicalGenealogyController::class, 'viewGenealogyTree'])
+        ->name('genealogy.viewtree.directdownlinegenealogy');
 
     //E-pin
     Route::get('sendpin', [SendEpinsController::class, 'showSendEpin'])->name('sendpin');
@@ -589,6 +593,49 @@ Route::get('systemmodules', [SystemManagementController::class, 'showSystemModul
     // Route::get('otpsent', [PaymentSettingsController::class, 'sendOTPPayment'])->name('otpsent');
     Route::post('paymentsettings/validateotp',[PaymentSettingsController::class, 'paymentValidateOTP']
         )->name('validateotp');
+        //Marketing campainManagement
+    Route::get('newsletter', [CampaignManagementController::class, 'showNewsletterSettings'])
+        ->name('newsletter');
+
+    Route::post('newsletter/userlists',[CampaignManagementController::class, 'showNewsletterUserlists'])->name('newsletter.userlists');
+
+    Route::post('newsletter/selecttemplate/{id}',[CampaignManagementController::class, 'viewMailTemplate'])->name('newsletter.selecttemplate');
+    Route::post('newsletter/sendnews', [CampaignManagementController::class, 'sendNewsletter'])->name('newsletter.sendnews');
+
+//newsletter template
+Route::get('newslettertemplate', [NewsLetterManagementController::class, 'newsletterTemplate'])
+    ->name('newslettertemplate');
+Route::get('addnewstemplate', [NewsLetterManagementController::class, 'addNewsTemplate'])
+    ->name('addnewstemplate');
+
+Route::post('newslettertemplateshow',
+    [NewsLetterManagementController::class, 'validAddNewsTemplate']
+)->name('newslettertemplate.store');
+
+Route::delete(
+    'newslettertemplate/{id}',
+    [NewsLetterManagementController::class, 'deletetemplate']
+)->name('newslettertemplate.delete');
+
+// web.php
+Route::get('newssubjectedit/edit/{id}', [NewsLetterManagementController::class, 'edittemplate'])
+     ->name('newslettertemplate.edit');
+     // Update newsletter template
+Route::put('updatenewssubject/update/{id}', [NewsLetterManagementController::class, 'updatetemplate'])
+     ->name('newslettertemplate.update');
+Route::get('templatedocumentsnews/docu/{filename}/{id}', [
+    NewsLetterManagementController::class,
+    'templateDocumentsNews'
+])->name('templatedocumentsnews.docu');
+
+Route::post('newsbuilderv1/imageupload', [NewsLetterManagementController::class, 'imageUpload'])
+    ->name('newsbuilder.imageupload');
+
+Route::post('newsbuilderv1/savecontent',[NewsLetterManagementController::class, 'saveContent'])->name('newsbuilder.save');
+
+Route::get('newsletter/preview/{id}', [NewsLetterManagementController::class, 'preview']);
+
+
 
 });
 

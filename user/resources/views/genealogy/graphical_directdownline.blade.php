@@ -1,8 +1,8 @@
-@include('components.common.header')
+@extends('user::components.common.main')
+@section('content')
 <!-- custom styles start-->
 <link href="{{$_ENV['UI_ASSET_URL']}}/assets/vendors/jstree/dist/themes/default/style.css" rel="stylesheet" type="text/css" />
 <!-- custom styles end-->
-@include('components.common.topbars')
 
         <div class="flex mb-4" aria-label="Breadcrumb">
                             <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
@@ -59,11 +59,10 @@
                         <div class="overflow-y-auto">
                         <div id="grptree"></div>
                         </div>
-        
+
     </div>
 </div>
 </main>
-@include('components.common.footer')
-@include('components.common.footer_scripts')
-@include('genealogy.components.graphical_directdownline_script')
-@include('components.common.footer_end')
+
+@include('user::genealogy.components.graphical_directdownline_script')
+@endsection

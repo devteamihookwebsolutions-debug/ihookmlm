@@ -18,6 +18,7 @@
 
 namespace User\App\Http\Controllers\Network;
 
+use Admin\App\Models\Middleware\MMatrixDetails;
 use Admin\App\Models\Middleware\MURLCrypt;
 use Exception;
 use Illuminate\Http\Request;
@@ -26,61 +27,69 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use User\App\Models\Genealogy\MBinaryCompactGenealogy;
+use User\App\Models\Genealogy\MCompactGenealogy;
+use User\App\Models\Genealogy\MlinearCompactGenealogy;
+use User\App\Models\Genealogy\MUnilevelCompactGenealogy;
 use User\App\Models\Network\MNetwork;
 
 class NetworkController extends Controller
 {
-public function showNetwork(Request $request, $token = null, $member_id = null, $matrix_id = null)
-{
-    // try {
-        session()->forget(['recruit', 'network', 'package', 'register', 'success_message', 'error_message']);
+    public function showNetwork(Request $request, $token = null, $member_id = null, $matrix_id = null)
+    {
 
-        $output['show_my_network_inactive_details'] = MNetwork::getInactiveNetworkDetails();
-        $output['show_my_network_active_list']      = MNetwork::getActiveNetworkList();
+            session()->forget(['recruit', 'network', 'package', 'register', 'success_message', 'error_message']);
 
-        $auth_user_id = Auth::user()->members_id;
+            $output['show_my_network_inactive_details'] = MNetwork::getInactiveNetworkDetails();
+            $output['show_my_network_active_list']      = MNetwork::getActiveNetworkList();
 
-        if ($member_id && is_numeric($member_id)) {
-            $current_member_id = (int)$member_id;
-        } elseif ($token) {
-            $decoded = MURLCrypt::decode($token);
-            $current_member_id = $decoded[0] ?? $auth_user_id;
-            $matrix_id = $decoded[1] ?? $matrix_id;
-        } else {
-            $current_member_id = $auth_user_id;
-        }
+            $auth_user_id = Auth::user()->members_id;
 
-        if (!$matrix_id) {
-            $prefix = config('ihook.prefix', 'ihook');
-            $matrix_id = \DB::table("{$prefix}_matrix_members_link_table")
-                ->where('members_id', $current_member_id)
-                ->orderBy('link_id')
-                ->value('matrix_id') ?? 1;
-        }
+            if ($member_id && is_numeric($member_id)) {
+                $current_member_id = (int)$member_id;
+            } elseif ($token) {
+                $decoded = MURLCrypt::decode($token);
+                $current_member_id = $decoded[0] ?? $auth_user_id;
+                $matrix_id = $decoded[1] ?? $matrix_id;
+            } else {
+                $current_member_id = $auth_user_id;
+            }
 
-        // Save original member only if not already saved (first load)
-        if (!session()->has('original_network_member_id')) {
-            session([
-                'original_network_member_id' => $current_member_id,
-                'original_network_matrix_id' => $matrix_id
-            ]);
-        }
+            if (!$matrix_id) {
+                $prefix = config('ihook.prefix', 'ihook');
+                $matrix_id = \DB::table("{$prefix}_matrix_members_link_table")
+                    ->where('members_id', $current_member_id)
+                    ->orderBy('link_id')
+                    ->value('matrix_id') ?? 1;
+            }
 
-        // Generate tree for current viewed member
-        $tree = MBinaryCompactGenealogy::getCompactGenealogytree($token, $current_member_id, $matrix_id);
+            // Save original member only if not already saved (first load)
+            if (!session()->has('original_network_member_id')) {
+                session([
+                    'original_network_member_id' => $current_member_id,
+                    'original_network_matrix_id' => $matrix_id
+                ]);
+            }
 
-        $output['genealogytree'] = $tree;
-        $output['referralurl']   = config('app.url') . '/';
-        $output['allgenealogy']  = MNetwork::getAllGenealogyList($auth_user_id, $matrix_id);
+            // Determine matrix type (binary or not)
+            $matrixdetails = MMatrixDetails::getMatrixDetails($matrix_id);
+            $matrix_type_id = $matrixdetails['matrix_type_id'] ?? 0;
 
-        return view('user::genealogy.mynetwork', $output);
+            // Generate tree for current viewed member
+            if ($matrix_type_id == 1) {
+                $output['genealogytree'] = MBinaryCompactGenealogy::getCompactGenealogytree(null,$current_member_id, $matrix_id);
+            } elseif ($matrix_type_id == 3) {
+                $output['genealogytree'] = MUnilevelCompactGenealogy::getCompactGenealogytree(null, $current_member_id, $matrix_id);
+            } elseif ($matrix_type_id == 4) {
+                $output['genealogytree'] = MLinearCompactGenealogy::getCompactGenealogytree($current_member_id, $matrix_id);
+            } else {
+                // Default
+                $output['genealogytree'] = MCompactGenealogy::getCompactGenealogytree($current_member_id, $matrix_id);
+            }
+            $output['referralurl']   = config('app.url') . '/';
+            $output['allgenealogy']  = MNetwork::getAllGenealogyList($auth_user_id, $matrix_id);
 
-    // } catch (Exception $e) {
-    //     \Log::error('Network Error: ' . $e->getMessage());
-    //     session()->flash('error_message', 'Something went wrong.');
-    //     return redirect()->route('user.network');
-    // }
-}
+            return view('user::genealogy.mynetwork', $output);
+    }
 
     public function showPlanNetwork(Request $request)
     {

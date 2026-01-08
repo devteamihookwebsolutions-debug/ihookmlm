@@ -71,10 +71,16 @@
                                     value="{{ old('city_name', $city->city_name) }}" maxlength="250"
                                     class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300"
                                     required>
+                                     <span id="city_error" class="text-red-500 text-xs hidden">
+                                 Numbers Special characters are not allowed except(.'-)
+                                 </span>
                                 @error('city_name')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
+
+
                             <div>
                                 <label for="country_id"
                                     class="block mb-3 text-xs text-gray-600 dark:text-gray-300">Country</label>
@@ -127,3 +133,32 @@
     </div>
 </main>
 @endsection
+<script>
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const cityInput = document.getElementById('city_name');
+    const errmsgkeypress =document.getElementById('city_error');
+
+    cityInput.addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+
+        // allow letters (all languages) and space
+        const regex = /^[\p{L} . ']$/u;
+
+        if (!regex.test(char)) {
+            e.preventDefault(); //  block number & special char
+             errmsgkeypress.classList.remove('hidden');
+
+            // Hide error after 1.5 seconds
+            setTimeout(() => {
+                errmsgkeypress.classList.add('hidden');
+            }, 2000);
+        }
+    });
+});
+</script>
+

@@ -10,117 +10,93 @@ use Illuminate\Http\Request;
 
 class MGenealogy
 {
+public static function updateGenealogyDetails($members_id, $matrix_id)
+{
+    $prefix = config('services.ihook.prefix', 'ihook');
 
-    public static function updateGenealogyDetails($members_id, $matrix_id)
-    {
-        $prefix = $_ENV['IHOOK_PREFIX'];
-
-        // Actually execute the query
-        $recordsdefault = DB::select(
-            "SELECT * FROM {$prefix}_matrix_members_link_table
-            WHERE matrix_id = ? AND members_id = ?",
-            [$matrix_id, $members_id]
-        );
-
-        // Safely access the first record
-        $default_members_id = !empty($recordsdefault) ? $recordsdefault[0]->members_id : null;
-        $default_members_account_status = !empty($recordsdefault) ? $recordsdefault[0]->members_account_status : null;
-
-        // Main query - now properly executed
-        $referralslinkdetails = DB::select("
-            SELECT SQL_CALC_FOUND_ROWS
+    $sql = "SELECT SQL_CALC_FOUND_ROWS
                 a.*,
-                b.members_email,
-                b.members_firstname,
-                b.members_lastname,
-                b.members_image,
-                b.members_phone,
-                b.members_username,
+                b.members_email, b.members_firstname, b.members_lastname, b.members_image, b.members_phone, b.members_username,
                 c.members_username AS sponsorname,
                 MAX(CASE WHEN d.rank_key = 'rank_value' THEN d.rank_value ELSE NULL END) AS rank_value_display,
                 MAX(CASE WHEN e.rank_key = 'rank_icon_path' AND e.matrix_id = ? THEN e.rank_value ELSE NULL END) AS rank_icon_path
-
             FROM {$prefix}_matrix_members_link_table AS a
             LEFT JOIN {$prefix}_members_table AS b ON a.members_id = b.members_id
             LEFT JOIN {$prefix}_members_table AS c ON c.members_id = a.direct_id
-            LEFT JOIN {$prefix}_ranksetting AS d
-                ON d.rank_id = a.rankid AND d.rank_key = 'rank_value'
-            LEFT JOIN {$prefix}_ranksetting AS e
-                ON e.rank_id = a.rankid
-                AND e.rank_key = 'rank_icon_path'
-                AND e.matrix_id = ?
-
+            LEFT JOIN {$prefix}_ranksetting AS d ON d.rank_id = a.rankid AND d.rank_key = 'rank_value'
+            LEFT JOIN {$prefix}_ranksetting AS e ON e.rank_id = a.rankid
+                AND e.rank_key = 'rank_icon_path' AND e.matrix_id = ?
             WHERE FIND_IN_SET(?, a.members_parents) OR a.members_id = ?
             GROUP BY a.link_id, a.members_id
-            ORDER BY a.position ASC
-            LIMIT 100
-        ", [$matrix_id, $matrix_id, $members_id, $members_id]);
+            ORDER BY a.matrix_doj ASC
+            LIMIT 1000";
 
-        $output = '';
+    $referralslinkdetails = DB::select($sql, [$matrix_id, $matrix_id, $members_id, $members_id]);
 
-        if (!empty($referralslinkdetails)) {
-            foreach ($referralslinkdetails as $row) {
-                $groupTitleColor = '#4169e1';
-                $itemTitleColor  = '#4169e1';
+    $nodes = [];
 
-                $spillover_id    = $row->spillover_id ?? 0;
-                $members_email   = $row->members_email ?? '';
-                $memberimage     = $row->members_image && $row->members_image !== ''
-                    ? $row->members_image
-                    : 'uploads/members/avatar.png';
+    foreach ($referralslinkdetails as $row) {
+        $parent_id = $row->direct_id ?? 0;
 
-                $members_fullname = $row->members_username ?? 'Unknown';
-                $members_phone    = $row->members_phone ?? '';
-                $linkid           = $row->link_id ?? 0;
-                $sponsor_name     = $row->sponsorname ?? 'Nil';
-                $rank_value       = $row->rank_value_display ?? '';
-                $rank            = $rank_value !== '' ? $rank_value : 'Nil';
+        $memberimage = !empty($row->members_image)
+            ? env('CDNCLOUDEXTURL') . '/' . ltrim($row->members_image, '/')
+            : env('CDNCLOUDEXTURL') . '/uploads/members/avatar.png';
 
-                // Passup logic
-                $members_passup_id = $row->members_passup_id ?? 0;
-                $passupdetails = '';
-                if ($members_passup_id > 0) {
-                    $member_details = MMemberDetails::getPartMembersDetails('members_username', $members_passup_id);
-                    $passupmembername = $member_details['members_username'] ?? 'Unknown';
-                    $passupdetails = ', Passup : ' . $passupmembername;
-                }
+        $members_fullname = $row->members_username ?? 'Unknown';
+        $sponsor_name     = $row->sponsorname ?? 'Nil';
+        $rank_value       = $row->rank_value_display ?? '';
+        $rank             = !empty($rank_value) ? $rank_value : 'Nil';
 
-                // Rank icon
-                $rank_icon_path = $row->rank_icon_path ?? '';
-                $rank_icon_path = $rank_icon_path !== ''
-                    ? $_ENV['CDNCLOUDEXTURL'] . '/' . $rank_icon_path
-                    : '';
-
-                $template = ($row->rank_icon_path && $row->rankid > 0)
-                    ? 'contactTemplate'
-                    : 'contactTemplate1';
-
-                $rankimage = ($row->rank_icon_path && $row->rankid > 0) ? $rank_icon_path : '0';
-
-                $output .= "{
-                    id: '{$row->members_id}',
-                    parent: '{$spillover_id}',
-                    title: '{$members_fullname}',
-                    description: '" . __('Sponsor') . " : {$sponsor_name}{$passupdetails}',
-                    phone: '{$members_phone}',
-                    email: '{$members_email}',
-                    rank: '" . __('Rank') . " : {$rank}',
-                    image: '{$memberimage}',
-                    rankimage: '{$rankimage}',
-                    templateName: '{$template}',
-                    members_id: '{$row->members_id}',
-                    groupTitleColor: '{$groupTitleColor}',
-                    itemTitleColor: '{$itemTitleColor}',
-                    href: '/genealogy/viewtree/{$linkid}'
-                },";
-            }
+        $passupdetails = '';
+        if (!empty($row->members_passup_id)) {
+            $passup = MMemberDetails::getPartMembersDetails('members_username', $row->members_passup_id);
+            $passup_name = $passup['members_username'] ?? 'Unknown';
+            $passupdetails = ', Passup: ' . $passup_name;
         }
 
-        $output = 'var data = [' . rtrim($output, ',') . '];';
+        $rank_icon_path = '';
+        if (!empty($row->rank_icon_path) && $row->rankid > 0) {
+            $rank_icon_path = env('CDNCLOUDEXTURL') . '/' . ltrim($row->rank_icon_path, '/');
+        }
 
-        return $output;
+        $template = (!empty($rank_icon_path) && $row->rankid > 0) ? 'contactTemplate' : 'contactTemplate1';
+
+        $nodes[] = [
+            'id'               => (string)$row->members_id,
+            'parent'           => $row->members_id == $members_id ? null : ($parent_id == 0 ? null : (string)$parent_id),
+            'title'            => $members_fullname,
+            'description'      => 'Sponsor: ' . $sponsor_name . $passupdetails,
+            'phone'            => $row->members_phone ?? '',
+            'email'            => $row->members_email ?? '',
+            'rank'             => 'Rank: ' . $rank,
+            'image'            => $memberimage,
+            'rankimage'        => $rank_icon_path ?: '0',
+            'templateName'     => $template,
+            'itemTitleColor'   => '#4169e1',
+            'groupTitleColor'  => '#4169e1',
+            'href'             => '/genealogy/viewtree/' . MURLCrypt::getEncryptURL($matrix_id, $row->members_id)
+        ];
     }
-    public  static function getCryptData(Request $request)
+
+    // If no members found, show at least the root
+    if (empty($nodes)) {
+        $rootImage = env('CDNCLOUDEXTURL') . '/uploads/members/avatar.png';
+        $nodes[] = [
+            'id'           => (string)$members_id,
+            'parent'       => null,
+            'title'        => 'No Downlines Yet',
+            'description'  => 'Start recruiting!',
+            'image'        => $rootImage,
+            'templateName' => 'contactTemplate1',
+            'itemTitleColor' => '#4169e1'
+        ];
+    }
+
+    // IMPORTANT: Return only the JSON array (no "var rawData =")
+    return json_encode($nodes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+}
+
+  public  static function getCryptData(Request $request)
         {
             // Get matrix_id from request, default to 1
             $matrix_id = $request->input('matrix_id', 1);

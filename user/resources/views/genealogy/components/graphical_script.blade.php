@@ -13,6 +13,7 @@
                 nodeBinding: {
                     field_0: "name",
                     field_1: "title",
+                   field_2: "downlinecount",
                     img_0: "img"
                 },
                 nodeMenu: {
@@ -26,6 +27,7 @@
                 },
                 nodes: data
             });
+
 
         </script>
 

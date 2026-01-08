@@ -65,22 +65,27 @@
                         @method('PUT')
                         <div class="space-y-3">
                             <div>
-                                <label for="country_code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Country Code</label>
-                                <input type="text" id="country_code" name="country_code" value="{{ old('country_code', $state->country_code) }}" maxlength="10" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" required>
+                                <label for="country_code" class="block mb-3 text-xs text-gray-600 dark:text-gray-300">Country Code</label>
+                                <input type="text" id="country_code" name="country_code" value="{{ old('country_code', $state->country_code) }}" maxlength="5" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300"  oninput="this.value=this.value.toUpperCase()">
+                                <span id='country_code_error'  class="text-red-500 text-xs hidden">Only allow characters<span>
+
+
                                 @error('country_code')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="state_code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">State Code</label>
-                                <input type="text" id="state_code" name="state_code" value="{{ old('state_code', $state->state_code) }}" maxlength="500" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" required>
+                                <label for="state_code" class="block mb-3 text-xs text-gray-600 dark:text-gray-300">State Code</label>
+                                <input type="text" id="state_code" name="state_code" value="{{ old('state_code', $state->state_code) }}" maxlength="10" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" required>
+                               <span id='state_code_error'  class="text-red-500 text-xs hidden">Special characters are not allowed except(.'-) <span>
                                 @error('state_code')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="state_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">State Name</label>
+                                <label for="state_name" class="block mb-3 text-xs text-gray-600 dark:text-gray-300">State Name</label>
                                 <input type="text" id="state_name" name="state_name" value="{{ old('state_name', $state->state_name) }}" maxlength="255" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" required>
+                               <span id='state_name_error'  class="text-red-500 text-xs hidden">Numbers Special characters are not allowed except(.'-) <span>
                                 @error('state_name')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -101,3 +106,85 @@
         </main>
 
 @endsection
+<script>
+
+  document.addEventListener('DOMContentLoaded', function () {
+   // alert("dfsdfsdf");
+    const countrycode = document.getElementById('country_code');
+    // alert($countrysortname);
+
+    const errmsgcountrycode =document.getElementById('country_code_error');
+
+    countrycode.addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+
+
+        // allow letters (all languages) and space
+        const regex =  /^[A-Za-z]$/;
+
+        // /^[\p{L} . ']$/u
+        if (!regex.test(char)) {
+            e.preventDefault(); //  block number & special char
+             errmsgcountrycode.classList.remove('hidden');
+
+            // Hide error after 1.5 seconds
+            setTimeout(() => {
+                errmsgcountrycode.classList.add('hidden');
+
+            }, 2000);
+        }
+    });
+});
+    document.addEventListener('DOMContentLoaded', function () {
+   // alert("dfsdfsdf");
+    const statecode = document.getElementById('state_code');
+    // alert($countrysortname);
+
+    const errmsgstatecode =document.getElementById('state_code_error');
+
+    statecode.addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+
+
+        // allow letters (all languages) and space
+        const regex = /^[A-Za-z0-9-]$/;
+
+        if (!regex.test(char)) {
+            e.preventDefault(); //  block number & special char
+             errmsgstatecode.classList.remove('hidden');
+
+            // Hide error after 1.5 seconds
+            setTimeout(() => {
+                errmsgstatecode.classList.add('hidden');
+
+            }, 2000);
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+   // alert("ttttt");
+    const statename= document.getElementById('state_name');
+    // alert($countrysortname);
+
+    const errmsgstate = document.getElementById('state_name_error');
+
+    statename.addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+
+        // allow letters (all languages) and space
+        const regex = /^[\p{L} . ']$/u;
+
+        if (!regex.test(char)) {
+            e.preventDefault(); //  block number & special char
+             errmsgstate.classList.remove('hidden');
+
+            // Hide error after 1.5 seconds
+            setTimeout(() => {
+                errmsgstate.classList.add('hidden');
+
+            }, 2000);
+        }
+    });
+});
+</script>

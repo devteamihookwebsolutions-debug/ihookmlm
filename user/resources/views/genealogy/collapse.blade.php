@@ -62,6 +62,5 @@
         </div>
     </div>
 </main>
-@endsection
 @include('user::genealogy.components.collapse_script')
-
+@endsection

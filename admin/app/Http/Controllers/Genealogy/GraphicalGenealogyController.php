@@ -106,12 +106,9 @@ $output['genealogyTemplate'] = $setting && filled($setting->sitesettings_value)
                     $output['bottomuser'] = $bottomUser;
 
 
-                    // $output['topuser'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
-                    // $output['leftuser'] = MURLCrypt::getEncryptURL($matrixId, $bottomUser['leftuser']);
-                    // $output['rightuser'] = MURLCrypt::getEncryptURL($matrixId, $bottomUser['rightuser']);
-
-
-
+                    $output['topuser'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
+                    $output['leftuser'] = MURLCrypt::getEncryptURL($matrixId, $bottomUser['leftuser']);
+                    $output['rightuser'] = MURLCrypt::getEncryptURL($matrixId, $bottomUser['rightuser']);
                     // Binary genealogy templates
                     if ($graphicalGenealogyType == 'grpgenealogy') {
                         $output['genealogy'] = MBinaryGraphicalGenealogy::getbinaryGenealogyDetails($memberId, $matrixId);
@@ -149,6 +146,10 @@ $output['genealogyTemplate'] = $setting && filled($setting->sitesettings_value)
 
                     } elseif ($graphicalGenealogyType == 'countgenealogy') {
                         $output['genealogy'] = MGraphicalGenealogy::updateGenealogyDetails($memberId, $matrixId);
+                        $output['rankcolors'] = MGraphicalGenealogyColors::getRankcolors($matrixId);
+                         $output['selectedMatrixId'] = $matrixId;
+                        $output['sub1'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
+                         $output['sub2'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
                         return view('genealogy.graphical_count', $output);
 
                     } elseif ($graphicalGenealogyType == 'rankgenealogy') {
@@ -156,11 +157,17 @@ $output['genealogyTemplate'] = $setting && filled($setting->sitesettings_value)
                         // dd($genealogy);
                         $output['genealogy'] = $genealogy[0];
                         $output['genealogycss'] = $genealogy[1];
+                        $output['selectedMatrixId'] = $matrixId;
+                         $output['sub1'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
+                        $output['sub2'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
                         $output['rankcolors'] = MGraphicalGenealogyColors::getRankcolors($matrixId);
                         return view('genealogy.graphical_rank', $output);
 
                     } elseif ($graphicalGenealogyType == 'directdownlinegenealogy') {
                         $output['genealogy'] = MGraphicalGenealogy::updateGenealogyDetails($memberId, $matrixId);
+                        $output['selectedMatrixId'] = $matrixId;
+                        $output['sub1'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
+                        $output['sub2'] = MURLCrypt::getEncryptURL($matrixId, $memberId);
                         return view('genealogy.directdownline', $output);
                     }
                 }

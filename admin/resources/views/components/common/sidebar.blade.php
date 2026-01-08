@@ -65,71 +65,76 @@
                                     </div>
                                 </a>
 
-                <!-- Nested Menu (hidden by default) -->
-                   <div id="networks-menu" class="hidden pl-5">
+                        <!-- Nested Menu (hidden by default) -->
+                        <div id="networks-menu" class="hidden pl-5">
+                            <ul class="py-2 text-xs text-gray-500 divide-y divide-gray-200 dark:text-gray-200 dark:divide-gray-800">
 
-                    <ul  class="py-2 text-xs text-gray-500 divide-y divide-gray-200 dark:text-gray-200 dark:divide-gray-800">
+                                @php
+                                    $memberId = Session::get('members_id', 1);
+                                    $matrixId = Session::get('matrix_id', 1);
 
-                        <!-- <li>
-                            <a href="{{ url(config('app.ADMINPATH') . '/grpgenealogy/viewtree/1') }}"
-                                class="block px-4 py-2 hover:bg-gray100 dark:hover:bg-gray-600 dark:hover:text-white hidden sidebar-text">
-                                Graphical Genealogy
-                            </a>
-                        </li> -->
-        @php
-            $memberId = Session::get('members_id', 1);
-            $matrixId = Session::get('matrix_id', 1);
-        @endphp
+                                    $prefix = config('ihook.prefix', 'ihook');
 
-        <li>
-            <a href="{{ route('grpgenealogy.viewtree', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
-          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ">
-                                                Graphical Genealogy</a>
-        </li>
+                                    $matrix = DB::table("{$prefix}_matrix_table")
+                                        ->where('matrix_id', $matrixId)
+                                        ->first();
 
-        <li>
-            <a href="{{ route('genealogy.viewtree.classicview', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
-           class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Classic
-                                                View</a>
-        </li>
+                                    $matrix_type_id = $matrix->matrix_type_id ?? 0;
+                                @endphp
 
-            <li>
-                    <a href="{{ route('genealogy.viewtree.collapseview', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
-                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Collapse View</a>
-            </li>
-                <li>
-                        <a href="{{ route('genealogy.viewtree.tabularview', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ">
-                        Tabular View
-                    </a>
-                </li>
+                                <li>
+                                    <a href="{{ route('grpgenealogy.viewtree', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        Graphical Genealogy
+                                    </a>
+                                </li>
 
-                <li>
+                                <li>
+                                    <a href="{{ route('genealogy.viewtree.classicview', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        Classic View
+                                    </a>
+                                </li>
 
-                        <li>
-                            <a href="{{ route('genealogy.viewtree', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
-                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rank
-                                                View</a>
-                        </li>
+                                <li>
+                                    <a href="{{ route('genealogy.viewtree.collapseview', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        Collapse View
+                                    </a>
+                                </li>
 
-                        <li>
-                            <a href="{{ route('genealogy.viewtree.countgenealogy', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
-                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ">
-                                Downline Count
-                            </a>
-                        </li>
+                                <li>
+                                    <a href="{{ route('genealogy.viewtree.tabularview', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        Tabular View
+                                    </a>
+                                </li>
 
-                        <li>
-                            <a href="network-g6.html"
-                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ">
-                                Unilevel Genealogy
-                            </a>
-                        </li>
+                                <li>
+                                    <a href="{{ route('genealogy.viewtree', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        Rank View
+                                    </a>
+                                </li>
 
-                    </ul>
+                                <li>
+                                    <a href="{{ route('genealogy.viewtree.countgenealogy', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        Downline Count
+                                    </a>
+                                </li>
 
+                                @if ($matrix_type_id == 3)
+                                    <li>
+                                        <a href="{{ route('genealogy.viewtree.directdownlinegenealogy', ['matrixId' => $matrixId, 'memberId' => $memberId]) }}"
+                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            Unilevel Genealogy
+                                        </a>
+                                    </li>
+                                @endif
 
-
+                            </ul>
+                        </div>
             </li>
 
                    <!-- Masters section -->
@@ -1084,12 +1089,13 @@
                                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Lead
                                                 contacts</a>
                                         </li>
+
                                         <li>
-                                            <a href="report-package-history.html"
+                                            <a href="{{route('newsletter')}}"
                                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Campaign</a>
                                         </li>
                                         <li>
-                                            <a href="report-downlinesalws-report.html"
+                                            <a href="{{route('newslettertemplate')}}"
                                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Newsletter
                                                 Templates</a>
                                         </li>

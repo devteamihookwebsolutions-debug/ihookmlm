@@ -13,6 +13,7 @@
         nodeBinding: {
             field_0: "name",
             field_1: "title",
+            field_2: "downlinecount",
             img_0: "img"
         },
         nodeMenu: {
@@ -36,71 +37,61 @@
             window.open("{{$_ENV['FCPATH']}}/register/"+"{{$sub1}}/"+"{{$sub2}}/"+nodeData["pid"]+"/"+nodeData["position"],"_blank");
         }
     }
-    function applyTemplate() {
-        var genealogyTemplate = document.getElementById('selectTemplate').value;
-        Swal.fire({
-            title: "{{ __('Do you want to activate?') }}",
-            text: "{{ __('Genealogy selected') }}",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: "{{ __('Yes, sure') }}",
-            cancelButtonText: "{{ __('Cancel it') }}",
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            padding: '2.5rem',
-            width: 400,
-            heightAuto: false,
-            buttonsStyling: false,
-            customClass: {
-                confirmButton: 'bg-neutral-500 text-white hover:bg-neutral-600 font-semibold py-2 px-4 rounded-lg',
-                cancelButton: 'bg-red-500 text-white hover:bg-red-600 font-semibold py-2 px-4 rounded-lg ms-2'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Using Fetch API for AJAX
-                fetch("{{ $_ENV['BCPATH'] }}/directdownlinegenealogy/updatetemplate", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        'templateKey': '{{ $matrix_name }}',
-                        'templateValue': genealogyTemplate
+  function applyTemplate() {
+            var genealogyTemplate = document.getElementById('selectTemplate').value;
+
+            Swal.fire({
+                title: "Do you want to activate?",
+                text: "Genealogy selected",
+                icon: 'warning',
+                showCancelButton: true,
+                buttonsStyling: false,
+
+                customClass: {
+                    confirmButton: 'px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700',
+                    cancelButton: 'px-4 py-2 rounded bg-gray-300 text-black hover:bg-gray-400 ml-2'
+                },
+
+                confirmButtonText: "Yes, sure",
+                cancelButtonText: "Cancel it"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch("{{ route('updatetemplate') }}?do=grpgenealogy", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document
+                                .querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            templateKey: 'Iconuniplan',
+                            templateValue: genealogyTemplate
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire(
-                            "{{ __('OK') }}",
-                            "{{ __('Genealogy updated') }}",
-                            'success'
-                        );
-                    } else {
-                        Swal.fire(
-                            "{{ __('Error') }}",
-                            "{{ __('Something went wrong') }}",
-                            'error'
-                        );
-                    }
-                })
-                .catch(error => {
-                    Swal.fire(
-                        "{{ __('Error') }}",
-                        "{{ __('Error handling here') }}",
-                        'error'
-                    );
-                });
-            } else {
-                Swal.fire(
-                    "{{ __('Cancelled') }}",
-                    "{{ __('Your records are safe') }}",
-                    'error'
-                );
-            }
+                    .then(res => res.json())
+                    .then(data => {
+                        Swal.fire({
+            title: "OK",
+            text: "Genealogy updated",
+            icon: "success",
+            buttonsStyling: false,
+
+            customClass: {
+                confirmButton:
+                    'px-5 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 focus:ring-2 focus:ring-green-400'
+            },
+
+            confirmButtonText: "OK"
         });
-        return false;
-    }
+                    })
+                    .catch(err => {
+                        Swal.fire("Error", "Error handling here", "error");
+                        console.error(err);
+                    });
+                }
+            });
+        }
+
     document.getElementById('default_matrix').addEventListener('change', function() {
         var matrix_id = this.value;
         if (matrix_id > 0) {

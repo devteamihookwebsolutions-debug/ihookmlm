@@ -2,118 +2,263 @@
 
 namespace User\App\Models\Genealogy;
 
-use Illuminate\Support\Facades\DB;
 use Admin\App\Models\Middleware\MURLCrypt;
+use Illuminate\Support\Facades\DB;
+use User\App\Models\Genealogy\MBinaryLinkDetails;
+use User\App\Models\Genealogy\MBinaryMembersCount;
 
 class MCompactGenealogy
 {
+    /**
+     * Get compact genealogy tree HTML (non-binary matrices like unilevel)
+     *
+     * @param int $members_id
+     * @param int $matrix_id
+     * @return string HTML output
+     */
     public static function getCompactGenealogytree($members_id, $matrix_id)
     {
-        $prefix = config('ihook.prefix', 'ihook');
-        $table_link = "{$prefix}_matrix_members_link_table";
-        $table_members = "{$prefix}_members_table";
+        $output = '';
 
-        // Root member details
-        $root = DB::table("{$table_link} as l")
-            ->join("{$table_members} as m", 'l.members_id', '=', 'm.members_id')
-            ->where('l.members_id', $members_id)
-            ->where('l.matrix_id', $matrix_id)
-            ->select('m.members_username', 'm.members_image')
-            ->first();
+        // Get parent/sponsor details
+        $binaryparentdetails = MBinaryLinkDetails::getBinaryLinkDetails($members_id, $matrix_id);
+        $direct_id           = $binaryparentdetails['direct_id'] ?? 0;
+        $matrix_doj          = $binaryparentdetails['matrix_doj'] ?? '';
+        $spillover_id        = $binaryparentdetails['spillover_id'] ?? 0;
+        $members_username    = $binaryparentdetails['membername'] ?? '';
+        $members_phone       = $binaryparentdetails['members_phone'] ?? '';
+        $members_email       = $binaryparentdetails['members_email'] ?? '';
+        $members_image       = $binaryparentdetails['members_image'] ?? '';
+        $parentroot          = $binaryparentdetails['root'] ?? 0;
+        $ranktitle           = $binaryparentdetails['ranktitle'] ?? '';
+        $sponsor_username    = $binaryparentdetails['sponsor_username'] ?? '';
+        $sponsor_username    = $direct_id > 0 ? $sponsor_username : 'Nil';
+        $rankid              = $binaryparentdetails['rankid'] ?? 0;
 
-        $root_username = $root->members_username ?? 'Unknown';
-        $root_image = $root->members_image
-            ? asset('' . ltrim($root->members_image, '/'))
-            : asset('/img/compact_emptyavatar.png');
+        $targetroot = $parentroot + 3;
+        $memberimage = $members_image
+            ? config('services.cdn.url') . '/' . $members_image
+            : asset('assets/img/compact_emptyavatar.png');
 
+        $rank_icon_path = '';
+        if ($rankid > 0) {
+            $rank_icon_path = $binaryparentdetails['rank_value'] ?? '';
+            if (empty($rank_icon_path) || $rank_icon_path === 'uploads/avatar/rankavathar.svg') {
+                $rank_icon_path = asset($rank_icon_path);
+            } else {
+                $rank_icon_path = config('services.cdn.url') . '/' . $rank_icon_path;
+            }
+        }
+
+        // Member counts (left/right - though not used in compact, kept for consistency)
+        $count = MBinaryMembersCount::getBinaryMemberscount($members_id, $matrix_id);
+        $leftcount = $count['left'] ?? 0;
+        $rightcount = $count['right'] ?? 0;
+
+        $rank = $ranktitle ?: 'Nil';
         $crypturl = MURLCrypt::getEncryptURL($matrix_id, $members_id);
 
-        $output = '
-        <section class="bg-gray-800 flex justify-center flex-col py-12 relative">
-            <div class="relative w-full flex items-center justify-center">
-                <div class="flex flex-col m-auto">
-                    <div class="mb-12 relative flex justify-center text-center
-                        before:content-[\'\'\] before:absolute before:top-[115%] before:left-14 before:right-14
-                        before:h-[2px] before:bg-white/70">
+        // Start building HTML tree
+        $output .= '
+        <div class="bg-white dark:bg-neutral-900 flex min-h-screen flex-col items-center justify-start p-2 py-10 text-center overflow-auto">
+            <div class="tree whitespace-nowrap overflow-auto relative mx-auto" data-testid="family-tree-root">
+                <ul class="relative flex flex-row items-baseline justify-center">';
 
-                        <div class="relative text-center
-                            after:content-[\'\'\] after:absolute after:w-[2px] after:h-[25px]
-                            after:bottom-0 after:left-1/2 after:bg-white/70
-                            after:transform after:translate-y-[100%]">
+        // Root member (top level)
+        $output .= '<li class="float-left list-none relative pt-14 px-2 mt-14">
+                        <div class="border-solid border-neutral-300 border p-2 rounded-md inline-block">
+                            <div class="!border-none py-1 px-2 inline-block" data-testid="person-container">
+                                <span role="img" aria-label="Avatar for ' . $members_username . '" class="bg-female inline-block relative h-10 w-10 cursor-pointer overflow-hidden rounded-full">
+                                    <a href="' . url('/network/view/' . $crypturl) . '">
+                                        <img src="' . $memberimage . '" alt="" class="w-10 h-10 rounded-full overflow-hidden bg-white">
+                                    </a>
+                                </span>
+                                <p class="m-0 text-black dark:text-white">' . $members_username . '</p>
+                            </div>';
 
-                            <a href="' . url('/user/network/view/' . $crypturl) . '">
-                                <img src="' . $root_image . '" alt="' . htmlspecialchars($root_username) . '"
-                                     class="w-28 h-28 border-4 border-indigo-600 rounded-full overflow-hidden object-cover bg-white mx-auto">
-                            </a>
+        if ($rank_icon_path) {
+            $output .= '<div class="rank"><img name="rankphoto" class="block mx-auto w-8 h-8" src="' . $rank_icon_path . '" title="' . $rank . '"></div>';
+        }
 
-                            <p class="bg-white py-1 px-3 rounded text-teal-800 font-medium m-0 mt-2
-                                before:content-[\'\'\] before:absolute before:w-[2px] before:h-[8px]
-                                before:bg-white before:left-1/2 before:top-0 before:transform before:-translate-y-full">
-                                ' . htmlspecialchars($root_username) . '
-                            </p>
-                        </div>
-                    </div>
+        $output .= '</div>
+                    <ul class="pt-14 relative flex flex-row items-baseline justify-center">';
 
-                    <div class="relative w-full flex items-center justify-center space-x-32">
-                        ' . self::renderLeg($members_id, $matrix_id, 'left') . '
-                        ' . self::renderLeg($members_id, $matrix_id, 'right') . '
-                    </div>
-                </div>
+        $firstchildroot = $parentroot + 1;
+
+        // Get first level downlines
+        $referralslinkdetails = self::getMembersAtRootLevel($members_id, $matrix_id, $firstchildroot);
+
+        if (count($referralslinkdetails) > 0) {
+            foreach ($referralslinkdetails as $referral) {
+                $output .= self::renderMemberNode($referral, $matrix_id, $firstchildroot);
+            }
+        } else {
+            $output .= self::getEmptyCompactGenealogytree($members_id, $matrix_id);
+        }
+
+        $output .= '    </ul>
+                    </li>
+                </ul>
             </div>
-        </section>';
+        </div>';
 
         return $output;
     }
 
-    private static function renderLeg($parent_id, $matrix_id, $side)
+    /**
+     * Recursive function to get deeper levels
+     */
+    public static function getDepthCompactGenealogy($members_id, $matrix_id, $currentroot)
     {
-        $prefix = config('ihook.prefix', 'ihook');
-        $position = ($side === 'left') ? 1 : 2;
+        $nextroot = $currentroot + 1;
+        $outputChild = '<ul class="pt-14 relative flex flex-row items-baseline justify-center">';
 
-        $child = DB::table("{$prefix}_matrix_members_link_table as l")
-            ->join("{$prefix}_members_table as m", 'l.members_id', '=', 'm.members_id')
-            ->whereRaw("FIND_IN_SET(?, l.members_parents)", [$parent_id])
-            ->where('l.matrix_id', $matrix_id)
-            ->where('l.position', $position)
-            ->select('l.members_id', 'm.members_username', 'm.members_image')
-            ->first();
+        $children = self::getMembersAtRootLevel($members_id, $matrix_id, $nextroot);
 
-        if (!$child) {
-            // Empty slot
-            return '
-            <div class="flex flex-col">
-                <div class="mb-12 relative flex justify-center text-center
-                    before:content-[\'\'\] before:absolute before:w-[2px] before:h-[25px]
-                    before:bg-white before:left-1/2 before:top-0 before:transform before:-translate-y-full">
-                    <div class="relative text-center">
-                        <img src="' . asset('/img/compact_emptyavatar.png') . '" alt="empty"
-                             class="w-28 h-28 border-4 border-dashed border-gray-500 rounded-full overflow-hidden bg-gray-200 mx-auto">
-                        <p class="bg-white py-1 px-3 rounded text-gray-600 m-0 mt-2">empty</p>
-                    </div>
-                </div>
-            </div>';
+        if (count($children) > 0) {
+            foreach ($children as $child) {
+                $outputChild .= self::renderMemberNode($child, $matrix_id, $nextroot, false); // no further recursion beyond depth 2 in original
+            }
+        } else {
+            $outputChild .= self::getEmptyCompactGenealogytree($members_id, $matrix_id);
         }
 
-        $crypt = MURLCrypt::getEncryptURL($matrix_id, $child->members_id);
-        $img = $child->members_image
-            ? asset('' . ltrim($child->members_image, '/'))
-            : asset('/img/compact_emptyavatar.png');
+        $outputChild .= '</ul>';
 
-        return '
-        <div class="flex flex-col">
-            <div class="mb-12 relative flex justify-center text-center
-                before:content-[\'\'\] before:absolute before:w-[2px] before:h-[25px]
-                before:bg-white before:left-1/2 before:top-0 before:transform before:-translate-y-full">
-                <div class="relative text-center">
-                    <a href="' . url('/user/network/view/' . $crypt) . '">
-                        <img src="' . $img . '" alt="' . htmlspecialchars($child->members_username) . '"
-                             class="w-28 h-28 border-4 border-indigo-600 rounded-full overflow-hidden object-cover bg-white mx-auto">
-                    </a>
-                    <p class="bg-white py-1 px-3 rounded text-teal-800 font-medium m-0 mt-2">
-                        ' . htmlspecialchars($child->members_username) . '
-                    </p>
-                </div>
-            </div>
-        </div>';
+        return $outputChild;
+    }
+
+    /**
+     * Render single member node (shared logic)
+     */
+    private static function renderMemberNode($member, $matrix_id, $currentroot, $withRecursion = true)
+    {
+        // Use object syntax -> instead of array ['key']
+        $members_id       = $member->members_id;
+        $members_image    = $member->members_image ?? '';
+        $members_username = $member->members_username ?? 'Unknown';
+        $rank_icon_path   = $member->rank_icon_path ?? '';
+        $rank_value       = $member->rank_value ?? 'Nil';
+
+        $memberimage = $members_image
+            ? config('services.cdn.url') . '/' . $members_image
+            : asset('assets/img/compact_emptyavatar.png');
+
+        // Handle rank icon path correctly
+        if (!empty($rank_icon_path)) {
+            if ($rank_icon_path === 'uploads/avatar/rankavathar.svg') {
+                $rank_icon_path = asset($rank_icon_path);
+            } else {
+                $rank_icon_path = config('services.cdn.url') . '/' . $rank_icon_path;
+            }
+        }
+
+        $crypturl = MURLCrypt::getEncryptURL($matrix_id, $members_id);
+
+        $output = '<li class="float-left list-none relative pt-14 px-2 mt-14">
+                    <div class="border-solid border-neutral-300 border p-2 rounded-md inline-block">
+                        <div class="!border-none py-1 px-2 inline-block" data-testid="person-container">
+                            <span role="img" aria-label="Avatar for ' . $members_username . '" class="inline-block relative h-10 w-10 cursor-pointer overflow-hidden rounded-full">
+                                <a href="' . url('/network/view/' . $crypturl) . '">
+                                    <img src="' . $memberimage . '" alt="" class="w-10 h-10 rounded-full overflow-hidden bg-white">
+                                </a>
+                            </span>
+                            <p class="m-0 text-black dark:text-white">' . $members_username . '</p>
+                        </div>';
+
+        if ($rank_icon_path) {
+            $output .= '<div class="rank">
+                            <img name="rankphoto" style="height: 40px;width:40px;" src="' . $rank_icon_path . '" title="' . $rank_value . '">
+                        </div>';
+        }
+
+        $output .= '</div>';
+
+        if ($withRecursion) {
+            $output .= self::getDepthCompactGenealogy($members_id, $matrix_id, $currentroot);
+        }
+
+        $output .= '</li>';
+
+        return $output;
+    }
+    /**
+     * Get members at specific root level (replaces raw SQL)
+     */
+    private static function getMembersAtRootLevel($parent_members_id, $matrix_id, $root_level)
+    {
+        $prefix = config('services.ihook.prefix', 'ihook');
+
+        return DB::select("
+            SELECT
+                a.members_id,
+                a.direct_id,
+                a.rankid,
+                a.position,
+                a.members_parents,
+                a.root,
+                a.members_passup_id,
+                a.members_passup_direct_id,
+                b.members_email,
+                b.members_firstname,
+                b.members_lastname,
+                b.members_image,
+                b.members_phone,
+                b.members_username,
+                c.members_username AS sponsorname,
+                d.rank_key,
+                d.rank_value,
+                e.rank_value AS rank_icon_path
+            FROM {$prefix}_matrix_members_link_table AS a
+            LEFT JOIN {$prefix}_members_table AS b ON a.members_id = b.members_id
+            LEFT JOIN {$prefix}_members_table AS c ON c.members_id = a.direct_id
+            LEFT JOIN {$prefix}_ranksetting AS d ON d.rank_id = a.rankid
+            LEFT JOIN {$prefix}_ranksetting AS e ON (
+                e.rank_id = a.rankid
+                AND e.rank_key = 'rank_icon_path'
+                AND e.matrix_id = ?
+            )
+            WHERE (FIND_IN_SET(?, a.members_parents) OR a.members_id = ?)
+            AND a.root = ?
+            GROUP BY
+                a.members_id,
+                a.direct_id,
+                a.rankid,
+                a.position,
+                a.members_parents,
+                a.root,
+                a.members_passup_id,
+                a.members_passup_direct_id,
+                b.members_email,
+                b.members_firstname,
+                b.members_lastname,
+                b.members_image,
+                b.members_phone,
+                b.members_username,
+                c.members_username,
+                d.rank_key,
+                d.rank_value,
+                e.rank_value
+            ORDER BY a.position ASC
+        ", [$matrix_id, $parent_members_id, $parent_members_id, $root_level]);
+    }
+
+    /**
+     * Empty slot placeholder
+     */
+    public static function getEmptyCompactGenealogytree($members_id, $matrix_id)
+    {
+        $emptyImage = asset('assets/img/compact_emptyavatar.png');
+
+        return '<li class="float-left list-none relative pt-14 px-2 mt-14">
+                    <div class="border-solid border-neutral-300 border p-2 rounded-md inline-block">
+                        <div class="!border-none py-1 px-2 inline-block" data-testid="person-container">
+                            <span role="img" aria-label="Empty slot" class="bg-female inline-block relative h-10 w-10 cursor-pointer overflow-hidden rounded-full">
+                                <img src="' . $emptyImage . '" alt="" class="w-10 h-10 rounded-full overflow-hidden bg-white">
+                            </span>
+                            <p class="m-0 text-black dark:text-white">empty</p>
+                        </div>
+                    </div>
+                </li>';
     }
 }

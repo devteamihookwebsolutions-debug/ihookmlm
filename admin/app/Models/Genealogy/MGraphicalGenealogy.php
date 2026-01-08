@@ -119,7 +119,7 @@ class MGraphicalGenealogy
                 $output .= '{'
                     . 'id:"'.$row->members_id.'",'
                     . 'name:"'.$members_fullname.'",'
-                    . 'pid:'.$spillover_id.','
+                    . 'pid:'.($spillover_id == 0 || empty($spillover_id) ? 'null' : $spillover_id).','
                     . 'title:"'.$title.'",'
                     . 'description:"Sponsor: '.$sponsor_name.'",'
                     . 'phone:"'.$members_phone.'",'

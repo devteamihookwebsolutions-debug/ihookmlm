@@ -68,7 +68,12 @@
                                     <div>
                                         <label for="sortname" class="city_name"
                                             class="block mb-3 text-xs text-gray-600 dark:text-gray-300">Sort Name</label>
-                                        <input type="text" id="sortname" name="sortname" value="{{ old('sortname', $country->sortname) }}" maxlength="3" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" required>
+                                        <input type="text" id="sortname"
+                                        name="sortname" value="{{ old('sortname', $country->sortname) }}" maxlength="3" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300"
+
+                                        oninput="this.value= this.value.toUpperCase()"   required>
+
+                                         <span id='sortname_error' class="text-red-500 text-xs hidden"> Numbers Special characters are not allowed except(.'-)<span>
                                         @error('sortname')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -76,6 +81,7 @@
                                     <div>
                                         <label for="country_master_name" class="block mb-3 text-xs text-gray-600 dark:text-gray-300">Name</label>
                                         <input type="text" id="country_master_name" name="country_master_name" value="{{ old('country_master_name', $country->country_master_name) }}" maxlength="150" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" required>
+                                         <span id='country_master_error' class="text-red-500 text-xs hidden"> Numbers Special characters are not allowed except(.'-)<span>
                                         @error('country_master_name')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -96,3 +102,59 @@
              </div>
     </main>
 @endsection
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+   // alert("dfsdfsdf");
+    const countrysortname = document.getElementById('sortname');
+    // alert($countrysortname);
+
+    const errmsgsort =document.getElementById('sortname_error');
+
+    countrysortname.addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+           const countryname = String.fromCharCode(e.which);
+
+        // allow letters (all languages) and space
+        const regex = /^[\p{L} . ']$/u;
+
+        if (!regex.test(char)) {
+            e.preventDefault(); //  block number & special char
+             errmsgsort.classList.remove('hidden');
+
+            // Hide error after 1.5 seconds
+            setTimeout(() => {
+                errmsgsort.classList.add('hidden');
+
+            }, 2000);
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+   // alert("ttttt");
+    const countryname= document.getElementById('country_master_name');
+    // alert($countrysortname);
+
+    const errmsgcountry = document.getElementById('country_master_error')
+
+    countryname.addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+           const countryname = String.fromCharCode(e.which);
+
+        // allow letters (all languages) and space
+        const regex = /^[\p{L} . ']$/u;
+
+        if (!regex.test(char)) {
+            e.preventDefault(); //  block number & special char
+             errmsgcountry.classList.remove('hidden');
+
+            // Hide error after 1.5 seconds
+            setTimeout(() => {
+                errmsgcountry.classList.add('hidden');
+
+            }, 2000);
+        }
+    });
+});
+
+</script>

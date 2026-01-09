@@ -16,72 +16,69 @@ class MNewsLetterManagement extends Model
 {
 
 
-public static function newsLetterMail()
-{
-    // dd('here');
+    public static function newsLetterMail()
+    {
+        // dd('here');
 
-  $admin_id = session('admin_id');
+    $admin_id = session('admin_id');
 
-    if (!$admin_id) {
-        // dd('Admin ID not found in session');
+        if (!$admin_id) {
+            // dd('Admin ID not found in session');
+        }
+
+        // 2 Fetch admin record
+        $admin = Admin::where('admin_id', $admin_id)->first();
+        // dd($admin);
+        $records = NewsletterTemplate::where('created_by', $admin->admin_id)
+                    ->get();
+        // dd($records);
+        return $records;
     }
 
-    // 2 Fetch admin record
-    $admin = Admin::where('admin_id', $admin_id)->first();
-    // dd($admin);
-    $records = NewsletterTemplate::where('created_by', 1)
-                 ->get();
-    // dd($records);
-    return $records;
-}
 
+    public static function storeTemplate(Request $request)
+    {
+        $request->validate([
+            'template_name'  => 'required|string|max:255',
 
+            'status'         => 'nullable',
+        ]);
 
+        // dd($request);
+        $admin = Admin::first();
+        // dd($admin);
+        if (!$admin) {
+            return back()->withErrors('Admin not found');
+        }
+    $table = config('services.ihook.prefix') . '_newsletter_buildertemplate_table';
 
-public static function storeTemplate(Request $request)
-{
-    $request->validate([
-        'template_name'  => 'required|string|max:255',
+        $randomNumber = sprintf('%06d', mt_rand(100000, 999999));
 
-        'status'         => 'nullable',
+        // File handling (example)
+        // $builderFilePath = 'uploads/templatesbuilderformnews/' . $randomNumber . '.html';
+        // file_put_contents(storage_path("app/{$builderFilePath}"), "<html>Email content</html>");
+
+        $alias = $request->input('template_name');
+    if (empty($alias)) {
+        $alias = Str::slug($request->input('template_name')); // fallback
+    }
+        DB::table($table)->insert([
+        'category_templates_name'       => $request->input('template_name'),
+        'category_templates_name_alias' => $alias,
+        'category_templates_file_path'  => 0,
+        'category_templates_status'     => $request->boolean('status') ? 1 : 0,
+        'randomid'                      => $randomNumber,
+        'created_on'                    => now(),
+        'created_by'                    => $admin->admin_id,
+        'user_type'                     => 1,
+        'members_id'                    => 0,
+        'campaign_id'                   => 0,
+        'updated_on'                    => now(),
+        'updated_by'                    => $admin->admin_id,
     ]);
 
-    // dd($request);
-    $admin = Admin::first();
-    // dd($admin);
-    if (!$admin) {
-        return back()->withErrors('Admin not found');
+        return redirect()->back()->with('success', 'Template inserted successfully');
     }
-$table = config('services.ihook.prefix') . '_newsletter_buildertemplate_table';
-
-    $randomNumber = sprintf('%06d', mt_rand(100000, 999999));
-
-    // File handling (example)
-    // $builderFilePath = 'uploads/templatesbuilderformnews/' . $randomNumber . '.html';
-    // file_put_contents(storage_path("app/{$builderFilePath}"), "<html>Email content</html>");
-
-    $alias = $request->input('template_name');
-if (empty($alias)) {
-    $alias = Str::slug($request->input('template_name')); // fallback
-}
-    DB::table($table)->insert([
-    'category_templates_name'       => $request->input('template_name'),
-    'category_templates_name_alias' => $alias,
-    'category_templates_file_path'  => 0,
-    'category_templates_status'     => $request->boolean('status') ? 1 : 0,
-    'randomid'                      => $randomNumber,
-    'created_on'                    => now(),
-    'created_by'                    => $admin->admin_id,
-    'user_type'                     => 1,
-    'members_id'                    => 0,
-    'campaign_id'                   => 0,
-    'updated_on'                    => now(),
-    'updated_by'                    => $admin->admin_id,
-]);
-
-    return redirect()->back()->with('success', 'Template inserted successfully');
-}
-
 
     public static function getMediaPopup()
     {

@@ -736,54 +736,78 @@
                                  </select>
 
                                  <!--payment Div Containers -->
-                                 <div id="content2" class="hidden my-5">
-                                    <div class="bg-white rounded-lg border p-6 mb-5">
-                                       <div class="mb-5">
-                                          <label for=""
-                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account
-                                             Name</label>
-                                          <input type="text" id="acc_number"
-                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500"
-                                             placeholder="">
-                                       </div>
+                                <div id="content2" class="hidden my-5">
+                                    <div class="bg-white rounded-lg border border-gray-300 p-8 shadow-lg">
+                                        <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">
+                                            Bank Wire Transfer Information
+                                        </h3>
 
-                                       <div class="mb-5">
-                                          <label for=""
-                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account
-                                             Number</label>
-                                          <input type="text" id="acc_name"
-                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500"
-                                             placeholder="">
-                                       </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <!-- Account Name -->
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                    Account Holder Name
+                                                </label>
+                                                <input type="text"
+                                                    value="{{ $bankwire_details['paymentsettings_accname'] }}"
+                                                    readonly
+                                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 cursor-not-allowed focus:outline-none">
+                                            </div>
 
-                                       <div class="mb-5">
-                                          <label for=""
-                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank
-                                             Address</label>
-                                          <input type="text" id="bank_address"
-                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500"
-                                             placeholder="">
-                                       </div>
+                                            <!-- Account Number -->
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                    Account Number / IBAN
+                                                </label>
+                                                <input type="text"
+                                                    value="{{ $bankwire_details['paymentsettings_accnum'] }}"
+                                                    readonly
+                                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 cursor-not-allowed focus:outline-none">
+                                            </div>
 
-                                       <div class="mb-5">
-                                          <label for=""
-                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank
-                                             Swift Code</label>
-                                          <input type="text" id="bank_swift_code"
-                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500"
-                                             placeholder="">
-                                       </div>
+                                            <!-- Bank Address -->
+                                            <div class="md:col-span-2">
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                    Bank Address
+                                                </label>
+                                                <input type="text"
+                                                    value="{{ $bankwire_details['bankwire_address'] }}"
+                                                    readonly
+                                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 cursor-not-allowed focus:outline-none">
+                                            </div>
 
-                                       <div class="mb-5">
-                                          <label for=""
-                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank
-                                             Route</label>
-                                          <input type="text" id="bank_route"
-                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500"
-                                             placeholder="">
-                                       </div>
+                                            <!-- Swift Code -->
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                    SWIFT / BIC Code
+                                                </label>
+                                                <input type="text"
+                                                    value="{{ $bankwire_details['bankwire_swift_code'] }}"
+                                                    readonly
+                                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 cursor-not-allowed focus:outline-none">
+                                            </div>
+
+                                            <!-- Routing Number -->
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                    Routing Number (if applicable)
+                                                </label>
+                                                <input type="text"
+                                                    value="{{ $bankwire_details['bankwire_route'] }}"
+                                                    readonly
+                                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 cursor-not-allowed focus:outline-none">
+                                            </div>
+                                        </div>
+
+                                        <!-- Important Note -->
+                                        <div class="mt-10 p-5 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <p class="text-sm text-blue-800 font-medium text-center">
+                                                <strong>Important:</strong> Please include your <span class="underline">Username</span> in the transfer reference/description
+                                                so we can identify and activate your account quickly after payment confirmation.
+                                            </p>
+                                        </div>
                                     </div>
-                                 </div>
+                                </div>
 
                                  <div id="content6" class="hidden my-5">
                                     <div class="bg-white rounded-lg border p-6 mb-5">

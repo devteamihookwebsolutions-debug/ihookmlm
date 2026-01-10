@@ -40,11 +40,12 @@ class SendEpinsController extends Controller
             $epinTypes = MSendEpins::getEpinType($request->all());
             // dd($epinTypes);
             // Clear session messages
-            session()->forget(['success', 'error_message']);
+           // session()->forget(['success', 'error_message']);
 
             // Return Blade view with data
             return view('epin.sendepin', [
                 'epintype' => $epinTypes,
+              //  'success' => session('success'),
                 'member'  => $output['member']
 
             ]);

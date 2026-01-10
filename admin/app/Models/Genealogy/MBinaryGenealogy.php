@@ -149,14 +149,14 @@ class MBinaryGenealogy
                 $leftrank_icon_path        = $binaryleftdetails['rank_icon_path'];
                 $leftcontacttemplate       = $leftbirankid > '0' ? 'contactTemplate' : 'contactTemplate1';
                 // $leftmembers_image         = $leftmembers_image != '' ?  $leftmembers_image : 'uploads/avatar/emptyavatar.png';
-                 
+
             $leftmembers_imagePath = $binaryparentdetails['members_image'] ?: 'uploads/members/avatar.png';
            $leftmembers_image     = asset($leftmembers_imagePath);
                 $leftrank_icon_path        = $leftrank_icon_path == '' ? '' : $leftrank_icon_path;
-				
+
 				// $leftmembers_image = $_ENV['CDNCLOUDEXTURL'].'/'.$leftmembers_image;
 				// $leftrank_icon_path = $_ENV['CDNCLOUDEXTURL'].'/'.$leftrank_icon_path;
-				
+
                 $count                     = MBinaryMembersCount::getBinaryMemberscount($leftuser, $matrix_id);
                 $leftcount                 = $count['left'];
                 $rightcount                = $count['right'];
@@ -188,10 +188,10 @@ class MBinaryGenealogy
                      $rightmembers_imagePath = $binaryparentdetails['members_image'] ?: 'uploads/avatar/emptyavatar.png';
            $rightmembers_image     = asset($rightmembers_imagePath);
                 $rightrank_icon_path   = $rightrank_icon_path == '' ? '' :  $rightrank_icon_path;
-				
+
 				// $rightmembers_image = $_ENV['CDNCLOUDEXTURL'].'/'.$rightmembers_image;
 				// $rightrank_icon_path = $_ENV['CDNCLOUDEXTURL'].'/'.$rightrank_icon_path;
-				
+
                 $rightcontacttemplate  = $rightrankid > '0' ? 'contactTemplate' : 'contactTemplate1';
                 $count                 = MBinaryMembersCount::getBinaryMemberscount($rightuser, $matrix_id);
                 $leftcount             = $count['left'];
@@ -210,7 +210,7 @@ class MBinaryGenealogy
 
 
         $output    = 'var data=[' . $output . ']';
-        
+
         // dd($output);
         return  $output;
     }
@@ -234,7 +234,7 @@ class MBinaryGenealogy
             $rankid                = $binaryparentdetails['rankid'];
             $rankIconPath        = $binaryparentdetails['rank_icon_path'];
 
-        
+
             $leftuser=MBinaryMembersPosition::getBinaryMembersPosition($members_id,$matrix_id,'1');
             $rightuser=MBinaryMembersPosition::getBinaryMembersPosition($members_id,$matrix_id,'2');
 
@@ -281,19 +281,19 @@ class MBinaryGenealogy
             $righttotalmember     = $count['right'] ?? 0;
             $leftranktitle        = $leftranktitle == '' ? 'Nil' : $leftranktitle;
 
-            $output .= '{ 
-                id:  "' . $leftuser . '", 
-                parent: "' . $members_id . '", 
-                title: "' . $leftmembers_username . '", 
-                description: "Sponsor : ' . $leftsponsor_username . '", 
-                phone: "' . $leftmembers_phone . '", 
+            $output .= '{
+                id:  "' . $leftuser . '",
+                parent: "' . $members_id . '",
+                title: "' . $leftmembers_username . '",
+                description: "Sponsor : ' . $leftsponsor_username . '",
+                phone: "' . $leftmembers_phone . '",
                 email: "' . $leftmembers_email . '",
-                rank: "Rank : ' . $leftranktitle . '", 
-                image: "' . $leftmembers_image . '", 
+                rank: "Rank : ' . $leftranktitle . '",
+                image: "' . $leftmembers_image . '",
                 rankimage: "' . $leftrank_icon_path . '",
                 leftmembercount:"Left total members : ' . $lefttotalmember . '",
-                rightmembercount:"Right total members : ' . $righttotalmember . '",  
-                templateName: "' . $leftcontacttemplate . '", 
+                rightmembercount:"Right total members : ' . $righttotalmember . '",
+                templateName: "' . $leftcontacttemplate . '",
                 members_id: "' . $leftuser . '",
                 href: "/genealogy/viewtree/' . $leftuser . '"
             },';
@@ -327,19 +327,19 @@ class MBinaryGenealogy
             $righttotalmember      = $count['right'] ?? 0;
             $rightranktitle        = $rightranktitle == '' ? 'Nil' : $rightranktitle;
 
-            $output .= '{ 
-                id:  "' . $rightuser . '", 
-                parent: "' . $members_id . '", 
-                title: "' . $rightmembers_username . '", 
-                description: "Sponsor : ' . $rightsponsor_username . '", 
-                phone: "' . $rightmembers_phone . '", 
+            $output .= '{
+                id:  "' . $rightuser . '",
+                parent: "' . $members_id . '",
+                title: "' . $rightmembers_username . '",
+                description: "Sponsor : ' . $rightsponsor_username . '",
+                phone: "' . $rightmembers_phone . '",
                 email: "' . $rightmembers_email . '",
-                rank: "Rank : ' . $rightranktitle . '", 
-                image: "' . $rightmembers_image . '", 
+                rank: "Rank : ' . $rightranktitle . '",
+                image: "' . $rightmembers_image . '",
                 rankimage: "' . $rightrank_icon_path . '",
                 leftmembercount:"Left total members : ' . $lefttotalmember . '",
-                rightmembercount:"Right total members : ' . $righttotalmember . '",  
-                templateName: "' . $rightcontacttemplate . '", 
+                rightmembercount:"Right total members : ' . $righttotalmember . '",
+                templateName: "' . $rightcontacttemplate . '",
                 members_id: "' . $members_id . '",
                 href: "/genealogy/viewtree/' . $rightuser . '"
             },';
@@ -369,7 +369,7 @@ class MBinaryGenealogy
         $randommember   = mt_rand(10000000, 99999999);
         $output .= '{ id:  "' . $randommember . '", parent: "' . $members_id . '",position:"' . $position . '", title: "",image: "' . $emtpyimagepath . '",templateName: "contactTemplate2", href: "/genealogy/viewtree/' . $members_id . '"},';
 
-       
+
         // dd($output);
         return $output;
     }
@@ -396,21 +396,21 @@ class MBinaryGenealogy
 //         $lefttotalmember  = $count['left'] ?? 0;
 //         $righttotalmember = $count['right'] ?? 0;
 
-//         $output .= '{ 
-//             id:  "' . $members_id . '", 
-//             parent: "' . $spillover_id . '", 
-//             title: "' . $members_username . '", 
-//             description: "Sponsor : ' . ($binaryparentdetails['sponsor_username'] ?? 'Nil') . '", 
-//             phone: "' . $members_phone . '", 
-//             email: "' . $members_email . '", 
-//             rank: "Rank : ' . $ranktitle . '", 
-//             image: "' . $memberImage . '", 
-//             rankimage: "' . $rankIconPath . '", 
-//             leftmembercount:"Left total members : ' . $lefttotalmember . '", 
-//             rightmembercount:"Right total members : ' . $righttotalmember . '",  
-//             templateName: "' . $parentcontacttemplate . '", 
-//             members_id: "' . $members_id . '", 
-//             href: "/genealogy/viewtree/' . $members_id . '" 
+//         $output .= '{
+//             id:  "' . $members_id . '",
+//             parent: "' . $spillover_id . '",
+//             title: "' . $members_username . '",
+//             description: "Sponsor : ' . ($binaryparentdetails['sponsor_username'] ?? 'Nil') . '",
+//             phone: "' . $members_phone . '",
+//             email: "' . $members_email . '",
+//             rank: "Rank : ' . $ranktitle . '",
+//             image: "' . $memberImage . '",
+//             rankimage: "' . $rankIconPath . '",
+//             leftmembercount:"Left total members : ' . $lefttotalmember . '",
+//             rightmembercount:"Right total members : ' . $righttotalmember . '",
+//             templateName: "' . $parentcontacttemplate . '",
+//             members_id: "' . $members_id . '",
+//             href: "/genealogy/viewtree/' . $members_id . '"
 //         },';
 
 //         // Process children recursively
@@ -451,21 +451,21 @@ class MBinaryGenealogy
 //                 $lefttotalmember  = $count['left'] ?? 0;
 //                 $righttotalmember = $count['right'] ?? 0;
 
-//                 $output .= '{ 
-//                     id:  "' . $child_id . '", 
-//                     parent: "' . $members_id . '", 
-//                     title: "' . $members_username . '", 
-//                     description: "Sponsor : ' . ($binarydetails['sponsor_username'] ?? 'Nil') . '", 
-//                     phone: "' . $members_phone . '", 
-//                     email: "' . $members_email . '", 
-//                     rank: "Rank : ' . $ranktitle . '", 
-//                     image: "' . $memberImage . '", 
-//                     rankimage: "' . $rankIconPath . '", 
-//                     leftmembercount:"Left total members : ' . $lefttotalmember . '", 
-//                     rightmembercount:"Right total members : ' . $righttotalmember . '",  
-//                     templateName: "' . $contacttemplate . '", 
-//                     members_id: "' . $child_id . '", 
-//                     href: "/genealogy/viewtree/' . $child_id . '" 
+//                 $output .= '{
+//                     id:  "' . $child_id . '",
+//                     parent: "' . $members_id . '",
+//                     title: "' . $members_username . '",
+//                     description: "Sponsor : ' . ($binarydetails['sponsor_username'] ?? 'Nil') . '",
+//                     phone: "' . $members_phone . '",
+//                     email: "' . $members_email . '",
+//                     rank: "Rank : ' . $ranktitle . '",
+//                     image: "' . $memberImage . '",
+//                     rankimage: "' . $rankIconPath . '",
+//                     leftmembercount:"Left total members : ' . $lefttotalmember . '",
+//                     rightmembercount:"Right total members : ' . $righttotalmember . '",
+//                     templateName: "' . $contacttemplate . '",
+//                     members_id: "' . $child_id . '",
+//                     href: "/genealogy/viewtree/' . $child_id . '"
 //                 },';
 
 //                 // Recursive call

@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Admin\App\Display\Epin\DSendEpins;
 use Admin\App\Models\Middleware\MMatrixConfiguration;
+use Illuminate\Support\Facades\Log;
+use Admin\App\Model\Epin\Exception;
 class MSendEpins
 {
 
@@ -57,8 +59,8 @@ public static function updateEpins(Request $request)
     // Split package and matrix once
     $epinSplit = explode(',', $epinTypeInput);
     $epinPackage = $epinSplit[0];
-    $epinMatrixId = $epinSplit[1];
-
+    $epinMatrixId = $epinSplit[1] ?? 0;
+   //  $allCreated=0;
     foreach ($userList as $userId) {
         if (!empty($userId)) {
             for ($i = 0; $i < $count; $i++) {
@@ -70,7 +72,7 @@ public static function updateEpins(Request $request)
                 $fee = ($epinPackage == '100000000000001' && $epinAmount)
                     ? preg_replace('/[^0-9]+/', '', $epinAmount)
                     : preg_replace('/[^0-9]+/', '', $epinAmountPackage);
-
+//dd($fee);
                 // Insert EPIN
                 try {
                     Epin::create([
@@ -85,20 +87,26 @@ public static function updateEpins(Request $request)
                         'epin_used_date'     => null,
                         'payment_history_id' => 0,
                     ]);
-                    Session::flash('success_message', 'EPIN created successfully');
-                } catch (\Exception $e) {
-                    \Log::error('EPIN creation failed: '.$e->getMessage());
-                    Session::flash('error_message', 'EPIN could not be created');
-                }
+
+                // $allCreated++; // count success
+               //  dd($allCreated);
+            } catch (\Exception $e) {
+                Log::error('EPIN creation failed: '.$e->getMessage());
             }
-        } else {
-            Session::flash('error_message', 'No valid user selected');
         }
     }
 
-        return redirect()->route('sendpin')->with('success', 'EPIN(s) created successfully');
 }
+// Flash success **once after all EPINs created**
 
+
+
+//dd($fee);
+ return redirect()->route('sendpin')->with('success', 'EPIN(s) created successfully');
+
+
+
+}
 
 
 

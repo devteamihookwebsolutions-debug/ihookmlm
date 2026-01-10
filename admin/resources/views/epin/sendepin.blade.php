@@ -84,7 +84,7 @@
                             <div id="search-combobox" class="relative mb-4" data-hs-combo-box="">
                                 <div class="relative">
                                     <input type="text" name="username" id="username"
-                                        class="text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-900 dark:text-white border border-gray-200 dark:border-gray-800  dark:placeholder-gray-400 dark:focus:ring-gray-500 dark:focus:border-gray-500"
+                                        class="text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-900 dark:text-white border border-gray-200 dark:border-gray-800  dark:placeholder-gray-400 block mb-3 text-xs text-gray-600 dark:text-gray-300"
                                         placeholder="Search..."  required aria-expanded="false" data-hs-combo-box-input=""
                                         onkeyup="filterSuggestions(this.value)" aria-describedby="username-error"/>
                                     <!-- <button type="button" onclick="genealogySearch();"
@@ -101,6 +101,8 @@
                                 <div id="suggestion-box"
                                     class="absolute z-50 w-full h-32 mt-1 bg-white rounded-lg shadow-md overflow-y-auto hidden"
                                    >
+
+                                   {{-- block mb-3 text-xs text-gray-600 dark:text-gray-300 --}}
                                   {!! $member !!}
                                 </div>
                                 <p id="username-error"
@@ -110,7 +112,7 @@
                             <label for=""
                                 class="block mb-3 text-xs text-gray-600 dark:text-gray-300">{{ __('Count') }}</label>
                             <input type="text" id="count" name="count"
-                                class="text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-900 dark:text-white border border-gray-200 dark:border-gray-800  dark:placeholder-gray-400 dark:focus:ring-gray-500 dark:focus:border-gray-500"
+                                class="text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-900 dark:text-white border border-gray-200 dark:border-gray-800  dark:placeholder-gray-400 dark:focus:ring-gray-500 dark:focus:border-gray-500 block mb-3 text-xs text-gray-600 dark:text-gray-300"
                                 placeholder="" value="" required aria-describedby="count-error">
                             <p id="count-error"
                                 class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">{{ __('Please enter a valid username') }}.</p>
@@ -123,12 +125,17 @@
                                 <p id="epintype-error"
                                 class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">{{ __('Please enter a valid type') }}.</p>
                         </div>
+
                         <div class="mb-4">
                             <label for=""
                                 class="block mb-3 text-xs text-gray-600 dark:text-gray-300">{{ __('Amount') }}</label>
                             <input type="text" id="epin_amount" name="epin_amount"
                                 class="text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-900 dark:text-white border border-gray-200 dark:border-gray-800  dark:placeholder-gray-400 dark:focus:ring-gray-500 dark:focus:border-gray-500"
                                 placeholder="" value="" required aria-describedby="epinamount-error">
+                             <span id="epinamount_error" class="text-red-500 text-xs hidden">
+      Only  Numbers  are  allowed except
+    </span>
+
                             <p id="epinamount-error"
                                 class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">{{ __('Please enter a valid amount') }}</p>
                         </div>
@@ -137,7 +144,7 @@
                             <label for=""
                                 class="block mb-3 text-xs text-gray-600 dark:text-gray-300">{{ __('Memo') }}</label>
                             <textarea name="memo" id="memo" rows="4"
-                                class="text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-900 dark:text-white border border-gray-200 dark:border-gray-800  dark:placeholder-gray-400 dark:focus:ring-gray-500 dark:focus:border-gray-500"
+                                class="text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-900 dark:text-white border border-gray-200 dark:border-gray-800  dark:placeholder-gray-400 dark:focus:ring-gray-500 dark:focus:border-gray-500 block mb-3 text-xs text-gray-600 dark:text-gray-300"
                                 placeholder="" required
                                 aria-describedby="memo-error"></textarea>
                             <p id="memo-error" class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">
@@ -146,12 +153,15 @@
 
                     </div>
 
-                    <div class="flex justify-end gap-2 pt-6 mt-6 border-t">
+                    <div class=" flex justify-end space-x-3 border-t pt-5 dark:border-gray-700 mt-8">
+
+
                         <button type="submit"
-                            class="px-5 py-2.5 me-2 mb-2 rounded bg-gray-800 text-white dark:bg-gray-100 dark:text-black transition-all duration-300 shadow-md hover:scale-105">
+                            class=" px-4 py-2 rounded-lg bg-gray-800 text-white dark:bg-blue-500 text-xs hover:bg-gray-900 dark:hover:bg-blue-600">
+
                             {{ __('Submit') }}
                         </button>
-                        <button type="button" onclick="window.history.back();" class=" text-black dark:text-white bg-white focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-900  dark:hover:bg-gray-800 dark:hover:border-gray-600 dark:focus:ring-gray-700 ">{{ __('Cancel') }}</button>
+                        <button type="button" onclick="window.history.back();" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-900 border dark:border-gray-800 dark:text-gray-300 text-xs hover:bg-gray-300 dark:hover:bg-gray-800">{{ __('Cancel') }}</button>
                     </div>
 
             </form>
@@ -255,8 +265,7 @@ function filterSuggestions(query) {
     } else {
         suggestionBox.classList.add("hidden");
     }
-
-    clearTimeout(typingTimeout);
+ clearTimeout(typingTimeout);
 
     typingTimeout = setTimeout(() => {
         checkUsernameExists(query);
@@ -293,6 +302,7 @@ async function checkUsernameExists(username) {
 function selectSuggestion(el) {
     const id = el.dataset.id;
     const username = el.dataset.username;
+ // Remove previous highlight
 
     document.querySelector("[data-hs-combo-box-input]").value = username;
     document.getElementById("user_list").value = id;
@@ -306,11 +316,19 @@ function showPackageAmount(id) {
     const epinAmount = document.getElementById("epin_amount");
     const epinAmountPackage = document.getElementById("epin_amount_package");
 
+//added style for the amount
+    epinAmount.classList.add(
+        'bg-gray-50','border','border-gray-300','text-gray-600','text-xs',
+        'rounded-lg','block','w-full','p-2',
+        'dark:bg-gray-800','dark:border-gray-700','dark:text-gray-300'
+    );
     // Initially disable the input field
     epinAmount.disabled = true;
 
     if (id === '100000000000001') {
         epinAmount.disabled = false;
+        epinAmount.value="";
+        epinAmountPackage.value="";
     } else {
         const [packageId, tid] = id.split(",");
     fetch(`/admin/sendepin/getpackageamount/${packageId}/${tid}`)
@@ -323,6 +341,33 @@ function showPackageAmount(id) {
     }
 }
 
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const EpinAmountInput = document.getElementById('epin_amount');
+    const errmsgkeypress= document.getElementById('epinamount_error');
+    EpinAmountInput.addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+
+        // allow letters (all languages) and space
+        const regex = /^[0-9., ]$/u;
+
+        if (!regex.test(char)) {
+            e.preventDefault(); //  block number & special char
+
+             errmsgkeypress.classList.remove('hidden');
+
+            // Hide error after 1.5 seconds
+            setTimeout(() => {
+                errmsgkeypress.classList.add('hidden');
+            }, 2000);
+        }
+    });
+});
+// #suggestion-box * {
+//     font-size: 0.75rem;
+//     color: #4b5563;
+//     font-weight: normal;
+// }
 </script>
 
 @endsection

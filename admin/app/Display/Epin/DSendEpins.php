@@ -10,9 +10,14 @@ public static function showEpinType($records, $recordsmatrix)
     $selected = '';
 
     if (count((array)$records) > 0 || count((array)$recordsmatrix) > 0) {
+  $class = 'bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2
+          dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300';
+       // $class ='text-red-500';
 
-        $output .= '<select aria-label="label" name="epin_type" class="text-sm rounded-lg focus:ring-neutral-500 focus:border-neutral-500 block w-full p-2.5 dark:bg-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 dark:placeholder-neutral-400 dark:focus:ring-neutral-500 dark:focus:border-neutral-500" onchange="showPackageAmount(this.value)" required aria-describedby="epintype-error">
-            <option value="">' . __('Select') . '</option>';
+        $output .= '<select aria-label="label" name="epin_type"
+         class="'.$class.'"text-sm rounded-lg focus:ring-neutral-500 focus:border-neutral-500 block w-full p-2.5 dark:bg-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 dark:placeholder-neutral-400 dark:focus:ring-neutral-500 dark:focus:border-neutral-500" onchange="showPackageAmount(this.value)"  required aria-describedby="epintype-error">
+
+         <option value="">' . __('Select') . '</option>';
 
         // MATRIX OPTIONS (objects)
         foreach ($recordsmatrix as $row) {
@@ -24,6 +29,11 @@ public static function showEpinType($records, $recordsmatrix)
         }
 // dd($recordsmatrix);
         // PACKAGE OPTIONS (object or array)
+
+
+
+
+
         foreach ($records as $rec) {
 
             // detect if object or array

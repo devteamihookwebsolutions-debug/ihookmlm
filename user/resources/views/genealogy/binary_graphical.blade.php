@@ -43,8 +43,7 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                     stroke-width="2" d="m10 16 4-4-4-4" />
                             </svg>
-                            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">My
-                                Organization</span>
+                            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Advance Genealogy</span>
                         </div>
                     </li>
                 </ol>

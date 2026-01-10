@@ -46,7 +46,7 @@
                                                 stroke-width="2" d="m10 16 4-4-4-4" />
                                         </svg>
                                         <span class="text-xs font-medium text-gray-500 dark:text-gray-400">My
-                                            Organization</span>
+                                            Tree</span>
                                     </div>
                                 </li>
                             </ol>

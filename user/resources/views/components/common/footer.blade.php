@@ -4,11 +4,14 @@
         <!-- footer  -->
 
        <div class="bottom-0 right-0 fixed w-full border-t h-15 bg-white dark:bg-gray-900 dark:border-gray-600 ">
-                    <div
-                        class="flex items-center justify-center ml-52 py-4 text-xs text-gray-600 dark:text-gray-200">
-                        <p>© 2025 ihookwebsolutions. All rights reserved.</p>
-                    </div>
-                </div>
+            <div
+                class="flex items-center justify-center ml-52 py-4 text-xs text-gray-600 dark:text-gray-200">
+                <?php
+                    $year=date('Y');
+                ?>
+                <p> © <?php echo $year ?> ihookwebsolutions. All rights reserved.</p>
+            </div>
+        </div>
 
     </footer>
  </main>

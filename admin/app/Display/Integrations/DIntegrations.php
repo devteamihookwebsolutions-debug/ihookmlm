@@ -22,7 +22,7 @@ class DIntegrations
 
                 $whereclassall = ($sub1 == 'all' || $sub1 == '' || $sub1 === null) ? 'selectedcat' : '';
                 $output .= '<li class="me-2" role="presentation">
-                    <a href="' . env('BCPATH') . '/admin/integration/show/all"
+                    <a href="' . env('BCPATH') . '/integration/show/all"
                     class="inline-block p-4 border-b-2 rounded-t-lg text-xs text-gray-600 ' . $whereclassall . '"
                     id="all-tab" aria-controls="all" aria-selected="false">' . __('All') . '</a>
                 </li>';
@@ -32,7 +32,7 @@ class DIntegrations
                     $whereclass = ($sub1 == $catId) ? 'selectedcat' : '';
 
                     $output .= '<li class="me-2" role="presentation">
-                        <a href="' . env('BCPATH') . '/admin/integration/show/' . $catId . '"
+                        <a href="' . env('BCPATH') . '/integration/show/' . $catId . '"
                         class="inline-block p-4 border-b-2 rounded-t-lg text-xs text-gray-600 dark:text-gray-300 ' . $whereclass . '"
                         id="' . $catId . '-tab"
                         aria-controls="tab-' . $catId . '"

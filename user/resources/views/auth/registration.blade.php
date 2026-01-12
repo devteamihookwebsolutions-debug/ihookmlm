@@ -1088,7 +1088,10 @@
 
                   <div class="flex flex-col">
                      <div class="flex justify-between">
-                        <div class="text-gray-800 text-sm">©ihookwebsolutions,2025</div>
+                        <?php
+                        $year=date('Y');
+                        ?>
+                        <div class="text-gray-800 text-sm">©<?php echo $year ?>, ihookwebsolutions</div>
                         <div class="footer-privacy-links flex justify-between align-center text-gray-800">
                            <a href="#" class="me-3  text-sm">Privacy</a>
                            <a href="#" class="me-3  text-sm">Legal</a>

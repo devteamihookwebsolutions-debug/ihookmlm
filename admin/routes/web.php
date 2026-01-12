@@ -1,5 +1,6 @@
 <?php
 
+use Admin\App\Http\Controllers\Admin\Integration\AppStoreController;
 use Admin\App\Http\Controllers\Bonus\BonusController;
 use Admin\App\Http\Controllers\Bonus\MatchingBonusController;
 use Admin\App\Http\Controllers\CustomerBonus\CustomerBonusController;
@@ -13,6 +14,18 @@ use Admin\App\Http\Controllers\Genealogy\CollapseGenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GraphicalGenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GraphicalGenealogyTemplateController;
+use Admin\App\Http\Controllers\Integrations\CurrencyLayerController;
+use Admin\App\Http\Controllers\Integrations\IntegrationsController;
+use Admin\App\Http\Controllers\Integrations\IntegrationsDetailsController;
+use Admin\App\Http\Controllers\Integrations\MailChimpImportController;
+use Admin\App\Http\Controllers\Integrations\SalesForceController;
+use Admin\App\Http\Controllers\Integrations\SendGridImportController;
+use Admin\App\Http\Controllers\Integrations\ServiceWorkerController;
+use Admin\App\Http\Controllers\Integrations\SocialLoginApiController;
+use Admin\App\Http\Controllers\Integrations\TaxSettingsController;
+use Admin\App\Http\Controllers\Integrations\TwilioSettingsController;
+use Admin\App\Http\Controllers\Integrations\WebAppController;
+use Admin\App\Http\Controllers\Integrations\ZohoCRMCodeController;
 use Admin\App\Http\Controllers\LeadPage\CampaignManagementController;
 use Admin\App\Http\Controllers\LeadPage\LeadContactsController;
 use Admin\App\Http\Controllers\Logs\LogManagementController;
@@ -52,6 +65,7 @@ use Admin\App\Http\Controllers\Funds\CDeductFundsController;
 use Admin\App\Http\Controllers\Terminology\TerminologyController;
 use Admin\App\Http\Controllers\UserManager\DistributesInsertUserController;
 use Admin\App\Http\Controllers\Withdrawal\PayoutsController;
+use Admin\Http\Controllers\Integrations\GoogleMapController;
 use Illuminate\Support\Facades\Route;
 use Admin\App\Http\Controllers\Rank\RankController;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +73,7 @@ use Illuminate\Support\Facades\Session;
 use Admin\App\Http\Controllers\Genealogy\TabularGenealogyController;
 use Admin\App\Http\Controllers\Factories\UserDashboardController;
 use Admin\App\Http\Controllers\Features\FeaturesController;
+
 
 // Reusable auth check (Closure)
 $middleware = function ($request, $next) {
@@ -637,6 +652,86 @@ Route::get('newsletter/preview/{id}', [NewsLetterManagementController::class, 'p
 
 
 
+});
+
+Route::prefix('admin')->group(function () {
+    Route::prefix('integration')->group(function () {
+
+      Route::get('/', [IntegrationsController::class, 'showIntegration'])
+            ->name('admin.integration.index');
+
+        Route::get('/show/{category?}', [IntegrationsController::class, 'showIntegration'])
+            ->name('admin.integration.show')
+            ->where('category', 'all|\d+');
+
+        Route::prefix('details')->group(function () {
+            Route::get('/configure', [IntegrationsDetailsController::class, 'integrationsDetails'])
+                ->name('admin.integration.details.configure');
+
+            Route::post('/update', [IntegrationsDetailsController::class, 'updateIntegration'])
+                ->name('admin.integration.details.update');
+        });
+
+        Route::get('/mailchimpimport', [MailChimpImportController::class, 'getMailChimpImport'])
+            ->name('admin.integration.mailchimp.get');
+
+        Route::post('/mailchimp/import', [MailChimpImportController::class, 'updateMailChimpImport'])
+            ->name('admin.integration.mailchimp.import');
+
+        // ------------------------------ Sendgrid Import -----------------------------
+        Route::get('/sendgridimport', [SendGridImportController::class, 'getSendGridImport'])
+            ->name('admin.integration.sendgrid.get');
+
+        Route::post('/sendgrid/import', [SendGridImportController::class, 'updateSendGridImport'])
+            ->name('admin.integration.sendgrid.import');
+
+        // ------------------------------ Zoho CRM -----------------------------
+        Route::get('/getcrmcode', [ZohoCRMCodeController::class, 'getCRMCode'])
+            ->name('admin.integration.zohocrm.getcode');
+
+        // ------------------------------ Sales Force -----------------------------
+        Route::get('/salesforce/redirect', [SalesForceController::class, 'showSalesForceRedirect'])
+            ->name('admin.integration.salesforce.redirect');
+
+        Route::post('/salesforce/updateaccesstoken', [SalesForceController::class, 'updateAccessToken'])
+            ->name('admin.integration.salesforce.update-token');
+
+        // ------------------------------ Twilio settings -----------------------------
+        Route::post('/twilio/update', [TwilioSettingsController::class, 'updateTwilioSettings'])
+            ->name('admin.integration.twilio.update');
+
+        // ------------------------------ Social Login API -----------------------------
+        Route::post('/social-login/update', [SocialLoginApiController::class, 'updateSocialLoginApi'])
+            ->name('admin.integration.social.update');
+
+        // ------------------------------ Google map -----------------------------
+        Route::post('/google-map/update', [GoogleMapController::class, 'updateGoogleMap'])
+            ->name('admin.integration.googlemap.update');
+
+        // ------------------------------ Currency Layer -----------------------------
+        Route::post('/currency-layer/update', [CurrencyLayerController::class, 'updateCurrencyLayer'])
+            ->name('admin.integration.currencylayer.update');
+
+        // ------------------------------ Avalara Tax -----------------------------
+        Route::get('/avalara-tax', [TaxSettingsController::class, 'showTaxSettings'])
+            ->name('admin.integration.avalara.show');
+
+        Route::post('/avalara-tax/update', [TaxSettingsController::class, 'updateTaxSettings'])
+            ->name('admin.integration.avalara.update');
+
+        // ------------------------------ Web App -----------------------------
+        Route::post('/web-app/update', [WebAppController::class, 'updateWebApp'])
+            ->name('admin.integration.webapp.update');
+
+        // ------------------------------ App Store -----------------------------
+        Route::post('/app-store/update', [AppStoreController::class, 'updateAppStoreSettings'])
+            ->name('admin.integration.appstore.update');
+
+        // ------------------------------ ServiceWorker -----------------------------
+        Route::post('/service-worker/update', [ServiceWorkerController::class, 'updateServiceWorker'])
+            ->name('admin.integration.serviceworker.update');
+
+    });
 });
 
 

@@ -64,7 +64,27 @@ return $query
 
 
 }
+public static function getTotalCredited($memberId)
+    {
+        $prefix = config('services.ihook.prefix');
 
+        return (float) DB::table("{$prefix}_history_table as h")
+            ->join("{$prefix}_history_type_table as t", 'h.history_type', '=', 't.history_type_name')
+            ->where('h.history_member_id', $memberId)
+            ->where('t.history_credit_type', 1)          // 1 = credit (income)
+            ->sum('h.history_amount');
+    }
+
+      public static function getTotalDebited($memberId)
+    {
+        $prefix = config('services.ihook.prefix');
+
+        return (float) DB::table("{$prefix}_history_table as h")
+            ->join("{$prefix}_history_type_table as t", 'h.history_type', '=', 't.history_type_name')
+            ->where('h.history_member_id', $memberId)
+            ->where('t.history_debit_type', 1)           // 1 = debit (expense)
+            ->sum('h.history_amount');
+    }
 
 public static function getTransactionType()
 {

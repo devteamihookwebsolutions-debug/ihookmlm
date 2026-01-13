@@ -245,8 +245,9 @@
                                     <label for="dashboard_type" class="block mb-3 text-xs text-gray-600 dark:text-gray-300">Dashboard Type</label>
                                     <select aria-label="label" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300" name="dashboard_type" id="dashboard_type">
                                         <option value="">Select</option>
-                                        <option value="1" {{ ($settings['dashboard_type'] ?? '') == '1' ? 'selected' : '' }}>MLM</option>
-                                        <option value="2" {{ ($settings['dashboard_type'] ?? '') == '2' ? 'selected' : '' }}>Crypto</option>
+                                        <option value="1" {{ ($settings['dashboard_type'] ?? '') == '1' ? 'selected' : '' }}>MLM1</option>
+                                        <option value="2" {{ ($settings['dashboard_type'] ?? '') == '2' ? 'selected' : '' }}>MLM2</option>
+                                        <option value="3" {{ ($settings['dashboard_type'] ?? '') == '3' ? 'selected' : '' }}>Crypto</option>
                                     </select>
                                 </div>
                                 <div class="mb-4">

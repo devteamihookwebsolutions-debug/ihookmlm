@@ -82,7 +82,17 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard/get-overview-data', [UserDashboardController::class, 'getOverviewData'])->name('dashboard.get-overview-data');
     Route::get('/dashboard/get-rank-details-requirements/{rankId}', [UserDashboardController::class, 'getRankDetailsRequirements'])->name('dashboard.get-rank-details-requirements');
     Route::get('/dashboard/get-rank-percentage', [UserDashboardController::class, 'getRankPercentage'])->name('dashboard.get-rank-percentage');
+    Route::get('/dashboard/getpvstats', [UserDashboardController::class, 'getPvStatsDetails'])
+        ->name('dashboard.getpvstats');
 
+    Route::get('/dashboard/getgpvstats', [UserDashboardController::class, 'getGpvStatsDetails'])
+        ->name('dashboard.getgpvstats');
+
+    Route::get('/dashboard/getactivememberstats', [UserDashboardController::class, 'getActiveMemberStatsDetails'])
+        ->name('dashboard.getactivememberstats');
+
+    Route::get('/dashboard/getpaidaccountstats', [UserDashboardController::class, 'getPaidAccountStatsDetails'])
+        ->name('dashboard.getpaidaccountstats');
 
     Route::post('/genealogy/search/{encrypted}', [GenealogyController::class, 'searchMember'])
         ->name('genealogy.search');

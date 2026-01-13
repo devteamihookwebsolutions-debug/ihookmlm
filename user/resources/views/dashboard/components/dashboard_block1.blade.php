@@ -329,7 +329,7 @@
 
             <!-- Current Rank Slider -->
             <div class="tab-content" data-content="current">
-                <div class="relative overflow-hidden h-52 text-center">
+                <div class="relative overflow-hidden h-80 text-center">
                     <div id="rank-cards" class="flex transition-transform duration-500">
                         @forelse($userRanks as $rank)
                             <div class="min-w-full h-52 flex flex-col justify-center items-center bg-white dark:bg-gray-900 p-4">
@@ -377,7 +377,7 @@
         <!-- Last Rank -->
 <!-- Last Rank -->
 <div class="tab-content hidden" data-content="last">
-    <div class="p-2 text-center text-gray-700 dark:text-gray-300">
+    <div class="p-2 h-80 text-center text-gray-700 dark:text-gray-300">
         <div>
             <table class="w-full text-xs text-gray-500">
                 <thead class="text-xs uppercase bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-500">
@@ -427,7 +427,7 @@
 
                 <!-- Rank History -->
                 <div class="tab-content hidden" data-content="history">
-                    <div class="p-2">
+                    <div class="p-2 h-80 text-center text-gray-700 dark:text-gray-300">
                         <div class="overflow-x-auto">
                             <table class="w-full text-xs text-left text-gray-500">
                                 <thead class="text-xs uppercase bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-500">

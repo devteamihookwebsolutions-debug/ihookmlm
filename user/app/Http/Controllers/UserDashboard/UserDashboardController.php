@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Session;
 use Illuminate\Http\Request;
+use User\App\Models\Reports\MTransactionHistory;
+use User\App\Models\Reports\MWithdrawalHistory;
 
 class UserDashboardController extends Controller
 {
@@ -61,6 +63,7 @@ class UserDashboardController extends Controller
                 ->where('rank_key', 'rank_title')
                 ->value('rank_value');
         }
+        $sponsorInfo = $this->getPlacementSponsorInfo($memberId);
 
         $block2details = [
             'membersimage'       => $member->members_image
@@ -73,8 +76,9 @@ class UserDashboardController extends Controller
             'rankachieveddate'   => $matrixLink?->rank_achieved_date
                 ? Carbon::parse($matrixLink->rank_achieved_date)->format('d M Y')
                 : ($member->members_doj ? Carbon::parse($member->members_doj)->format('d M Y') : 'N/A'),
-            'sponsor_fullname'   => $this->getSponsorName($member->members_sponsor_id),
             'package_name'       => $this->getPackageName($memberId),
+            'sponsor_fullname'   => $sponsorInfo['name'],
+            'sponsorimage'       => $sponsorInfo['image'],
         ];
             // Total Commission
         $commissionData = DashboardBlock1Overview::getTotalCommission($memberId);
@@ -112,7 +116,6 @@ class UserDashboardController extends Controller
             ->whereIn('h.history_type', ['withdrawcompleted', 'withdrawal'])
             ->where('t.history_debit_type', 1)
             ->sum('h.history_amount');
-
         $payout = DB::table("{$prefix}_history_table as h")
             ->where('h.history_member_id', $memberId)
             ->where('h.history_type', 'payout')
@@ -407,29 +410,91 @@ class UserDashboardController extends Controller
 
                 return 0;
             });
+            // site settings dashborad type get -> templete id
+            $templateId = DB::table($prefix . '_sitesettings_table')
+                ->where('sitesettings_name', 'dashboard_type')
+                ->value('sitesettings_value');
 
-        // dd($userRanks ,$rankProgress ,$previousRank);
+            $templateId = (int) $templateId;
+            if ($templateId < 1 || $templateId > 4) {
+                $templateId = 1;
+            }
 
-        return view('user::dashboard.dashboard', compact(
-            'member', 'block1details', 'block2details',
+            $withdrawal = DB::table("{$prefix}_history_table as h")
+                ->join("{$prefix}_history_type_table as t", 'h.history_type', '=', 't.history_type_name')
+                ->where('h.history_member_id', $memberId)
+                ->whereIn('h.history_type', ['withdrawcompleted', 'withdrawal'])
+                ->where('t.history_debit_type', 1)
+                ->sum('h.history_amount');
+                // dd($withdrawal);
+
+            $totalWithdrawn = MWithdrawalHistory::getTotalWithdrawn($memberId);
+
+            $totalCredited   = MTransactionHistory::getTotalCredited($memberId);
+            $totalDebited    = MTransactionHistory::getTotalDebited($memberId);
+
+            $netTransaction  = $totalCredited - $totalDebited;
+
+            $data = compact(
+         'member', 'block1details', 'block2details',
             'totalcommission', 'totalorders', 'totalPackagePurchased', 'directdownlines',
             'sparklineSales', 'sparklineOrders', 'sparklinePackages', 'sparklineDownlines',
             'cWallet', 'eWallet', 'currency', 'siteName','replicated_url', 'payout', 'withdrawal',
+            'totalWithdrawn',  'totalCredited',   'totalDebited', 'netTransaction',
             'commissionChange', 'ordersChange', 'packageChange', 'downlineChange','previousRank',
             'totalcommission_last_month','recentOrders', 'allOrders', 'allMembers',
             'mapData', 'listCountries', 'grandTotal','countryStats','packagePurchased',
             'todayEnrollments','totalDownlines', 'personalPV', 'downlineSales','userRanks','rankProgress',
             'totalGroupDownlines','paidMembersInGroup','downlineChange','personalChange','totalWallet',
+            );
+            return match ($templateId) {
+                1 => view('user::dashboard.dashboard', $data),
+                2 => view('user::dashboard.dashboard-templete1', $data),
+                default => view('user::dashboard.dashboard', $data),
+            };
+    }
 
-        ));
+private function getPlacementSponsorInfo(int $memberId): array
+{
+    $prefix = config('services.ihook.prefix');
+
+    $spilloverId = DB::table("{$prefix}_matrix_members_link_table")
+        ->where('members_id', $memberId)
+        ->value('spillover_id');
+
+    if (!$spilloverId || $spilloverId == 0) {
+        return [
+            'name'  => 'N/A',
+            'image' => null,
+        ];
     }
-    private function getSponsorName($sponsorId)
-    {
-        if (!$sponsorId) return 'N/A';
-        $s = MemberAreaSummary::selectRaw("CONCAT(members_firstname, ' ', members_lastname) as name")
-            ->where('members_id', $sponsorId)->first();
-        return $s->name ?? 'N/A';
+
+    $sponsor = MemberAreaSummary::select([
+            'members_firstname',
+            'members_lastname',
+            'members_image',
+        ])
+        ->where('members_id', $spilloverId)
+        ->first();
+
+    if (!$sponsor) {
+        return [
+            'name'  => 'Unknown Sponsor (ID: ' . $spilloverId . ')',
+            'image' => null,
+        ];
     }
+
+    $fullName = trim($sponsor->members_firstname . ' ' . $sponsor->members_lastname);
+
+    $imagePath = $sponsor->members_image
+        ? asset(ltrim($sponsor->members_image, '/'))
+        : asset('img/av-ico-2.png');
+
+    return [
+        'name'  => $fullName ?: 'N/A',
+        'image' => $imagePath,
+    ];
+}
 
     private function getPackageName($memberId)
     {
@@ -1032,11 +1097,13 @@ $totalWallet = DashboardBlock1Overview::getTotalWalletBalance($memberId);
             ->where('history_type', 'gpv')
             ->sum('history_amount');
 
-        $activeMembers = DB::table("{$prefix}_matrix_members_link_table")
-            ->whereRaw('FIND_IN_SET(?, members_parents)', [$memberId])
-            ->where('members_id', '!=', $memberId)
-            ->where('members_status', 1)
-            ->count();
+    $activeMembers = DB::table("{$prefix}_members_table as m")
+        ->join("{$prefix}_matrix_members_link_table as ml", "m.members_id", "=", "ml.members_id")
+        ->whereRaw('FIND_IN_SET(?, ml.members_parents)', [$memberId])
+        ->orWhere('ml.direct_id', $memberId)
+        ->where('m.members_id', '!=', $memberId)
+        ->where('m.members_status', 1)
+        ->count();
 
         $paidMembers = DB::table("{$prefix}_paymenthistory_table as ph")
             ->join("{$prefix}_matrix_members_link_table as ml", function ($join) use ($memberId) {
@@ -1139,82 +1206,48 @@ $totalWallet = DashboardBlock1Overview::getTotalWalletBalance($memberId);
         $page     = $request->get('page', 1);
         $offset   = ($page - 1) * $perPage;
 
-        $sql = "
-            WITH RECURSIVE downline AS (
-                SELECT
-                    ml.members_id,
-                    ml.direct_id,
-                    ml.members_parents
-                FROM {$prefix}_matrix_members_link_table AS ml
-                WHERE FIND_IN_SET(?, COALESCE(ml.members_parents, '')) > 0
-                OR ml.direct_id = ?
+        $query = DB::table("{$prefix}_members_table as m")
+            ->join("{$prefix}_matrix_members_link_table as ml", 'm.members_id', '=', 'ml.members_id')
+            ->leftJoin("{$prefix}_members_table as s", 'ml.direct_id', '=', 's.members_id')
+            ->leftJoin("{$prefix}_paymenthistory_table as ph", function ($join) {
+                $join->on('ph.paymenthistory_member_id', '=', 'm.members_id')
+                    ->where('ph.paymenthistory_status', 'paid');
+            })
+            ->leftJoin("{$prefix}_package_table as p", 'ph.paymenthistory_plan_id', '=', 'p.package_id')
 
-                UNION ALL
+            // Exact same condition as your working count
+            ->whereRaw('FIND_IN_SET(?, ml.members_parents)', [$memberId])
+            ->orWhere('ml.direct_id', $memberId)
 
-                SELECT
-                    ml.members_id,
-                    ml.direct_id,
-                    ml.members_parents
-                FROM {$prefix}_matrix_members_link_table AS ml
-                INNER JOIN downline d ON FIND_IN_SET(d.members_id, COALESCE(ml.members_parents, '')) > 0
-            )
-            SELECT
-                m.members_username AS Username,
-                m.members_firstname AS Firstname,
-                m.members_lastname AS Lastname,
-                m.members_email AS Email,
-                COALESCE(s.members_username, 'Admin') AS Sponsor,
-                COALESCE(p.package_name, 'Free') AS `Package Purchased`,
-                DATE_FORMAT(m.members_doj, '%d %b %Y') AS DOJ,
-                IF(m.members_status = 1, 'Active', 'Inactive') AS Status
-            FROM downline dl
-            JOIN {$prefix}_members_table AS m ON dl.members_id = m.members_id
-            LEFT JOIN {$prefix}_members_table AS s ON dl.direct_id = s.members_id
-            LEFT JOIN {$prefix}_paymenthistory_table AS ph ON ph.paymenthistory_member_id = m.members_id
-                AND ph.paymenthistory_status = 'paid'
-            LEFT JOIN {$prefix}_package_table AS p ON ph.paymenthistory_plan_id = p.package_id
-            WHERE m.members_status = 1
-            AND m.members_id != ?
-            GROUP BY
-                m.members_id,
-                m.members_username,
-                m.members_firstname,
-                m.members_lastname,
-                m.members_email,
-                m.members_doj,
-                s.members_username,
-                p.package_name
-            ORDER BY m.members_doj DESC
-            LIMIT ? OFFSET ?
-        ";
+            ->where('m.members_id', '!=', $memberId)
+            ->where('m.members_status', 1)
 
-        $records = DB::select($sql, [
-            $memberId, $memberId,
-            $memberId,
-            $perPage, $offset
+            // Prevent row duplication if member has multiple paid payments
+            ->distinct()
+
+            ->select([
+                'm.members_username          AS Username',
+                'm.members_firstname         AS Firstname',
+                'm.members_lastname          AS Lastname',
+                'm.members_email             AS Email',
+                DB::raw("COALESCE(s.members_username, 'Admin') AS Sponsor"),
+                DB::raw("COALESCE(p.package_name, 'Free / No Package') AS `Package Purchased`"),
+                DB::raw("DATE_FORMAT(m.members_doj, '%d %b %Y') AS DOJ"),
+                DB::raw("'Active' AS Status"),
+            ])
+            ->orderByDesc('m.members_doj');
+
+        // Debug: log the exact SQL being sent to MySQL
+        \Log::info('Active members popup query - DEBUG', [
+            'member_id'     => $memberId,
+            'full_sql'      => $query->toSql(),
+            'bindings'      => $query->getBindings(),
+            'raw_count'     => (clone $query)->count(),
+            'raw_limit_sql' => (clone $query)->offset($offset)->limit($perPage)->toSql(),
         ]);
 
-        $totalSql = "
-            WITH RECURSIVE downline AS (
-                SELECT ml.members_id, ml.direct_id
-                FROM {$prefix}_matrix_members_link_table AS ml
-                WHERE FIND_IN_SET(?, COALESCE(ml.members_parents, '')) > 0
-                OR ml.direct_id = ?
-
-                UNION ALL
-
-                SELECT ml.members_id, ml.direct_id
-                FROM {$prefix}_matrix_members_link_table AS ml
-                INNER JOIN downline d ON FIND_IN_SET(d.members_id, COALESCE(ml.members_parents, '')) > 0
-            )
-            SELECT COUNT(DISTINCT m.members_id) as total
-            FROM downline dl
-            JOIN {$prefix}_members_table AS m ON dl.members_id = m.members_id
-            WHERE m.members_status = 1
-            AND m.members_id != ?
-        ";
-
-        $total = DB::selectOne($totalSql, [$memberId, $memberId, $memberId])->total;
+        $records = (clone $query)->offset($offset)->limit($perPage)->get();
+        $total   = (clone $query)->count();
 
         return response()->json([
             'records'       => $records,

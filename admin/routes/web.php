@@ -65,6 +65,7 @@ use Admin\App\Http\Controllers\Funds\CDeductFundsController;
 use Admin\App\Http\Controllers\Terminology\TerminologyController;
 use Admin\App\Http\Controllers\UserManager\DistributesInsertUserController;
 use Admin\App\Http\Controllers\Withdrawal\PayoutsController;
+use Admin\App\Http\Controllers\Withdrawal\WithdrawalPaymentSettingsController;
 use Admin\Http\Controllers\Integrations\GoogleMapController;
 use Illuminate\Support\Facades\Route;
 use Admin\App\Http\Controllers\Rank\RankController;
@@ -155,9 +156,15 @@ Route::prefix('admin')
         Route::get('getmembers', [CDeductFundsController::class, 'getMembers']);
         Route::post('updateDetect', [CDeductFundsController::class, 'updateDetect'])->name('updateDetect');
 
+      Route::prefix('withdrawpaymentsettings')->group(function () {
+            Route::get('/', [WithdrawalPaymentSettingsController::class, 'index'])->name('withdraw-payments.index');
+            Route::post('/withdrawupdate', [WithdrawalPaymentSettingsController::class, 'update'])->name('withdraw-payments.update');
+            Route::post('/send-otp', [WithdrawalPaymentSettingsController::class, 'sendOtp'])->name('withdraw-payments.send-otp');
+            Route::post('/verify-otp', [WithdrawalPaymentSettingsController::class, 'verifyOtp'])->name('withdraw-payments.verify-otp');
+        });
         // Logout
         Route::match(['get', 'post'], 'logout', [AuthController::class, 'logout'])->name('logout');
-    });
+});
 // plan add routes
 Route::prefix('admin')->group(function () {
     Route::get('matrix', [MatrixController::class, 'index'])->name('matrixconfig.matrix');

@@ -10,6 +10,8 @@ use Admin\App\Http\Controllers\Ewallet\EwalletGatewaySettingsController;
 use Admin\App\Http\Controllers\Factories\BannerSettingsController;
 use Admin\App\Http\Controllers\Factories\PaymentSettingsController;
 use Admin\App\Http\Controllers\Factories\RegisterSettingsController;
+use Admin\App\Http\Controllers\Funds\DeductFundsController;
+use Admin\App\Http\Controllers\Funds\FundTransferController;
 use Admin\App\Http\Controllers\Genealogy\CollapseGenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GenealogyController;
 use Admin\App\Http\Controllers\Genealogy\GraphicalGenealogyController;
@@ -59,9 +61,7 @@ use Admin\App\Http\Controllers\Reports\AdminEarningReportsController;
 use Admin\App\Http\Controllers\Reports\BonusAchievedController;
 use Admin\App\Http\Controllers\Reports\PackageReportsController;
 use Admin\App\Http\Controllers\Ewallet\EwalletPaymentsController;
-use Admin\App\Http\Controllers\Funds\CFundTransferController;
 use Admin\App\Http\Controllers\Bonus\SendBonusController;
-use Admin\App\Http\Controllers\Funds\CDeductFundsController;
 use Admin\App\Http\Controllers\Terminology\TerminologyController;
 use Admin\App\Http\Controllers\UserManager\DistributesInsertUserController;
 use Admin\App\Http\Controllers\Withdrawal\PayoutsController;
@@ -142,8 +142,8 @@ Route::prefix('admin')
         Route::post('ewallet/activate', [EwalletPaymentsController::class, 'activateEwalletPayment'])->name('ewalletactivate');
 
         // Funds
-        Route::get('fundtransfer', [CFundTransferController::class, 'showFunds'])->name('fundtransfer');
-        Route::get('fundtransferdata', [CFundTransferController::class, 'showFundTransfers'])->name('fundtransferdata');
+        Route::get('fundtransfer', [FundTransferController::class, 'showFunds'])->name('fundtransfer');
+        Route::get('fundtransferdata', [FundTransferController::class, 'showFundTransfers'])->name('fundtransferdata');
 
         // Send Bonus
         Route::get('sendbonus', [SendBonusController::class, 'showSendBonus'])->name('sendbonus');
@@ -152,9 +152,9 @@ Route::prefix('admin')
         Route::post('usernamecheck', [SendBonusController::class, 'bonususernamechck'])->name('usernamecheck');
 
         // Deduct Bonus
-        Route::get('detectfunds', [CDeductFundsController::class, 'showDetect'])->name('detectfunds');
-        Route::get('getmembers', [CDeductFundsController::class, 'getMembers']);
-        Route::post('updateDetect', [CDeductFundsController::class, 'updateDetect'])->name('updateDetect');
+        Route::get('detectfunds', [DeductFundsController::class, 'showDetect'])->name('detectfunds');
+        Route::get('getmembers', [DeductFundsController::class, 'getMembers']);
+        Route::post('updateDetect', [DeductFundsController::class, 'updateDetect'])->name('updateDetect');
 
       Route::prefix('withdrawpaymentsettings')->group(function () {
             Route::get('/', [WithdrawalPaymentSettingsController::class, 'index'])->name('withdraw-payments.index');

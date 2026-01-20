@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to NewsLetterManagementController
+ *
+ * @package         NewsLetterManagementController
+ * @category        Controller
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Http\Controllers\NewsLetter;
 
 use Admin\App\Http\Controllers\Controller;
@@ -30,7 +47,7 @@ class NewsLetterManagementController extends Controller
 public function addNewsTemplate()
     {
         try {
-            
+
             return view('newsletter.addnewstemplates');
 
         } catch (Exception $e) {
@@ -83,7 +100,7 @@ public function edittemplate($id)
     // dd($template);
     return view('newsletter.editnewsmailsubjects', [
         'template' => $template,
-        'sub1' => $id,  
+        'sub1' => $id,
     ]);
 }
 
@@ -98,7 +115,7 @@ public function updatetemplate(Request $request, $id)
     // dd($request);
     $template = NewsLetterTemplate::findOrFail($id);
     $template->category_templates_name = $request->template_name;
-    $template->category_templates_status = $request->status; 
+    $template->category_templates_status = $request->status;
     $template->updated_on = now();
     // dd($template);
     $template->save();
@@ -177,7 +194,7 @@ public function saveContent(Request $request)
     $oldFilename     = $template->randomid;
     $newRandomNumber = sprintf("%06d", mt_rand(100000, 999999));
 
-    $htmlContent = $data['html_content']; 
+    $htmlContent = $data['html_content'];
 
 
     $finalFilename = $newRandomNumber . '.html';

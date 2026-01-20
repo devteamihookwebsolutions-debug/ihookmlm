@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to MDeductFunds
+ *
+ * @package         MDeductFunds
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Models\Funds;
 use Admin\App\Models\Member\Member;
 use Admin\App\Models\Member\Reports;
@@ -12,82 +29,6 @@ use Illuminate\Support\Facades\Response;
 class MDeductFunds
 {
 
-//     public static function updateDetect($request)
-// {
-//     // dd('function reached');
-//     $transaction_id = "#" . substr(number_format(time() * rand(), 0, '', ''), 0, 9);
-//     $history_wallet_type = $request->wallet_type;
-
-//     // Check if users are selected
-//     if (count((array)$request->user_list) > 0) {
-
-//         // Fetch email notification setting (if needed)
-//         $where = "WHERE sitesettings_name ='email_notification_user' ";
-//         $sitesettings = MSiteDetails::getSiteSettingsDetails($where);
-//         $email_notification_user = $sitesettings[0]['sitesettings_value'] ?? null;
-
-//         // Fetch crypto default name
-//         $cryptoCurrencyId = $request->cryptocurrency;
-//         $crypto = DB::table(env('PROMLM_PREFIX') . 'crypto_currency_and_token')
-//             ->where('crypto_currency_id', $cryptoCurrencyId)
-//             ->first();
-
-//         $cryptocurrency = $crypto->crypto_default_name ?? null;
-
-//         // Get live crypto conversion
-//         $btc_crypto_balance = MCryptoConverter::cryptoConverter($cryptocurrency);
-//         $cryptovalue = (float) str_replace(',', '', $btc_crypto_balance);
-
-//         // Calculate crypto qty
-//         if ($cryptovalue != 0) {
-//             $crypto_qty = $request->amount / $cryptovalue;
-//         } else {
-//             $crypto_qty = 0;
-//         }
-
-//         $crypto_qty = number_format($crypto_qty, 6, '.', '');
-
-//         // Loop through users
-//         foreach ($request->user_list as $username) {
-
-//             // Find member
-//             $member = Member::where('members_username', $username)->first();
-//             if (!$member) continue;
-
-//             $memberId = $member->members_id;
-
-//             // Check wallet balance
-//             $balance_amount = MWalletBalance::getWalletCurrentBalance($memberId, $history_wallet_type);
-
-//             if ($balance_amount < $request->amount) {
-//                 // Redirect with error
-//                 return redirect()->back()->with('error_message', 'User ' . $username . ' does not have enough balance.');
-//             }
-
-//             // New transaction ID
-//             $transaction_id = "#" . substr(number_format(time() * rand(), 0, '', ''), 0, 9);
-
-//             // Create deduction record
-//             $report = new Reports();
-//             $report->timestamps = false;
-//             $report->history_member_id      = $memberId;
-//             $report->history_type           = 'admindeduct';
-//             $report->history_description    = $request->memo;
-//             $report->history_datetime       = now();
-//             $report->history_amount         = $request->amount;
-//             $report->history_transaction_id = $transaction_id;
-//             $report->history_wallet_type    = $history_wallet_type;
-//             $report->crypto_qty             = $crypto_qty;
-//             $report->currency_id            = $request->cryptocurrency;
-//             $report->save();
-//         }
-
-//         // Redirect success
-//         return redirect()->back()->with('success_message', 'Amount deducted successfully!');
-//     }
-
-//     return redirect()->back()->with('error_message', 'No users selected.');
-// }
   public static function updateDetect($request)
     {
         $history_wallet_type = $request->wallet_type;

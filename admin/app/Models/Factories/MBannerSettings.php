@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to MBannerSettings
+ *
+ * @package         MBannerSettings
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Models\Factories;
 use Admin\App\Display\Factories\DBannerSettings;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +33,7 @@ public static function showBanners($action = 'login')
         $banner_type = '1';
     } elseif ($action === 'register') {
         $banner_type = '2';
-    } 
+    }
 // dd($banner_type);
     $banners = Banner::where('banner_type', $banner_type)
                      ->orderBy('banner_id', 'asc')
@@ -93,6 +110,6 @@ public static function updateBanner(Request $request, $action, $id)
 
 public static function deleteBanner()
 {
- 
+
 }
 }

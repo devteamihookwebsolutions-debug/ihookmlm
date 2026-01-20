@@ -1,4 +1,21 @@
 <?php
+
+/**
+ * This class contains public functions related to MMatrixPackage
+ *
+ * @package         MMatrixPackage
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
 namespace Admin\App\Models\MatrixConfig;
 
 use Admin\App\Models\Middleware\MMatrixDetails;
@@ -21,7 +38,7 @@ class MMatrixPackage
     {
 
 
-  
+
         $packageStatus = 1;
         $packagePaymentMethod = 0;
         $packageDuration = 0;
@@ -87,16 +104,16 @@ class MMatrixPackage
             $packageIcon = $filePath;
         }
 
-      
 
-   
+
+
         // $matrix_details = MMatrixDetails::getMatrixDetails($matrix_id);
-        
- 
+
+
         // $matrix = MatrixDetail::find($request->matrix_id);
         // $chargebeePlanName = $matrix ? $matrix->matrix_name . '_' . $request->package_name : $request->package_name;
-  
-    
+
+
         $packages = new Package();
         $packages->package_name = $package['package_name'];
         $packages->package_type = $package['packagetype'];
@@ -122,8 +139,8 @@ class MMatrixPackage
 
         return true;
 
-     
-    
+
+
     }
 
      public static function showPackageDetails($matrix_id, $Err = null)
@@ -135,7 +152,7 @@ class MMatrixPackage
         $records = Package::where('matrix_id', $matrix_id)
                             ->orderBy('package_id', 'asc')
                             ->get();
-       
+
 
         return DMatrixPackage::showPackageDetails($records,$Err);
 
@@ -149,8 +166,8 @@ class MMatrixPackage
             $packagePaymentGateway = '';
             $packPaymentFields = '';
             $planId = '';
-            
-            $packagePaymentMethod = 0; 
+
+            $packagePaymentMethod = 0;
 
          if ($package['package_paymentmethod'] === 'onetime') {
             $packagePaymentMethod  = 0;
@@ -200,7 +217,7 @@ class MMatrixPackage
             $packageImage = $package['package_image_hidden'];
         }
 
-        
+
         // Update the package
         $packages = Package::find($package['edit_package_id']);
 
@@ -223,10 +240,10 @@ class MMatrixPackage
             $packages->taxcode = $package['taxcode'];
             // $packages->stripe_planid = $package['stripe_planid'];
             $packages->save();
-            
+
         }
         // Optional: handle Chargebee integration
- 
+
         return response()->json([
             'status' => 'success',
             'message' => 'Package updated successfully.',
@@ -249,7 +266,7 @@ class MMatrixPackage
 
     }
     return true;
-    
+
     }
 
      public static function validatePackageName()
@@ -271,7 +288,7 @@ class MMatrixPackage
         // return response()->json([
         //     'valid' => !$exists, // true if name is available
         // ]);
-       
+
     }
 
      public static function previewPackageIcon($icon_id)
@@ -283,4 +300,3 @@ class MMatrixPackage
 
 
 }
-    

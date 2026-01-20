@@ -1,18 +1,19 @@
 <?php
+
 /**
- * This class contains public static functions related to commission reports .
+ * This class contains public functions related to MCommissionReports
  *
  * @package         MCommissionReports
  * @category        Model
- * @author          Sunsofty Dev Team
- * @link            https://promlmsoftware.com
- * @copyright       Copyright (c) 2020 - 2025, Sunsofty.
- * @version         Version 8.1
- */
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
 /****************************************************************************
-* Licence Agreement: 
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@promlmsoftware.com.
-*****************************************************************************/
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
 ?>
 <?php
 namespace Admin\App\Models\Reports;
@@ -25,30 +26,13 @@ use Illuminate\Support\Facades\DB;
 use Admin\App\Display\Reports\DCommissionReports;
 class MCommissionReports{
 
-// public static function getCommissionReports($perPage = 10)
-// {
-//     $query = Reports::from('ihook_history_table as a')
-//         ->leftJoin('ihook_members_table as b', 'a.history_member_id', '=', 'b.members_id')
-//         ->select(
-//             'a.history_id',
-//             'b.members_username',
-//             'a.history_amount',
-//             'a.history_type',
-//             'a.history_datetime',
-//             'a.history_member_id'
-//         )
-//         ->whereNotIn('a.history_type', ['withdraw_pending', 'pv'])
-//         ->orderByDesc('a.history_datetime');
-
-//     return $query->paginate($perPage);
-// }
 public static function getCommissionReports(Request $request)
 {
     $limit = $request->input('perPage', 10);
     $page = $request->input('page', 1);
     $offset = ($page - 1) * $limit;
     $columnIndex = (int) $request->input('columnIndex');
-    
+
     $queryValue = $request->input('query');
 // dd($queryValue);
     // ✅ Build base query

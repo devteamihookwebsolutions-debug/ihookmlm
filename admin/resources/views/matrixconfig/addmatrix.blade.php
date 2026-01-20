@@ -92,7 +92,7 @@
 
     @elseif($step == 2)
         {{-- STEP 2: Plan Type --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
             <div class="bg-white rounded-lg shadow-md p-4 border dark:border-gray-700 dark:bg-gray-900 h-fit">
                 <ul class="space-y-3 text-xs">
                     <li><div class="flex items-center p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-gray-300 text-gray-600"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 font-bold mr-3">1</span><span class="font-medium">Plan Name</span></div></li>
@@ -119,12 +119,12 @@
                         @foreach ($matrixTypes as $type)
                             @php
                                 $imagePaths = [
-                                    'Binary Plan' => 'assets/img/plans/binary-plan.png',
-                                    'Forced Plan' => 'assets/img/plans/forced-plan.png',
-                                    'Unilevel Plan' => 'assets/img/plans/unilevel-plan.png',
-                                    'Linear Plan' => 'assets/img/plans/linear-plan.png',
-                                    'X-up Plan' => 'assets/img/plans/xup-plan.png',
-                                    'Stair Step Plan' => 'assets/img/plans/stair-pla.png',
+                                    'Binary Plan' => 'assets/img/plans/binary-plan.svg',
+                                    'Forced Plan' => 'assets/img/plans/forced-plan.svg',
+                                    'Unilevel Plan' => 'assets/img/plans/unilevel-plan.svg',
+                                    'Linear Plan' => 'assets/img/plans/linear-plan.svg',
+                                    'X-up Plan' => 'assets/img/plans/xup-plan.svg',
+                                    'Stair Step Plan' => 'assets/img/plans/stair-plan.svg',
                                 ];
                                 $imagePath = $imagePaths[$type->matrix_type_name] ?? '/assets/img/Plans/default.png';
                             @endphp
@@ -133,8 +133,7 @@
                                     {{ old('matrix_type_id', $matrixData['matrix_type_id'] ?? '') == $type->matrix_type_id ? 'checked' : '' }}>
                                 <div class="flex justify-center">
                                     <figure class="max-w-lg">
-                                        <img class="h-auto max-w-full rounded-lg" src="{{ asset($imagePath) }}" alt="{{ $type->matrix_type_name }} image">
-                                        <figcaption class="mt-2 text-sm text-center text-gray-500">{{ $type->matrix_type_name }} Image</figcaption>
+                                        <img class="h-auto max-w-full rounded-lg mb-3" src="{{ asset($imagePath) }}" alt="{{ $type->matrix_type_name }} image">
                                     </figure>
                                 </div>
                                 <h4 class="text-md font-semibold text-gray-800 mb-3 text-center">{{ $type->matrix_type_name }}</h4>

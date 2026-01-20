@@ -1,17 +1,18 @@
 <?php
+
 /**
- * This class contains public static functions related to site settings .
+ * This class contains public functions related to MSiteSettings
  *
- * @package         MSitesettings
+ * @package         MSiteSettings
  * @category        Model
- * @author          Sunsofty Dev Team
- * @link            https://promlmsoftware.com
- * @copyright      Copyright (c) 2020 - 2023, Sunsofty.
- * @version        Version 8.1
- */
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
 /****************************************************************************
  * Licence Agreement:
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@promlmsoftware.com.
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
  *****************************************************************************/
 ?>
 <?php

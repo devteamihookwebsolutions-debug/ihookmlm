@@ -1,70 +1,29 @@
 <?php
+
+/**
+ * This class contains public functions related to DEpinManagement
+ *
+ * @package         DEpinManagement
+ * @category        Display
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
 namespace Admin\App\Display\Ewallet;
 
 use Illuminate\Http\JsonResponse;
 use Admin\App\Models\Middleware\MFormatDate;
 use Admin\App\Models\Middleware\MSiteDetails;
 use Illuminate\Support\Facades\DB;
-class DEwalletPayments   
+class DEwalletPayments
 {
-    
-// public static function showEwalletManagement($records, $iTotal)
-// {
-//     // dd($records);
-//     $data = [];
-
-//     if (count((array) $records) > 0) {
-
-
-//         //Get site currency only once
-//         $where = 'WHERE sitesettings_name="site_currency"';
-//         $site_currency_data = MSiteDetails::getSiteSettingsDetails($where);
-//         $site_currency = is_array($site_currency_data) && isset($site_currency_data[0]['sitesettings_value'])
-//             ? $site_currency_data[0]['sitesettings_value']
-//             : '';
-
-//         foreach ($records as $record) {
-
-//             $currency = DB::table('ihook_currencysettings_table')
-//                 ->where('currency_id', $record->payment_user_request_currency_id)
-//                 ->first();
-
-//             $user = DB::table('ihook_members_table')
-//                 ->where('members_id', $record->paymenthistory_member_id)
-//                 ->first();
-
-//             $payment = DB::table('ihook_paymentsettings_table')
-//                 ->where('paymentsettings_id', $record->paymenthistory_mode)
-//                 ->first();
-
-//             $formattedDate = MFormatDate::formatingDate($record->paymenthistory_date);
-//             $currencySymbol = $currency->currency_symbol ?? '';
-//             // dd($currency);
-//             // Build payment status (HTML ready)
-//             $paymentStatus = $record->paymenthistory_status === 'notpaid'
-//                 ? '<a href="javascript:void(0);" onclick="activateEwalletPayment(' . $record->paymenthistory_id . ')">
-//                     <span class="bg-neutral-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded border border-blue-400">Activate</span>
-//                    </a>'
-//                 : '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded border border-green-400">Paid</span>';
-
-//             //Push into data array
-//             $data[] = [
-//                 'username'       => $user->members_username ?? '-',
-//                 'amount'         => $currencySymbol . ($record->paymenthistory_amount ?? '0'),
-//                 'payment_mode'   => $payment->paymentsettings_name ?? '-',
-//                 'transaction_id' => $record->paymenthistory_trans_id ?? '-',
-//                 'date'           => $formattedDate,
-//                 'type'           => ucfirst($record->paymenthistory_type ?? '-'),
-//                 'status'         => $paymentStatus,
-//             ];
-//         }
-//     }
-//     return [
-//         'total' => $iTotal,
-//             'data'  => $data,
-//     ];
-
-// }
 
 public static function showEwalletManagement($records, $iTotal)
 {

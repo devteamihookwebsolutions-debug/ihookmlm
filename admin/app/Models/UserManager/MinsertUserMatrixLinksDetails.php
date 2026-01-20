@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to MinsertUserMatrixLinksDetails
+ *
+ * @package         MinsertUserMatrixLinksDetails
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Models\UserManager;
 
 
@@ -56,7 +73,7 @@ public static function insertUserMatrixLinkDetails(
     // if ($members_subscription_plan > 0) {
     //     dd('function reached or not');
     //     $totaldays = MPackageExpiryDateCalculate::getPackageExpireDays($members_subscription_plan);
-        
+
     //     $members_subscription_expirydate = date('Y-m-d', strtotime("+$totaldays days"));
     // } else {
     //     $members_subscription_expirydate = '0000-00-00';
@@ -83,8 +100,8 @@ $expiry = $members_subscription_expirydate;
 
 // If value is empty, zero-date, or invalid → set NULL
 if (
-    empty($expiry) || 
-    $expiry == '0000-00-00' || 
+    empty($expiry) ||
+    $expiry == '0000-00-00' ||
     strtotime($expiry) === false
 ) {
     $memberLink->members_subscription_expirydate = null;

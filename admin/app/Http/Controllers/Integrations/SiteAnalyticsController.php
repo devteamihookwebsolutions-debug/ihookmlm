@@ -1,18 +1,18 @@
 <?php
 
 /**
- * This class contains public functions related to Siteanalytics 
+ * This class contains public functions related to SiteAnalyticsController
  *
- * @package         CSiteanalytics 
+ * @package         SiteAnalyticsController
  * @category        Controller
- * @author          Sunsofty Dev Team
- * @link            https://sunsoftny.com
- * @copyright       Copyright (c) 2020 - 2025, Sunsofty.
- * @version         Version 8.1
- */
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
 /****************************************************************************
- * Licence Agreement: 
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@sunsoftny.com.
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
  *****************************************************************************/
 ?><?php
     class Controller_Integrations_CSiteAnalytics
@@ -41,10 +41,10 @@
 
             $token_auth = Model\Integrations\MSiteAnalytics::getMatomaUserToken();
             $output['matomopanel'] = $_ENV['BASEPATH'] . '/matomo/index.php?date=today&module=CoreHome&action=index&page=0&idSite=1&token_auth=' . $token_auth . '&period=day#?idSite=1&period=day&date=today&category=Dashboard_Dashboard&subcategory=1';
-            
 
 
-            
+
+
             Bin_Template::createTemplate('integrations/siteanalytics.html', $output);
             unset($_SESSION['success_message']);
             unset($_SESSION['error_message']);

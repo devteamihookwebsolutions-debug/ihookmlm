@@ -1,90 +1,40 @@
 <?php
 
+/**
+ * This class contains public functions related to MatrixPackageController
+ *
+ * @package         MatrixPackageController
+ * @category        Controller
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Http\Controllers\MatrixConfig;
 
 use Admin\App\Http\Controllers\Controller;
-use Admin\App\Models\Middleware\MPaymentGatewayDetails;
-use Admin\App\Models\MatrixConfig\MatrixPackageDetails;
-use Admin\App\Models\Middleware\MMatrixDetails;
 use Admin\App\Models\MatrixConfig\MMatrixPackage;
-use Admin\App\Models\Middleware\MMatrixtTypeDetails;
-use Admin\App\Models\Middleware\MMatrixConfigurationWholeDetails;
-use Admin\App\Models\Middleware\MMatrixTypes;
-use Admin\App\Models\MatrixConfig\MDefaultMatrix;
-use Admin\App\Models\MatrixConfig\MMatrixPackageDetails;
 use Admin\App\Models\Middleware\MWalletType;
 use Admin\App\Models\Middleware\MPackageDetails;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Exception;
-
-
-// use App\Models\PackageIcon;
-// use App\Models\ShopProduct;
-// use App\Models\SiteSetting; 
-// use App\Models\CryptoCurrency;
-// use App\Models\TaxDetail;
-// use App\Models\WalletType;
 
 class MatrixPackageController extends Controller
 {
-    public function __construct()
-    {
-        // Middleware for authentication
-        // $this->middleware(function ($request, $next) {
-        //     if (!Session::has('admin.id')) {
-        //         return redirect()->to(env('ADMINPATH') . '/adminlogin');
-        //     }
-        //     return $next($request);
-        // });
-    }
-
-    /**
-     * Show add package form
-     */
-    public function showAddPackage(Request $request, $matrix_id)
+       public function showAddPackage(Request $request, $matrix_id)
     {
         try {
             $matrix_id = $matrix_id;
 
-            // Get Chargebee Payment Gateway
-            // $chargebee = PaymentGatewayDetail::where('paymentsettings_default_name', 'chargebee')->first();
-
              $output = [];
              $output['matrix_id'] =  $matrix_id;
-
-            // if ($chargebee && $chargebee->paymentsettings_status === 'Active') {
-            //     $matrixDetails = MMatrixDetails::find($matrix_id);
-            //     $output['matrix_details'] = $matrixDetails;
-            //     $output['chargebee_paymentsettings_status'] = '1';
-            //     $output['chargebeeplanname'] = $matrixDetails->matrix_name ?? '';
-            // } else {
-            //     $output['chargebee_paymentsettings_status'] = '0';
-            // }
-
-            // Package Icon
-            // $output['package_icon'] = MMatrixPackage::getPackageIcons(''); // assuming getIcons() is defined
-
-            // Products
-            // $output['products'] = ShopProduct::getEshopProducts(); // assuming getEshopProducts() is defined
-
-            // Get Dashboard Type
-            // $dashboardSetting = SiteSetting::where('sitesettings_name', 'dashboard_type')->first();
-            // $dashboard_type = $dashboardSetting->sitesettings_value ?? '1';
-            // $output['dashboard_type'] = $dashboard_type;
-
-            // Crypto
-            // if ($dashboard_type === '2') {
-            //     $output['cryptocurrency'] = CryptoCurrency::getCurrency($request->product, $request->package_type); // assuming method exists
-            // }
-
-            // Tax Type
-            // $taxtype = TaxDetail::getTaxTypeDetail(); // assuming returns array or collection
-            // $output['taxtype'] = $taxtype[0]->taxtype ?? null;
-
             // Wallet Type
             $output['package_direct_commission_wallet_type'] = MWalletType::getWalletType(
                 "package_direct_commission_wallet_type",
@@ -108,8 +58,8 @@ class MatrixPackageController extends Controller
     {
         try {
             MMatrixPackage::validatePackageName();
-        } catch (\Exception $e) {
-           
+        } catch (Exception $e) {
+
              return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -129,10 +79,10 @@ class MatrixPackageController extends Controller
             // Insert package logic
             MMatrixPackage::insertPackage($package,$matrix_id);
 
-          
+
         } catch (Exception $e) {
               return response()->json(['error' => $e->getMessage()], 500);
-           
+
         }
     }
 
@@ -146,7 +96,7 @@ class MatrixPackageController extends Controller
 
         echo MMatrixPackage::showPackageDetails($matrix_id, '');
             // Return view or JSON response depending on your use case
-          
+
             // Or if you want JSON response:
             // return response()->json(['details' => $details]);
 
@@ -209,7 +159,7 @@ class MatrixPackageController extends Controller
 
 
         $package = $request->all();
-  
+
         // Perform the update logic
         MMatrixPackage::updatePackage($package, $matrix_id);
 
@@ -232,7 +182,7 @@ class MatrixPackageController extends Controller
 
         return response()->json(['preview_url' => $previewUrl]);
         } catch (\Exception $e) {
-            
+
              return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -243,11 +193,11 @@ class MatrixPackageController extends Controller
     public function deletePackage($package_id)
     {
         try {
-       
+
 
         MMatrixPackage::deletePackage($package_id);
 
-       
+
         } catch (\Exception $e) {
             // You can also use withErrors or with('error_message') for flash messages
             return response()->json(['error' => $e->getMessage()], 500);

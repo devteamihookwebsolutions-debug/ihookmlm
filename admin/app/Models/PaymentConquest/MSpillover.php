@@ -1,4 +1,21 @@
 <?php
+
+/**
+ * This class contains public functions related to MSpillover
+ *
+ * @package         MSpillover
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
 namespace Admin\App\Models\PaymentConquest;
 
 // use Query\Bin_Query;
@@ -83,7 +100,7 @@ class MSpillover
                 'matrix.members_parents' => $childrenmembers_parents,
                 'matrix.root' => (string)$childroot
             ];
-          
+
         } else {
             // Find next spillover child
             $child = MemberLinks::where('matrix_id', $matrix_id)
@@ -126,7 +143,7 @@ class MSpillover
                 'matrix.members_parents' => $childrenmembers_parents,
                 'matrix.root' => (string)$childroot
             ];
-           
+
         }
 
         // Update members_filled_status if full
@@ -175,7 +192,7 @@ public static function setSpilloverByLeg($membersId, $directId, $matrixId, $matr
             'position' => $position
         ]);
 
-       
+
         $spilloverId = $directId;
     } else {
         $nextSpillover = $legCount->members_id;
@@ -198,7 +215,7 @@ public static function setSpilloverByLeg($membersId, $directId, $matrixId, $matr
         ]);
 
         // Update MongoDB
-   
+
 
         $spilloverId = $nwSpillover;
     }

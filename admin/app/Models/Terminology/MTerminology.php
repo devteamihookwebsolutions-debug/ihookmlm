@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to MTerminology
+ *
+ * @package         MTerminology
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Models\Terminology;
 use Admin\App\Models\Member\TerminologySetting;
 use Illuminate\Http\Request;
@@ -250,7 +267,7 @@ public static function showTerminologySettingsNew($lang, $type)
             ["label" => "Invalid Password Format", "key" => "CUS_INVALID_PASSWORD_FORMAT"]
         ];
         // ... your full array ...
-    
+
 
     // Extract all keys
     $keys = array_column($data, 'key');
@@ -284,7 +301,7 @@ public static function showTerminologySettingsNew($lang, $type)
                 </span>
 
                 <input type="text" name="'.$key.'" id="'.$key.'"
-                    class="bg-neutral-50 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 
+                    class="bg-neutral-50 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5
                     dark:bg-neutral-600 dark:border-neutral-500 dark:placeholder-neutral-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-1/2"
                     value="'.$value.'" required>
             </button>

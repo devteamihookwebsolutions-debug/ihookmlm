@@ -1,13 +1,32 @@
 <?php
 
+/**
+ * This class contains public functions related to MatrixConfigurationController
+ *
+ * @package         MatrixConfigurationController
+ * @category        Controller
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Http\Controllers\MatrixConfig;
 
 use Admin\App\Http\Controllers\Controller;
+use Admin\App\Models\Middleware\MAdminActivityLog;
 use Admin\App\Models\Middleware\MMatrixtTypeDetails;
 use Admin\App\Models\Middleware\MMatrixConfigurationWholeDetails;
 use Admin\App\Models\Middleware\MMatrixTypes;
 use Admin\App\Models\MatrixConfig\MDefaultMatrix;
 use Admin\App\Models\MatrixConfig\MMatrixPackageDetails;
+use Admin\App\Models\Middleware\MPackageDetails;
 use Admin\App\Models\Middleware\MWalletType;
 use Admin\App\Models\MatrixConfig\MMatrixBinary;
 use Admin\App\Models\Middleware\MPaymentGatewayDetails;
@@ -15,25 +34,12 @@ use Admin\App\Models\Middleware\PackageDetails;
 use Admin\App\Models\MatrixConfig\MSetMatrixConfiguration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Exception;
 
 
 class MatrixConfigurationController extends Controller
 {
-    // public function __construct()
-    // {
-    //     // Apply middleware for admin auth
-    //     $this->middleware(function ($request, $next) {
-    //         if (!Session::has('admin')) {
-    //             return redirect(env('ADMINPATH') . '/adminlogin');
-    //         }
-
-    //         Previllage::getPrevillage(); // You might replace this with Laravel's Gate or Policy
-    //         return $next($request);
-    //     });
-    // }
 
     public function showMatrixConfiguration(Request $request,$matrix_id)
     {
@@ -175,10 +181,10 @@ class MatrixConfigurationController extends Controller
     public function updateSubscription(Request $request)
     {
         try {
-            AdminActivityLog::getAdminActivity('PLANS - Add Subscription');
+            MAdminActivityLog::getAdminActivity('PLANS - Add Subscription');
 
             $packageId = $request->query('sub1');
-            $output['errval'] = PackageDetails::showPackage($packageId);
+            $output['errval'] = MPackageDetails::getPackageDetails($packageId);
 
             $packPaymentSer = unserialize($output['errval']['pack_payment']);
             $packPaymentArr = [];

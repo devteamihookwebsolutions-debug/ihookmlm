@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to DistributorController
+ *
+ * @package         DistributorController
+ * @category        Controller
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Http\Controllers\Distributors;
 
 use Admin\App\Http\Controllers\Controller;
@@ -54,8 +71,8 @@ $data = Member::leftJoin(
         // dd($dataArray);
         // exit;
         return view('admin::distributors.distributors', [
-            'data' => $dataArray['data'], 
-            'paginator' => $data           
+            'data' => $dataArray['data'],
+            'paginator' => $data
         ]);
   }
 
@@ -73,7 +90,7 @@ $data = Member::leftJoin(
 public function checkUsername(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:50', 
+            'username' => 'required|string|max:50',
         ]);
 
         $username = $request->input('username');
@@ -113,7 +130,7 @@ public function add(Request $request)
 
 
         $data = $request->all();
-             
+
         // Member creation
         $member = new Member();
         $member->members_username = $data['txtusername'];
@@ -128,14 +145,14 @@ public function add(Request $request)
         $member->members_zip = $data['txtzipcode'];
         $member->members_phone = $data['phone'];
         $member->save();
-                 
+
         if($member->id)
-        {  
+        {
             // memberlink entry
             $memberId = $member->id;
             $memberLink = new MemberLinks();
             $memberLink->members_id = $memberId;
-            $memberLink->matrix_id = $data['matrix_id']; 
+            $memberLink->matrix_id = $data['matrix_id'];
             $memberLink->spillover_id=$data['sponsor_id'];
             $memberLink->members_subscription_plan=$data['view_packages'];
             $memberLink->members_subscription_date = date('Y-m-d');

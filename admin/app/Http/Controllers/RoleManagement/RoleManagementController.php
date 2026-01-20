@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to RoleManagementController
+ *
+ * @package         RoleManagementController
+ * @category        Controller
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace Admin\App\Http\Controllers\RoleManagement;
 
 
@@ -44,10 +61,10 @@ public function showRoleManagementSettings($id)
     public function createRole(Request $request)
     {
         // dd('function reached or not');
-      
+
             $create_role['create_role'] = MRoleManagement::create_role($request);
             // dd($create_role);
-         
+
         return redirect()->route('rolemanagement.view', ['id' => 1])
                      ->with('success', 'Role added successfully!');
     }
@@ -70,8 +87,8 @@ public function showRoleManagementSettings($id)
         // try {
             MAdminActivityLog::getAdminActivity('RoleManagement - Update Role');
             // MRoleManagement::updateRole($request);
-            
-          
+
+
     $result = MRoleManagement::updateRole($request);
     // dd($result);
     return response()->json($result);

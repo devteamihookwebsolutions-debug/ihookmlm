@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This class contains public functions related to AdminOtpMail
+ * This class contains public functions related to MPaymentSettings
  *
  * @package         MPaymentSettings
  * @category        Model
@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-use Admin\App\Mail\MPaymentSettings;
+use Admin\App\Mail\AdminOtpMail;
 
 class MPaymentSettings
 {

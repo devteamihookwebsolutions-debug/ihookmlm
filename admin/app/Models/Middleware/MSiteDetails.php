@@ -19,6 +19,7 @@ namespace Admin\App\Models\Middleware;
 
 use Admin\App\Models\Member\currencyFormat;
 use Admin\App\Models\Member\SiteDetails;
+use Illuminate\Support\Facades\DB;
 class MSiteDetails
 {
         public static function getSiteSettingsDetails()
@@ -29,5 +30,21 @@ class MSiteDetails
             return currencyformat::all();
 
         }
+// public static function getSiteSettingsByName($name)
+// {
+//    $result=SiteDetails::where('sitesettings_name', $name)->first();
+//    dd($result);
 
+//    return $result;
+// }
+
+
+
+public static function getSiteSettingValue(string $settingName)
+{
+    $prefix = config('services.ihook.prefix');
+    return DB::table($prefix.'_sitesettings_table')
+        ->where('sitesettings_name', $settingName)
+        ->value('sitesettings_value');
+}
 }

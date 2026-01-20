@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to MemberAreaSummary
+ *
+ * @package         MemberAreaSummary
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace User\App\Models\MemberArea;
 
 use User\App\Models\Masters\CountryMaster;
@@ -26,7 +43,7 @@ class MemberAreaSummary extends Model
         'members_password',
     ];
     protected $casts = [
-        'members_doj' => 'date:Y-m-d',    
+        'members_doj' => 'date:Y-m-d',
         'members_dob' => 'date:Y-m-d',
     ];
     public function country()
@@ -74,12 +91,12 @@ class MemberAreaSummary extends Model
     {
         return number_format($this->history_amount, 2);
     }
-   
+
 public function sponsor()
 {
     return $this->belongsTo(
         self::class,
-        'members_from',   
+        'members_from',
         'members_id'
     );
 }

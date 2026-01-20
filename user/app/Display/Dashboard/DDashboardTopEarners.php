@@ -1,18 +1,19 @@
 <?php
+
 /**
- * This class contains public static functions related to dashboard top selling
+ * This class contains public functions related to DDashboardTopEarners
  *
- * @package         DDashBoard
+ * @package         DDashboardTopEarners
  * @category        Display
- * @author          Sunsofty Dev Team
- * @link            https://sunsoftny.com
- * @copyright       Copyright (c) 2020 - 2023, Sunsofty.
- * @version         Version 8.1
- */
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
 /****************************************************************************
-* Licence Agreement:
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@sunsoftny.com.
-*****************************************************************************/
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
 ?><?php
 
 namespace Display\Dashboard;
@@ -39,8 +40,8 @@ class DDashboardTopEarners
                 $imgemenm = $_ENV['CDNCLOUDEXTURL'].$records[$t]['members_image'];
 
                 $output .= '<div class="earn-top">
-                                            <div class="earner">  
-                                                <img src="' . $imgemenm . '" width="100px" class="top-earner">                                   
+                                            <div class="earner">
+                                                <img src="' . $imgemenm . '" width="100px" class="top-earner">
                                                 <div class="earner-name">
                                                        <span>' .__('Name') . '</span>
                                                         <h5 class="pt-3">' .$records[$t]['members_username'] . '</h5>
@@ -49,15 +50,15 @@ class DDashboardTopEarners
                                                       <span>' .__('Price') . '</span>
                                                     <h5 class="pt-3">' .MFormatNumber::formatingNumberCurrency($records[$t]['totalprice']). '</h5>
                                                 </div>
-                                            </div>                                  
+                                            </div>
                                         </div>';
             }
 
         } else {
             $output .= '
             <div class="earn-top">
-                                            <div class="earner">  
-                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">                                   
+                                            <div class="earner">
+                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">
                                                 <div class="earner-name">
                                                        <span>' .__('Name') . '</span>
                                                         <h5 class="pt-3">maxwin</h5>
@@ -69,8 +70,8 @@ class DDashboardTopEarners
                                         </div>
                                       </div>
                                       <div class="earn-top">
-                                            <div class="earner">  
-                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">                                   
+                                            <div class="earner">
+                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">
                                                 <div class="earner-name">
                                                        <span>' .__('Name') . '</span>
                                                         <h5 class="pt-3">maxwin5</h5>
@@ -82,8 +83,8 @@ class DDashboardTopEarners
                                         </div>
                                       </div>
                                       <div class="earn-top">
-                                            <div class="earner">  
-                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">                                   
+                                            <div class="earner">
+                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">
                                                 <div class="earner-name">
                                                        <span>' .__('Name') . '</span>
                                                         <h5 class="pt-3">maxwin5</h5>
@@ -95,8 +96,8 @@ class DDashboardTopEarners
                                         </div>
                                       </div>
                                       <div class="earn-top">
-                                            <div class="earner">  
-                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">                                   
+                                            <div class="earner">
+                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">
                                                 <div class="earner-name">
                                                        <span>' .__('Name') . '</span>
                                                         <h5 class="pt-3">maxwin5</h5>
@@ -108,8 +109,8 @@ class DDashboardTopEarners
                                         </div>
                                       </div>
                                       <div class="earn-top">
-                                            <div class="earner">  
-                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">                                   
+                                            <div class="earner">
+                                                <img src="' .$_ENV['UI_ASSET_URL']. "/assets/img/Avatar.png" . '" width="100px" class="top-earner">
                                                 <div class="earner-name">
                                                        <span>' .__('Name') . '</span>
                                                         <h5 class="pt-3">maxwin5</h5>

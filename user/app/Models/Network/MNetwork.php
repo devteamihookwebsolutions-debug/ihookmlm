@@ -1,4 +1,21 @@
 <?php
+
+/**
+ * This class contains public functions related to MNetwork
+ *
+ * @package         MNetwork
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
 /**
  * MNetwork – Laravel model for the “My Network” page
  *
@@ -117,7 +134,7 @@ class MNetwork
         AS b ON b.matrix_id=a.matrix_id LEFT JOIN " . env('IHOOK_PREFIX') . "matrix_type_table AS c ON c.matrix_type_id=
         b.matrix_type_id  LEFT JOIN " . env('IHOOK_PREFIX') . "members_table AS d ON d.members_id=a.members_id WHERE
         a.members_id='" . $user_id . "' GROUP BY a.matrix_id";
-    
+
             $records = $sql;
             // dd($records);
             return DActiveNetwork::getActiveNetworkList($records);

@@ -8,6 +8,7 @@ use Admin\App\Http\Controllers\Epin\EpinManagementController;
 use Admin\App\Http\Controllers\Epin\SendEpinsController;
 use Admin\App\Http\Controllers\Ewallet\EwalletGatewaySettingsController;
 use Admin\App\Http\Controllers\Factories\BannerSettingsController;
+use Admin\App\Http\Controllers\Factories\EmailSettingsController;
 use Admin\App\Http\Controllers\Factories\PaymentSettingsController;
 use Admin\App\Http\Controllers\Factories\RegisterSettingsController;
 use Admin\App\Http\Controllers\Funds\DeductFundsController;
@@ -658,8 +659,23 @@ Route::post('newsbuilderv1/savecontent',[NewsLetterManagementController::class, 
 Route::get('newsletter/preview/{id}', [NewsLetterManagementController::class, 'preview']);
 
 
+//Email Setting //
+Route::get('viewemailsettings',
+    [EmailSettingsController::class, 'viewEmailSettings']
+)->name('viewemailsettings');
 
+Route::get('editemail/edit/{id}/{lid}', [EmailSettingsController::class, 'editEmail'])
+    ->name('editemail.edit');
+
+Route::post('mail/update/{mail_id}/{mail_lang}', [EmailSettingsController::class, 'updateEmail'])
+    ->name('mail.update');
+Route::post('addemailsetting', [EmailSettingsController::class, 'addEmailSettings'])->name('emailsettings.store');
+Route::post('addemailgeneralsetting', [EmailSettingsController::class, 'addEmailGeneralSettings'])->name('emailsettings.add');
 });
+
+
+
+
 
 Route::prefix('admin')->group(function () {
     Route::prefix('integration')->group(function () {

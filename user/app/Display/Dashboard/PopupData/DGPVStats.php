@@ -1,19 +1,21 @@
 <?php
+
 /**
- * This class contains public static functions related to dashboard rank slider
+ * This class contains public functions related to DGPVStats
  *
- * @package         DDashBoardRankProgress
+ * @package         DGPVStats
  * @category        Display
- * @author          Sunsofty Dev Team
- * @link            https://sunsoftny.com
- * @copyright       Copyright (c) 2020 - 2023, Sunsofty.
- * @version         Version 8.1
- */
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
 /****************************************************************************
-* Licence Agreement:
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@sunsoftny.com.
-*****************************************************************************/
-?><?php
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
 namespace Display\Dashboard\PopupData;
 
 use Query\Bin_Query;
@@ -28,13 +30,13 @@ class DGPVStats
      * @param array $records;
      * @return HTML data
      */
-   
+
     public static function getGPVStats($records,$iTotal)
     {
         if (count((array)$records) != 0) {
 
             for ($i = 0; $i < count((array)$records); $i++) {
-                
+
                 if ($records[$i]['history_datetime'] != '0000-00-00') {
                     $formatuseddate = MFormatDate::formatingDate($records[$i]['history_datetime']);
                 } else {
@@ -49,10 +51,10 @@ class DGPVStats
                 }
                 $history_amount = round($records[$i]['history_amount']);
 
-            
-                $view='<a aria-label="link" href="' . $_ENV['FCPATH'] . '/dashboard/commissioninvoice/'. $records[$i]['history_id'] . '" target="_blank">' .__('View') . '</a>';               
 
-                
+                $view='<a aria-label="link" href="' . $_ENV['FCPATH'] . '/dashboard/commissioninvoice/'. $records[$i]['history_id'] . '" target="_blank">' .__('View') . '</a>';
+
+
                 $mem_data[] = array(
                     'date' =>$formatuseddate,
                     'description' =>$records[$i]['history_description'],
@@ -73,7 +75,7 @@ class DGPVStats
             $data_result = json_encode($res_array);
             echo $data_result;
             exit();
-            
+
         }else{
 
             $res_array   = array(
@@ -88,6 +90,6 @@ class DGPVStats
         }
     }
 
-   
+
 }
 ?>

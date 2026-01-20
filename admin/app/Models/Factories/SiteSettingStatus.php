@@ -8,7 +8,7 @@
  * @author          Ihook Dev Team
  * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
- * @version         Version 0.1
+ * @version         Version 1.0
 **/
 /****************************************************************************
  * Licence Agreement:

@@ -1,18 +1,19 @@
 <?php
+
 /**
- * This class contains public static functions related to myaccount
+ * This class contains public functions related to DMyProfile
  *
  * @package         DMyProfile
  * @category        Display
- * @author          Sunsofty Dev Team
- * @link            https://sunsoftny.com
- * @copyright       Copyright (c) 2020 - 2023, Sunsofty.
- * @version         Version 8.1
- */
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
 /****************************************************************************
-* Licence Agreement:
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@sunsoftny.com.
-*****************************************************************************/
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
 ?><?php
 
 namespace Display\Profile;
@@ -22,12 +23,7 @@ use Model\Middleware\MSiteDetails;
 use Query\Bin_Query;
 
 class DMyProfile
-{/**
- * This public static function is used to showHeaderMessageNotification
- * @param array  $unseenmemberscount
- * @param array  $records
- * @return HTML data
- */
+{
     public static function showActivityLogs($records)
     {
         if (count((array) $records) > 0) {
@@ -39,7 +35,7 @@ class DMyProfile
                        <div class="flex items-center">
                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 text-white font-bold text-lg">
                             '.$value['members_firstname'][0].' '.$value['members_lastname'][0].'
-                        </div>                        
+                        </div>
                     </div>
                     </td>
                     <td class="px-6 py-4 dark:text-neutral-100">

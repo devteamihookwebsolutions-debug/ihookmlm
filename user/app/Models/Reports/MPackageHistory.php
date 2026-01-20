@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to MPackageHistory
+ *
+ * @package         MPackageHistory
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace User\App\Models\Reports;
 use User\App\Display\Reports\DPackageHistory;
 use Admin\App\Models\Middleware\MMembersDetails;
@@ -13,7 +30,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MPackageHistory
 {
- 
+
 
 
 public static function packageHistory(Request $request)
@@ -36,7 +53,7 @@ public static function packageHistory(Request $request)
         ->join($matrix . ' as b', 'b.matrix_id', '=', 'a.matrix_id')
         ->join($package . ' as c', 'c.package_id', '=', 'a.paymenthistory_plan_id')
         ->where('a.paymenthistory_plan_id', '>', 0);
-        
+
 
     // ALL PACKAGE HISTORY
     if ($request->query('do') == 'allpackagehistory') {
@@ -137,8 +154,8 @@ $records = $records->get();
 //     $package = MPackageDetails::getPackageDetails($invoice->paymenthistory_plan_id);
 
 //     // 5. Determine payment method
-//     $payment_method = ($history->history_wallet_type ?? 0) == 1 
-//         ? "E-Wallet" 
+//     $payment_method = ($history->history_wallet_type ?? 0) == 1
+//         ? "E-Wallet"
 //         : "C-Wallet";
 
 //     // 6. Prepare data for blade

@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * This class contains public functions related to MDownlineLevelSales
+ *
+ * @package         MDownlineLevelSales
+ * @category        Model
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
+/****************************************************************************
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
+?>
+<?php
+
 namespace User\App\Models\Reports;
 use User\App\Display\Reports\DDownlineLevelSales;
 
@@ -37,20 +54,20 @@ public static function getDownlineDetailsNew($memberId)
             'a.members_id',
 
             // Sponsor
-            DB::raw("(SELECT members_username 
-                      FROM ihook_members_table 
+            DB::raw("(SELECT members_username
+                      FROM ihook_members_table
                       WHERE members_id = b.spillover_id) as sponsor"),
 
             // Rank
-            DB::raw("(SELECT rank_value 
-                      FROM ihook_ranksetting 
-                      WHERE rank_key='rank_title' 
-                      AND rank_id=b.rankid 
+            DB::raw("(SELECT rank_value
+                      FROM ihook_ranksetting
+                      WHERE rank_key='rank_title'
+                      AND rank_id=b.rankid
                       LIMIT 1) as ranks"),
 
             // Sales Amount
-            DB::raw("(SELECT SUM(paymenthistory_amount) 
-                      FROM ihook_paymenthistory_table 
+            DB::raw("(SELECT SUM(paymenthistory_amount)
+                      FROM ihook_paymenthistory_table
                       WHERE paymenthistory_member_id = a.members_id) as salesAmount")
         ])
         ->get();

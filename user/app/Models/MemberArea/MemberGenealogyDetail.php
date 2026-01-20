@@ -1,18 +1,19 @@
 <?php
+
 /**
- * This class contains public static functions related to network page
+ * This class contains public functions related to MemberGenealogyDetail
  *
- * @package         MMemberGenealogyDetail
+ * @package         MemberGenealogyDetail
  * @category        Model
- * @author          Sunsofty Dev Team
- * @link            https://sunsoftny.com
- * @copyright       Copyright (c) 2020 - 2025, Sunsofty.
- * @version         Version 8.1
- */
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 0.1
+**/
 /****************************************************************************
-* Licence Agreement:
- *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@sunsoftny.com.
-*****************************************************************************/
+ * Licence Agreement:
+ *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact https://ihookmlmsoftware.com.
+ *****************************************************************************/
 ?>
 <?php
 namespace Model\MemberArea;
@@ -20,11 +21,7 @@ use Query\Bin_Query;
 
 use Display\MemberArea\DMemberGenealogyDetail;
 class MMemberGenealogyDetail {
-    /**
-     * This public static function is used  to get network details of users
-     * @return HTML data
-     */
-    public static function getGenealogyDetail()
+        public static function getGenealogyDetail()
     {
         $user_id = trim($_GET['sub1']);
         $sql     = "SELECT a.*,b.matrix_id,b.matrix_name,b.matrix_type_id,b.matrix_status,c.matrix_type_id,

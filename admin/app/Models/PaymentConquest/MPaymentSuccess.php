@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This class contains public functions related to MSentDirectCommissionSuccess
+ * This class contains public functions related to MPaymentSuccess
  *
- * @package         MSentDirectCommissionSuccess
+ * @package         MPaymentSuccess
  * @category        Model
  * @author          Ihook Dev Team
  * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
@@ -21,6 +21,7 @@ namespace Admin\App\Models\PaymentConquest;
 
 use Admin\App\Models\Member\PaymentHistory;
 use Admin\App\Models\Member\Matrix;
+use Admin\App\Models\Middleware\MPackageDetails;
 use Admin\App\Models\Member\Member;
 use Admin\App\Models\Member\MemberLinks;
 use Admin\App\Models\Member\MatrixConfiguration;
@@ -29,8 +30,12 @@ use Admin\App\Models\Middleware\MMatrixConfiguration;
 use Admin\App\Models\PaymentConquest\MPackageRegisterSuccess;
 use Admin\App\Models\PaymentConquest\MOneTimeRegisterSuccess;
 use Admin\App\Models\PaymentConquest\MInstantBinary;
-
-use DB;
+use Admin\App\Models\Middleware\MSiteDetails;
+use Admin\App\Models\Middleware\MSendMail;
+use Admin\App\Models\Middleware\MUserNotifyStatus;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+// use DB;
 use Illuminate\Support\Facades\Log;
 use DateTime;
 
@@ -58,7 +63,11 @@ class MPaymentSuccess
             'matrix_type_id' => $matrix_type_id,
             'payment_amt_exclusive' => $payment_amt_exclusive,
         ]);
-
+        //send mail  start wanted this fields
+        $filename         = mt_rand(100000000, 999999999);
+        $site_currency = Session::get('site_settings.site_currency');
+        $pdfpath          = "uploads/membersinvoice/" . "invoice" . $filename . ".pdf";
+        $prefix = config('services.ihook.prefix');
         if ($paymenthistory_id <= 0) {
             Log::warning('[PaymentSuccess] Invalid paymenthistory_id', ['paymenthistory_id' => $paymenthistory_id]);
             return true;
@@ -115,6 +124,7 @@ class MPaymentSuccess
         }
 
         $memberName   = $member->members_username;
+        $members_email   = $member->members_email;
         $direct_id    = $matrixLink->direct_id;
         $spillover_id = $matrixLink->spillover_id ?? 0;
         $moduletype   = $matrixLink->moduletype;
@@ -267,7 +277,80 @@ class MPaymentSuccess
             'matrix_id' => $matrix_id,
             'paymenthistory_id' => $paymenthistory_id
         ]);
+   //fetch package details
+      $package_id                = $matrixLink->members_subscription_plan;
+    //   dd($package_id);
+        if ($package_id != '') {
+            $package = MPackageDetails::getPackageDetails($package_id);
+        }
 
+        $registration_pv                  = $package['package_pv'];
+        $packagename                      = $package['package_name'];
+        $package_duration                 = $package['package_duration'];
+        $package_direct_commission        = $package['package_direct_commission'];
+        $package_direct_commission_method = $package['package_direct_commission_method'];
+        $product_id                       = $package['eshop_products'];
+        $autoship_duration                = $package['package_duration'];
+        //send mail
+        $email_notification_user = MSiteDetails::getSiteSettingValue('email_notification_user');
+        // dd($email_notification_user);
+        $push_notification_admin = MSiteDetails::getSiteSettingValue('push_notification_admin');
+
+        $push_notification_user  = MSiteDetails::getSiteSettingValue('push_notification_user');
+
+         $usermailstatus = MUserNotifyStatus::userMailStatus($members_id);
+        if ($usermailstatus == 0) {
+        //    dd('fimciaslfnd');
+        $prefix = config('services.ihook.prefix');
+        // dd($prefix);
+        $records = DB::table($prefix . '_usernotify_meta')
+            ->where('user_id', $members_id)
+            ->whereIn('meta_key', ['notify_via', 'all_notify', 'register_notify'])
+            ->pluck('meta_value', 'meta_key'); // returns associative array: meta_key => meta_value
+    // dd($records);
+        $notify_via = $records['notify_via'] ?? 0;
+        $all_notify = $records['all_notify'] ?? 0;
+        $register_notify = $records['register_notify'] ?? 0;
+
+        if (($all_notify == 1 || $register_notify == 1) && in_array($notify_via, [1, 4])) {
+            $usermailstatus = 1;
+        }
+    }
+
+    if ($email_notification_user == '1' && $usermailstatus == '1') {
+    //   dd('function reached or not');
+    $mail_lang = MUserNotifyStatus::userMailLang($members_id);
+    // dd($mail_lang);
+    // Fetch template for user language
+    $record = DB::table($prefix . '_mailtemplates_table')
+        ->where('mail_default_name', 'package_purchase_notification')
+        ->where('mail_status', 1)
+        ->where('mail_lang', $mail_lang)
+        ->first();
+    // dd($record);
+    // Fallback to default language (id=1)
+    if (!$record) {
+        $record = DB::table($prefix . '_mailtemplates_table')
+            ->where('mail_default_name', 'package_purchase_notification')
+            ->where('mail_status', 1)
+            ->where('mail_lang', 1)
+            ->first();
+    }
+
+    if ($record) {
+        $body = $record->mail_content;
+
+        // Replace placeholders
+        $body = str_replace('[name]', $memberName, $body);
+        $body = str_replace('[packagename]', $packagename, $body);
+        $body = str_replace('[packageprice]', $site_currency . $paymenthistory_amount, $body);
+        $body = str_replace('[packageduration]', $package_duration . ' Days', $body);
+        $body = str_replace('[packagepv]', $registration_pv, $body);
+        $body = str_replace('[packagecommision]', $package_direct_commission . $package_direct_commission_method, $body);
+
+        MSendMail::send($record, $members_email, $body, $pdfpath, '', '');
+    }
+    }
         return true;
     }
 }

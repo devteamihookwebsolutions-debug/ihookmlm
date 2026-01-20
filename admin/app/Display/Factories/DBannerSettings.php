@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This class contains public functions related to DEpinManagement
+ * This class contains public functions related to DBannerSettings
  *
- * @package         DEpinManagement
+ * @package         DBannerSettings
  * @category        Display
  * @author          Ihook Dev Team
  * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html

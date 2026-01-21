@@ -1587,7 +1587,7 @@
                                                     class="py-2 text-xs text-gray-500 divide-y divide-gray-200 dark:text-gray-200 dark:divide-gray-800">
 
                                                     <li>
-                                                        <a href="cart-config.html"
+                                                        <a href="/admin/cartconfig"
                                                             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                             Cart Configuration
                                                         </a>

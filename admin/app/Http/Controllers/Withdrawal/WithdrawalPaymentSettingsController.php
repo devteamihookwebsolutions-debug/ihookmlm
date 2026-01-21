@@ -324,12 +324,14 @@ class WithdrawalPaymentSettingsController extends Controller
 
     public function update(Request $request)
     {
+      $prefix = config('services.ihook.prefix');
+
         if (!session('withdraw_otp_verified_at')) {
             return redirect()->back()->with('error', 'OTP ');
         }
 
         $request->validate([
-            'paymentsettings_id'   => 'required|integer|exists:ihook_withdrawpaymentsettings_table,paymentsettings_id',
+            'paymentsettings_id'   => 'required|integer|exists:' . $prefix . '_withdrawpaymentsettings_table,paymentsettings_id',
             'paymentsettings_mode' => 'nullable|in:live,sandbox',
         ]);
 

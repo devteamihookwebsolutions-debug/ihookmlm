@@ -63,7 +63,7 @@ class MatrixController extends Controller
         session()->flash('error_message', $e->getMessage());
         return redirect()->route('admin.matrixconfig.matrix');
     }
-}
+   }
 
     public function checkMatrixName(Request $request)
     {
@@ -72,6 +72,7 @@ class MatrixController extends Controller
 
     public function store(Request $request)
     {
+        $prefix = config('services.ihook.prefix');
         try {
             $step = $request->input('step', 1);
             $matrixData = session('matrix_data', []);
@@ -83,7 +84,7 @@ class MatrixController extends Controller
 
             if ($step == 1) {
                 $validated = $request->validate([
-                    'matrix_name' => 'required|string|max:255|unique:ihook_matrix_table,matrix_name', // Added unique validation like first code
+                    'matrix_name' => 'required|string|max:255|unique:' . $prefix . '_matrix_table,matrix_name', // Added unique validation like first code
                 ]);
                 $matrixData['matrix_name'] = $validated['matrix_name'];
                 session(['matrix_data' => $matrixData]);
@@ -93,7 +94,7 @@ class MatrixController extends Controller
                 return redirect()->route('admin.plans.create', 2)->with('success', 'Plan name saved!');
             } elseif ($step == 2) {
                 $validated = $request->validate([
-                    'matrix_type_id' => 'required|integer|exists:ihook_matrix_type_table,matrix_type_id',
+                    'matrix_type_id' => 'required|integer|exists:' . $prefix . '_matrix_type_table,matrix_type_id',
                 ]);
                 $matrixData['matrix_type_id'] = $validated['matrix_type_id'];
                 session(['matrix_data' => $matrixData]);
@@ -113,16 +114,15 @@ class MatrixController extends Controller
                 $finalData = [
                     'matrix_name' => $matrixData['matrix_name'],
                     'matrix_type_id' => $matrixData['matrix_type_id'],
-                    'matrix_status' => $validated['status'] ?? 0, // Default to 0 if not provided
-                    'matrix_default' => 1, // Default value if required
+                    'matrix_status' => $validated['status'] ?? 0,
+                    'matrix_default' => 1,
                     'created_by' => 1,
                     'created_on' => now(),
                     'updated_by' => 1,
                     'updated_on' => now(),
                 ];
 
-                $matrix = MMatrix::insertMatrix($finalData); // Adjust if it doesn't return the object/ID
-
+                $matrix = MMatrix::insertMatrix($finalData);
                         // Clear session
                 session()->forget('matrix_data');
 

@@ -30,6 +30,8 @@ class  LeadContactsController extends Controller
 
 public function currencysetting()
 {
+    $prefix = config('services.ihook.prefix');
+
     // Get currency settings from model
     $currencySettings = MLeadContacts::getcurrencyformat();
   // dd($currencySettings);
@@ -38,7 +40,7 @@ public function currencysetting()
 
  // dd($currencySeparator);
     // Get active currency from DB
-    $getcurrencyformat = DB::table('ihook_currencyformat')
+    $getcurrencyformat = DB::table('' . $prefix . '_currencyformat')
         ->where('id', 1)
         ->first();
 
@@ -49,7 +51,7 @@ $currencySymbol=$getcurrencyformat->currency;
 
 
 // GET CURRENCY DETAILS
-$currencyDetails = DB::table('ihook_currencysettings_table')
+$currencyDetails = DB::table('' . $prefix . '_currencysettings_table')
     ->where('currency_symbol', $currencySymbol)
     ->first();
 

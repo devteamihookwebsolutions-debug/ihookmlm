@@ -340,8 +340,9 @@ public function registration(): View
         ]);
 
         $epinCode = trim($request->epin_code);
+        $prefix = config('ihook.prefix', 'ihook');
 
-        $epin = DB::table('ihook_epin_table')
+        $epin = DB::table("{$prefix}_epin_table")
             ->where('epin_code', $epinCode)
             ->first();
 

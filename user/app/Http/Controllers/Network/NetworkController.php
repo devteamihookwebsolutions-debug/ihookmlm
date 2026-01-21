@@ -113,9 +113,9 @@ class NetworkController extends Controller
                     $matrix_id  = $request->query('sub2');
                 }
             }
-
+             $prefix = config('ihook.prefix', 'ihook');
             if (empty($matrix_id)) {
-                $first = DB::table('ihook_matrix_members_link_table')
+                $first = DB::table("{$prefix}_matrix_members_link_table")
                     ->where('members_id', $members_id)
                     ->orderBy('link_id')
                     ->first();

@@ -1184,23 +1184,16 @@
                                                 <ul
                                                     class="py-2 text-xs text-gray-500 divide-y divide-gray-200 dark:text-gray-200 dark:divide-gray-800">
 
-                                                    <li>
-
+                                                  <li>
                                                         <a href="{{route('showbanners/login')}}"
                                                             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                             Login/Forget Password Banners
-
-                                                        <a href="{{ route('showbanners', 'login') }}"
-                                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            Login / Forgot Password Banners
                                                         </a>
                                                     </li>
 
                                                     <li>
                                                         <a href="{{route('showbanners/register')}}"
                                                             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <a href="{{ route('showbanners', 'register') }}"
-                                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                             Register Banners
                                                         </a>
                                                     </li>

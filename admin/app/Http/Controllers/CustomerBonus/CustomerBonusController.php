@@ -8,7 +8,7 @@
  * @author          Ihook Dev Team
  * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
- * @version         Version 1.0
+ * @version         Version 0.1
 **/
 /****************************************************************************
  * Licence Agreement:
@@ -55,17 +55,19 @@ class CustomerBonusController extends Controller
      */
     public function updateCustomerBonus(Request $request)
     {
+            $prefix = config('services.ihook.prefix');
+
         // Validate the request
         $validated = $request->validate([
             'cab_bonus_name' => 'required|string|max:255',
             'cab_bonus_percentage' => 'required|numeric|min:0',
             'cab_bonus_percentage_type' => 'required|in:flat,%',
-            'cab_bonus_wallet_type' => 'nullable|exists:ihook_wallettype,wallet_type_id',
+            'cab_bonus_wallet_type' => 'nullable|exists:' . $prefix . '_wallettype,wallet_type_id',
             'cab_bonus_status' => 'required|in:0,1',
             'retail_commission_name' => 'required|string|max:255',
             'retail_commission_percenatge' => 'required|numeric|min:0',
             'retail_commission_percentage_type' => 'required|in:flat,%',
-            'retail_commission_wallet_type' => 'nullable|exists:ihook_wallettype,wallet_type_id',
+            'retail_commission_wallet_type' => 'nullable|exists:' . $prefix . '_wallettype,wallet_type_id',
             'retail_commission_status' => 'required|in:0,1',
         ]);
 

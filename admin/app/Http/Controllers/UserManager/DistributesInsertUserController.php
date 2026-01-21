@@ -41,6 +41,8 @@ public function index(){
 }
 public function fetch(Request $request)
 {
+            $prefix = config('services.ihook.prefix');
+
     // IMPORTANT: Tell Laravel to parse JSON input
     $input = $request->json()->all();
 
@@ -50,38 +52,40 @@ public function fetch(Request $request)
 
     // Build base query
     $query = Member::leftJoin(
-            'ihook_matrix_members_link_table',
-            'ihook_matrix_members_link_table.members_id',
+            '' . $prefix . '_matrix_members_link_table',
+            '' . $prefix . '_matrix_members_link_table.members_id',
             '=',
-            'ihook_members_table.members_id'
+            '' . $prefix . '_members_table.members_id'
         )
         ->leftJoin(
-            'ihook_members_table as directid',
+            '' . $prefix . '_members_table as directid',
             'directid.members_id',
             '=',
-            'ihook_matrix_members_link_table.direct_id'
+            '' . $prefix . '_matrix_members_link_table.direct_id'
         )
         ->select(
-            'ihook_members_table.*',
-            'ihook_matrix_members_link_table.link_id',
-            'ihook_matrix_members_link_table.members_parents',
+            '' . $prefix . '_members_table.*',
+            '' . $prefix . '_matrix_members_link_table.link_id',
+            '' . $prefix . '_matrix_members_link_table.members_parents',
             'directid.members_username as directid_username'
         );
 
 
 
-if (!empty($input['search']) && isset($input['search'][0]['key'])) {
+    if (!empty($input['search']) && isset($input['search'][0]['key'])) {
 
-    $searchKey = $input['search'][0]['key'];
+        $searchKey = $input['search'][0]['key'];
+        $prefix = config('services.ihook.prefix');
 
-    $query->where(function ($q) use ($searchKey) {
-        $q->where('ihook_members_table.members_username', 'LIKE', "%{$searchKey}%")
-          ->orWhere('ihook_members_table.members_email', 'LIKE', "%{$searchKey}%")
-          ->orWhere('ihook_members_table.members_firstname', 'LIKE', "%{$searchKey}%")
-          ->orWhere('ihook_members_table.members_lastname', 'LIKE', "%{$searchKey}%")
-          ->orWhere('directid.members_username', 'LIKE', "%{$searchKey}%");
-    });
-}
+        $query->where(function ($q) use ($searchKey, $prefix) { // <-- add $prefix here
+            $q->where($prefix . '_members_table.members_username', 'LIKE', "%{$searchKey}%")
+            ->orWhere($prefix . '_members_table.members_email', 'LIKE', "%{$searchKey}%")
+            ->orWhere($prefix . '_members_table.members_firstname', 'LIKE', "%{$searchKey}%")
+            ->orWhere($prefix . '_members_table.members_lastname', 'LIKE', "%{$searchKey}%")
+            ->orWhere('directid.members_username', 'LIKE', "%{$searchKey}%");
+        });
+    }
+
 
     if (!empty($input['where'])) {
 
@@ -98,14 +102,14 @@ if (!empty($input['search']) && isset($input['search'][0]['key'])) {
 
             //  Map grid fields to DB columns (IMPORTANT)
             $columnMap = [
-                'members_id'         => 'ihook_members_table.members_id',
-                'members_username'   => 'ihook_members_table.members_username',
-                'members_email'      => 'ihook_members_table.members_email',
-                'members_firstname'  => 'ihook_members_table.members_firstname',
-                'members_lastname'   => 'ihook_members_table.members_lastname',
+                'members_id'         => '' . $prefix . '_members_table.members_id',
+                'members_username'   => '' . $prefix . '_members_table.members_username',
+                'members_email'      => '' . $prefix . '_members_table.members_email',
+                'members_firstname'  => '' . $prefix . '_members_table.members_firstname',
+                'members_lastname'   => '' . $prefix . '_members_table.members_lastname',
                 'directid_username'  => 'directid.members_username',
-                'members_status'     => 'ihook_members_table.members_status',
-                'account_status'     => 'ihook_members_table.account_status',
+                'members_status'     => '' . $prefix . '_members_table.members_status',
+                'account_status'     => '' . $prefix . '_members_table.account_status',
             ];
 
             // Apply sorting only if column is allowed
@@ -115,7 +119,7 @@ if (!empty($input['search']) && isset($input['search'][0]['key'])) {
         }
     } else {
         // Default sorting
-        $query->orderByDesc('ihook_members_table.members_id');
+        $query->orderByDesc('' . $prefix . '_members_table.members_id');
     }
 
 
@@ -183,10 +187,12 @@ public function adddistrbutors()
 
     public function insertUser(Request $request)
     {
+                $prefix = config('services.ihook.prefix');
+
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'user_name' => 'required',
-            'email' => 'required|email|unique:ihook_members_table,members_email',
+            'email' => 'required|email|unique:' . $prefix . '_members_table,members_email',
             'first_name' => 'required',
             'last_name' => 'required',
             'password' => 'required|min:8',

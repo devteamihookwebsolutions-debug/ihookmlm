@@ -116,14 +116,15 @@ class GenerationBonusController extends Controller
      */
     public function store(Request $request)
     {
+          $prefix = config('services.ihook.prefix');
         // Validate input
         $request->validate([
-            'matrix_id' => 'required|integer|exists:ihook_matrix_table,matrix_id',
+            'matrix_id' => 'required|integer|exists:' . $prefix . '_matrix_table,matrix_id',
             'generationalbonus_name' => 'required|string|max:255',
             'commission_percentage' => 'required|in:1,2',
-            'wallet' => 'required|integer|exists:ihook_wallettype,wallet_type_id',
+            'wallet' => 'required|integer|exists:' . $prefix . '_wallettype,wallet_type_id',
             'generationalbonus_status' => 'nullable|in:0,1',
-            'r_rank.*' => 'required|integer|exists:ihook_ranksetting,rank_id',
+            'r_rank.*' => 'required|integer|exists:' . $prefix . '_ranksetting,rank_id',
             'r_own.*' => 'required|numeric|min:0',
             'r_admin.*' => 'required|numeric|min:0',
             'r_method.*' => 'required|in:1,2',
@@ -233,12 +234,13 @@ class GenerationBonusController extends Controller
      */
     public function update(Request $request, $matrix_id)
     {
+        $prefix = config('services.ihook.prefix');
         // Validate input, excluding r_rank since it's read-only
         $request->validate([
-            'matrix_id' => 'required|integer|exists:ihook_matrix_table,matrix_id',
+            'matrix_id' => 'required|integer|exists:' . $prefix . '_matrix_table,matrix_id',
             'generationalbonus_name' => 'required|string|max:255',
             'commission_percentage' => 'required|in:1,2',
-            'wallet' => 'required|integer|exists:ihook_wallettype,wallet_type_id',
+            'wallet' => 'required|integer|exists:' . $prefix . '_wallettype,wallet_type_id',
             'generationalbonus_status' => 'nullable|in:0,1',
             'r_own.*' => 'required|numeric|min:0',
             'r_admin.*' => 'required|numeric|min:0',

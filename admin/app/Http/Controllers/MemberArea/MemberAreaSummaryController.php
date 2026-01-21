@@ -223,15 +223,16 @@ class MemberAreaSummaryController extends Controller
 
     public function updateContactDetails(Request $request)
     {
+        $prefix = config('services.ihook.prefix');
         $request->validate([
-            'members_id' => 'required|exists:ihook_members_table,members_id',
+            'members_id' => 'required|exists:' . $prefix . '_members_table,members_id',
             'email' => 'required|email|max:70',
             'phone' => 'nullable|string|max:30|regex:/^[0-9\-]+$/',
-            'country' => 'nullable|exists:ihook_country_master_table,country_master_id',
+            'country' => 'nullable|exists:' . $prefix . '_country_master_table,country_master_id',
             'city' => 'nullable|string|max:30',
             'address' => 'nullable|string',
             'address2' => 'nullable|string|max:1000',
-            'state' => 'nullable|exists:ihook_state_table,state_id',
+            'state' => 'nullable|exists:' . $prefix . '_state_table,state_id',
             'zip' => 'nullable|string|max:30',
         ]);
 
@@ -257,13 +258,14 @@ class MemberAreaSummaryController extends Controller
     }
     public function updateBillingDetails(Request $request)
     {
+        $prefix = config('services.ihook.prefix');
         $request->validate([
-            'members_id' => 'required|exists:ihook_members_table,members_id',
-            'country' => 'nullable|exists:ihook_country_master_table,country_master_id',
+            'members_id' => 'required|exists:' . $prefix . '_members_table,members_id',
+            'country' => 'nullable|exists:' . $prefix . '_country_master_table,country_master_id',
             'city' => 'nullable|string|max:30',
             'address' => 'nullable|string',
             'address2' => 'nullable|string|max:1000',
-            'state' => 'nullable|exists:ihook_state_table,state_id',
+            'state' => 'nullable|exists:' . $prefix . '_state_table,state_id',
             'zip' => 'nullable|string|max:30',
         ]);
 
@@ -348,9 +350,10 @@ class MemberAreaSummaryController extends Controller
 
 public function updateWebsiteDetails(Request $request)
 {
+    $prefix = config('services.ihook.prefix');
     try {
         $validated = $request->validate([
-            'id' => 'required|exists:ihook_members_table,members_id',
+            'id' => 'required|exists:' . $prefix . '_members_table,members_id',
             'mobile' => 'nullable|string|max:30|regex:/^[\+0-9\s\-]*$/',
             'message' => 'nullable|string|max:1000',
         ], [
@@ -399,10 +402,11 @@ public function updateWebsiteDetails(Request $request)
     public function updateSocialMediaDetails(Request $request)
     {
         // dd($request->all());
+        $prefix = config('services.ihook.prefix');
 
         try {
             $validated = $request->validate([
-                'id' => 'required|exists:ihook_members_table,members_id',
+                'id' => 'required|exists:' . $prefix . '_members_table,members_id',
                 'facebook' => 'nullable|url|max:255',
                 'twitter' => 'nullable|url|max:255',
                 'youtube' => 'nullable|url|max:255',
@@ -621,8 +625,10 @@ public function updateWebsiteDetails(Request $request)
 
     public function savePasswordDetail(Request $request)
     {
+                $prefix = config('services.ihook.prefix');
+
         $request->validate([
-            'members_id' => 'required|exists:ihook_members_table,members_id',
+            'members_id' => 'required|exists:' . $prefix . '_members_table,members_id',
             'currentpassword' => 'required|string',
             'newpassword' => [
                 'required',
@@ -669,8 +675,10 @@ public function updateWebsiteDetails(Request $request)
 
     public function contactUs(Request $request, $members_id)
     {
+                $prefix = config('services.ihook.prefix');
+
         $request->validate([
-            'members_id' => 'required|exists:ihook_members_table,members_id',
+            'members_id' => 'required|exists:' . $prefix . '_members_table,members_id',
         ]);
 
         try {
@@ -799,18 +807,19 @@ public function updateWebsiteDetails(Request $request)
 
     public function UpdateUserForm(Request $request, $id)
     {
+      $prefix = config('services.ihook.prefix');
         // dd($request->all());
         $member = MemberAreaSummary::where('members_id', $id)->firstOrFail();
 
         $validator = Validator::make($request->all(), [
-            'members_username' => 'required|string|max:50|unique:ihook_members_table,members_username,' . $id . ',members_id',
-            'members_email'    => 'required|email|max:70|unique:ihook_members_table,members_email,' . $id . ',members_id',
+            'members_username' => 'required|string|max:50|unique:' . $prefix . '_members_table,members_username,' . $id . ',members_id',
+            'members_email'    => 'required|email|max:70|unique:' . $prefix . '_members_table,members_email,' . $id . ',members_id',
             'members_phone'    => 'nullable|string|max:30',
             'members_firstname'=> 'nullable|string|max:50',
             'members_lastname' => 'nullable|string|max:50',
             'members_dob'      => 'nullable|date',
-            'members_country'  => 'nullable|exists:ihook_country_master_table,country_master_id',
-            'members_state'    => 'nullable|exists:ihook_state_table,state_id',
+            'members_country'  => 'nullable|exists:' . $prefix . '_country_master_table,country_master_id',
+            'members_state'    => 'nullable|exists:' . $prefix . '_state_table,state_id',
             'members_city'     => 'nullable|string|max:50',
             'members_zip'      => 'nullable|string|max:20',
             'members_address'  => 'nullable|string|max:500',
@@ -935,13 +944,14 @@ public function updateWebsiteDetails(Request $request)
 
     public function approvePendingPayment(Request $request)
     {
+         $prefix = config('services.ihook.prefix');
         $request->validate([
             'member_id'  => 'required|integer',
             'matrix_id'  => 'required|integer',
             'payment_id' => 'required|integer',
         ]);
 
-            $updated = DB::table('ihook_paymenthistory_table')
+            $updated = DB::table('' . $prefix . '_paymenthistory_table')
                 ->where('paymenthistory_member_id', $request->member_id)
                 ->where('matrix_id', $request->matrix_id)
                 ->where('paymenthistory_id', $request->payment_id)
@@ -958,13 +968,13 @@ public function updateWebsiteDetails(Request $request)
             }
 
             try {
-                $columns = DB::getSchemaBuilder()->getColumnListing('ihook_matrix_members_link_table');
+                $columns = DB::getSchemaBuilder()->getColumnListing('' . $prefix . '_matrix_members_link_table');
 
                 $possiblePassupCols = ['passup_id', 'members_passup_direct_id', 'sponsor_id', 'parent_id', 'direct_sponsor_id'];
                 $passupCol = collect($possiblePassupCols)->first(fn($col) => in_array($col, $columns));
 
                 if ($passupCol && in_array('spillover_id', $columns)) {
-                    DB::statement("UPDATE ihook_matrix_members_link_table
+                    DB::statement("UPDATE ' . $prefix . '_matrix_members_link_table
                                 SET spillover_id = IFNULL(spillover_id, ?)
                                 WHERE members_id = ? AND matrix_id = ?",
                                 [$passupCol, $request->member_id, $request->matrix_id]);
@@ -974,10 +984,10 @@ public function updateWebsiteDetails(Request $request)
             }
 
             try {
-                $memberCols = DB::getSchemaBuilder()->getColumnListing('ihook_members_table');
+                $memberCols = DB::getSchemaBuilder()->getColumnListing('' . $prefix . '_members_table');
 
                 if (in_array('members_status', $memberCols)) {
-                    DB::table('ihook_members_table')
+                    DB::table('' . $prefix . '_members_table')
                         ->where('members_id', $request->member_id)
                         ->update(['members_status' => 1]);  // ← This is the correct value
                 }
@@ -1027,12 +1037,13 @@ public function updateWebsiteDetails(Request $request)
     }
     private function earningReport($memberId, $onlyProcessed)
     {
+        $prefix = config('services.ihook.prefix');
         try {
             // Use correct table names from your models
-            $historyTable = 'ihook_history_table';
-            $historyTypeTable = 'ihook_history_type_table';
-            $matrixLinkTable = 'ihook_matrix_members_link_table';
-            $membersTable = 'ihook_members_table';
+            $historyTable = '' . $prefix . '_history_table';
+            $historyTypeTable = '' . $prefix . '_history_type_table';
+            $matrixLinkTable = '' . $prefix . '_matrix_members_link_table';
+            $membersTable = '' . $prefix . '_members_table';
 
             $builder = DB::table("{$historyTable} AS h")
                 ->leftJoin("{$matrixLinkTable} AS a", 'a.members_id', '=', 'h.history_member_id')
@@ -1105,7 +1116,8 @@ public function updateWebsiteDetails(Request $request)
     }
     private function calculateWalletBalance($memberId, $walletType)
     {
-        $types = DB::table('ihook_history_type_table')
+       $prefix = config('services.ihook.prefix');
+        $types = DB::table('' . $prefix . '_history_type_table')
             ->get(['history_type_name', 'history_credit_type', 'history_debit_type']);
 
         $credit = $debit = [];
@@ -1118,7 +1130,7 @@ public function updateWebsiteDetails(Request $request)
         $creditSum = $debitSum = 0;
 
         if ($credit) {
-            $creditSum = DB::table('ihook_history_table')
+            $creditSum = DB::table('' . $prefix . '_history_table')
                 ->where('history_member_id', $memberId)
                 ->where('history_wallet_type', $walletType)
                 ->whereIn('history_type', $credit)
@@ -1126,7 +1138,7 @@ public function updateWebsiteDetails(Request $request)
         }
 
         if ($debit) {
-            $debitSum = DB::table('ihook_history_table')
+            $debitSum = DB::table('' . $prefix . '_history_table')
                 ->where('history_member_id', $memberId)
                 ->where('history_wallet_type', $walletType)
                 ->whereIn('history_type', $debit)
@@ -1138,8 +1150,9 @@ public function updateWebsiteDetails(Request $request)
     }
     public function updatePersonalInfo(Request $request)
     {
+       $prefix = config('services.ihook.prefix');
         $validated = $request->validate([
-            'members_id' => 'required|exists:ihook_members_table,members_id',
+            'members_id' => 'required|exists:' . $prefix . '_members_table,members_id',
             'firstname'     => 'required|string|max:30',
             'lastname'      => 'required|string|max:30',
             'dob'           => 'nullable|date',

@@ -388,6 +388,8 @@ class PremiumLearningLessonController extends Controller
 
     public function insertCourseAnsFaq(Request $request, $id)
     {
+          $prefix = config('services.ihook.prefix');
+
         $course_id = (int) $id;
 
         if ($course_id <= 0) {
@@ -414,7 +416,7 @@ class PremiumLearningLessonController extends Controller
             }
 
             if (!empty($insertData)) {
-                DB::table('ihook_premium_courses_faq')->insert($insertData);
+                DB::table('' . $prefix . '_premium_courses_faq')->insert($insertData);
             }
 
             $existing_ids       = $request->input('existing_faq_id', []);
@@ -429,7 +431,7 @@ class PremiumLearningLessonController extends Controller
                 $answer   = trim($existing_answers[$index] ?? '');
 
                 if ($question !== '' && $answer !== '') {
-                    DB::table('ihook_premium_courses_faq')
+                    DB::table('' . $prefix . '_premium_courses_faq')
                         ->where('id', $faq_id)
                         ->where('courses_id', $course_id)
                         ->update([
@@ -510,6 +512,7 @@ class PremiumLearningLessonController extends Controller
 
     public function deleteFaqLession($course_id, $faq_id)
     {
+       $prefix = config('services.ihook.prefix');
         $course_id = (int) $course_id;
         $faq_id = (int) $faq_id;
 
@@ -520,7 +523,7 @@ class PremiumLearningLessonController extends Controller
             ], 400);
         }
 
-        $deleted = DB::table('ihook_premium_courses_faq')
+        $deleted = DB::table('' . $prefix . '_premium_courses_faq')
             ->where('courses_id', $course_id)
             ->where('id', $faq_id)
             ->delete();
@@ -541,8 +544,6 @@ class PremiumLearningLessonController extends Controller
 
     public function deleteLession()
     {
-
-
         try {
             MPremiumLearningLesson::deleteLession();
             return redirect()->back();

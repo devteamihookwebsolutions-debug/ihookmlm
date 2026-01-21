@@ -42,9 +42,10 @@ class CityController extends Controller
 
     public function store(Request $request)
     {
+         $prefix = config('services.ihook.prefix');
         $request->validate([
-            'country_id' => 'required|integer|exists:ihook_country_master_table,country_master_id',
-            'state_id' => 'required|integer|exists:ihook_state_table,state_id',
+            'country_id' => 'required|integer|exists:' . $prefix . '_country_master_table,country_master_id',
+            'state_id' => 'required|integer|exists:' . $prefix . '_state_table,state_id',
             'city_name' => 'required|string|max:250',
         ]);
 
@@ -67,9 +68,10 @@ class CityController extends Controller
 
     public function update(Request $request, City $city)
     {
+         $prefix = config('services.ihook.prefix');
         $request->validate([
-            'country_id' => 'required|integer|exists:ihook_country_master_table,country_master_id',
-            'state_id' => 'required|integer|exists:ihook_state_table,state_id',
+            'country_id' => 'required|integer|exists:' . $prefix . '_country_master_table,country_master_id',
+            'state_id' => 'required|integer|exists:' . $prefix . '_state_table,state_id',
             'city_name' => 'required|string|max:250',
         ]);
 

@@ -117,12 +117,16 @@ class GenealogyController extends Controller
             return response()->json([]);
         }
 
+        $prefix = config('services.ihook.prefix', 'ihook');
+        $matrixTable = "{$prefix}_matrix_members_link_table";
+        $membersTable = "{$prefix}_members_table";
+
         // Now pass the decoded matrix_id into your query:
-        $members = DB::table('ihook_matrix_members_link_table')
-            ->join('ihook_members_table', 'ihook_members_table.members_id', '=', 'ihook_matrix_members_link_table.members_id')
-            ->where('ihook_matrix_members_link_table.matrix_id', $matrix_id) // ← decode used here
-            ->where('ihook_members_table.members_username', 'LIKE', "%{$search}%")
-            ->select('ihook_members_table.members_id', 'ihook_members_table.members_username')
+        $members = DB::table("{$matrixTable}")
+            ->join($membersTable, "{$membersTable}.members_id", '=', "{$matrixTable}.members_id")
+            ->where("{$matrixTable}.matrix_id", $matrix_id) // ← decode used here
+            ->where("{$membersTable}.members_username", 'LIKE', "%{$search}%")
+            ->select("{$membersTable}.members_id", "{$membersTable}.members_username")
             ->limit(10)
             ->get();
     // dd($members);

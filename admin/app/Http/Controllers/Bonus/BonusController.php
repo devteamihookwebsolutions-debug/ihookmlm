@@ -71,10 +71,11 @@ class BonusController extends Controller
      */
 public function store(Request $request)
 {
+    $prefix = config('services.ihook.prefix');
     // dd($request->all());
     $validated = $request->validate([
         'title' => 'required|string|max:255',
-        'matrix_id' => 'required|exists:ihook_matrix_table,matrix_id',
+        'matrix_id' => 'required|exists:' . $prefix . '_matrix_table,matrix_id',
         'periodstatus' => 'nullable|boolean',
         'bonus_to' => 'required|in:0,1',
         'Bonus_Type' => 'required|in:1,2',
@@ -84,7 +85,7 @@ public function store(Request $request)
         'maximumlimit' => 'nullable|numeric|min:0',
         'admin_approve_bonus' => 'nullable|boolean',
         'workson' => 'required|string|in:Registration,Recruit New User,Upgrade Network,Package Upgrade,Auto',
-        'accountype' => 'required|exists:ihook_wallettype,wallet_type_id',
+        'accountype' => 'required|exists:' . $prefix . '_wallettype,wallet_type_id',
         'crypto_currency' => 'nullable|string|max:255',
         'crypto_currency_id' => 'nullable|string|max:45',
         'bonusday' => 'nullable|integer|between:1,31',

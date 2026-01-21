@@ -26,13 +26,14 @@ class PackageController extends Controller
 {
     public function packageDetails()
     {
-        $paidType = DB::table('ihook_matrix_configuration_table')
+        $prefix = config('ihook.prefix', 'ihook');
+        $paidType = DB::table("{$prefix}_matrix_configuration_table")
             ->where('matrix_key', 'members_paid_account_type')
             ->value('matrix_value');
 
         if ($paidType == '0') {
             // ONE TIME MODE
-            $config = DB::table('ihook_matrix_configuration_table')
+            $config = DB::table("{$prefix}_matrix_configuration_table")
                 ->whereIn('matrix_key', [
                     'onetime_image',
                     'registration_fee',
@@ -61,7 +62,8 @@ class PackageController extends Controller
         }
 
         // PAID PACKAGES MODE
-        $packages = DB::table('ihook_package_table')
+        $prefix = config('ihook.prefix', 'ihook');
+        $packages = DB::table("{$prefix}_package_table")
             ->where('package_status', 1)
             ->select(
                 'package_id',

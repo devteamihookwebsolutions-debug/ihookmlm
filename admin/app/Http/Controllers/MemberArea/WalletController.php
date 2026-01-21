@@ -40,11 +40,12 @@ class WalletController extends Controller
     // === Payout History (unchanged) ===
     public function payoutHistory($memberId)
     {
+      $prefix = config('services.ihook.prefix');
         Log::info("=== PAYOUT HISTORY START ===", ['member_id' => $memberId]);
 
         try {
-            $historyTable  = 'ihook_history_table';
-            $accountsTable = 'ihook_members_accounts_table';
+            $historyTable  = '' . $prefix . '_history_table';
+            $accountsTable = '' . $prefix . '_members_accounts_table';
 
             $records = DB::table("{$historyTable} AS h")
                 ->where('h.history_member_id', $memberId)
@@ -111,9 +112,10 @@ class WalletController extends Controller
 
 public function showUserEwallet($memberId)
 {
+    $prefix = config('services.ihook.prefix');
     Log::info("Fetching E-Wallet History for Member ID: {$memberId}");
 
-    $rows = DB::table('ihook_history_table')
+    $rows = DB::table('' . $prefix . '_history_table')
         ->where('history_member_id', $memberId)
         ->where('history_wallet_type', 2) // E-Wallet
         ->orderByDesc('history_datetime')

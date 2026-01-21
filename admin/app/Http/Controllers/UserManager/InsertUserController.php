@@ -69,9 +69,11 @@ class InsertUserController extends Controller
      */
     protected function validateInsertUser(Request $request)
     {
+          $prefix = config('services.ihook.prefix');
+
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:ihook_members_table,members_email',
-            'user_name' => 'required|unique:ihook_members_table,members_username',
+            'email' => 'required|email|unique:' . $prefix . '_members_table,members_email',
+            'user_name' => 'required|unique:' . $prefix . '_members_table,members_username',
             'first_name' => 'required',
             'last_name' => 'required',
             'password' => 'required|min:8',

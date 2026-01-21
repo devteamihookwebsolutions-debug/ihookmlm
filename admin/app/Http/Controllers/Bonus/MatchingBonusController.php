@@ -93,9 +93,10 @@ class MatchingBonusController extends Controller
 
   public function store(Request $request)
 {
+  $prefix = config('services.ihook.prefix');
     try {
         $validated = $request->validate([
-            'matrix_id' => 'required|exists:ihook_matrix_table,matrix_id',
+            'matrix_id' => 'required|exists:' . $prefix . '_matrix_table,matrix_id',
             'matchingbonus_name' => 'required|string|max:240',
             'commissionsent_type' => 'required|in:1,2,3',
             'matchbonus_status' => 'required|in:0,1',
@@ -110,7 +111,7 @@ class MatchingBonusController extends Controller
             'r_commissionpercentage.*' => 'nullable|in:1,2',
             'r_method.*' => 'nullable|in:1',
             'r_wallet.*' => 'nullable|in:1,2',
-            'r_rank.*' => 'nullable|exists:ihook_ranksetting,rank_id',
+            'r_rank.*' => 'nullable|exists:' . $prefix . '_ranksetting,rank_id',
         ]);
 
         if (MatchingBonus::checkNameExists($validated['matchingbonus_name'], $validated['matrix_id'])) {
@@ -192,9 +193,10 @@ return redirect()->route('matchbonus.index')->with('success', 'Matching bonus ad
 
     public function update(Request $request, $id)
     {
+         $prefix = config('services.ihook.prefix');
         try {
             $validated = $request->validate([
-                'matrix_id' => 'required|exists:ihook_matrix_table,matrix_id',
+                'matrix_id' => 'required|exists:' . $prefix . '_matrix_table,matrix_id',
                 'matchingbonus_name' => 'required|string|max:240',
                 'commissionsent_type' => 'required|in:1,2,3',
                 'matchbonus_status' => 'required|in:0,1',
@@ -209,7 +211,7 @@ return redirect()->route('matchbonus.index')->with('success', 'Matching bonus ad
                 'r_commissionpercentage.*' => 'nullable|in:1,2',
                 'r_method.*' => 'nullable|in:1',
                 'r_wallet.*' => 'nullable|in:1,2',
-                'r_rank.*' => 'nullable|exists:ihook_ranksetting,rank_id',
+                'r_rank.*' => 'nullable|exists:' . $prefix . '_ranksetting,rank_id',
             ]);
 
             if (MatchingBonus::checkNameExists($validated['matchingbonus_name'], $validated['matrix_id'], $id)) {

@@ -203,12 +203,12 @@ class GenealogyController extends Controller
     }
     public function getMembers($matrixId, $query)
     {
-        // dd($matrixId);
-    $members = DB::table('ihook_matrix_members_link_table')
-        ->join('ihook_members_table', 'ihook_members_table.members_id', '=', 'ihook_matrix_members_link_table.members_id')
-        ->where('ihook_matrix_members_link_table.matrix_id', $matrixId)
-        ->where('ihook_members_table.members_username', 'LIKE', "%{$query}%")
-        ->select('ihook_members_table.members_id', 'ihook_members_table.members_username')
+    $prefix = config('services.ihook.prefix');
+    $members = DB::table('' . $prefix . '_matrix_members_link_table')
+        ->join('' . $prefix . '_members_table', '' . $prefix . '_members_table.members_id', '=', '' . $prefix . '_matrix_members_link_table.members_id')
+        ->where('' . $prefix . '_matrix_members_link_table.matrix_id', $matrixId)
+        ->where('' . $prefix . '_members_table.members_username', 'LIKE', "%{$query}%")
+        ->select('' . $prefix . '_members_table.members_id', '' . $prefix . '_members_table.members_username')
         ->limit(10)
         ->get();
 

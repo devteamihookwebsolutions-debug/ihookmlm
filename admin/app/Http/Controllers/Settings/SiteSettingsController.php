@@ -28,8 +28,9 @@ class SiteSettingsController extends Controller
 {
     public function index()
     {
+               $prefix = config('services.ihook.prefix');
         $settings = SiteSetting::pluck('sitesettings_value', 'sitesettings_name')->toArray();
-        $matrices = DB::table('ihook_matrix_table')->pluck('matrix_name', 'matrix_id')->toArray();
+        $matrices = DB::table('' . $prefix . '_matrix_table')->pluck('matrix_name', 'matrix_id')->toArray();
         $default_logo = asset('assets/img/default-logo.png'); // Adjust path as needed
         $default_favicon = asset('assets/img/default-favicon.png'); // Adjust path as needed
 
@@ -38,6 +39,8 @@ class SiteSettingsController extends Controller
 
     public function store(Request $request)
     {
+        $prefix = config('services.ihook.prefix');
+
         // dd($request->all());
         try {
             $fileFields = ['site_logo', 'site_logo_dark', 'login_site_logo', 'register_logo', 'site_favicon'];
@@ -68,7 +71,7 @@ class SiteSettingsController extends Controller
 
             if ($request->has('default_matrix')) {
                 $matrixId = $request->input('default_matrix');
-                $matrixName = DB::table('ihook_matrix_table')
+                $matrixName = DB::table('' . $prefix . '_matrix_table')
                     ->where('matrix_id', $matrixId)
                     ->value('matrix_name');
 

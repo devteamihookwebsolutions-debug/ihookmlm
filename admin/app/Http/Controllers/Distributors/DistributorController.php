@@ -39,17 +39,18 @@ class  DistributorController extends Controller
 
   public function index()
   {
+            $prefix = config('services.ihook.prefix');
 
-$data = Member::leftJoin(
-        'ihook_matrix_members_link_table',
-        'ihook_matrix_members_link_table.members_id',
+    $data = Member::leftJoin(
+        '' . $prefix . '_matrix_members_link_table',
+        '' . $prefix . '_matrix_members_link_table.members_id',
         '=',
-        'ihook_members_table.members_id'
+        '' . $prefix . '_members_table.members_id'
     )
     ->select(
-        'ihook_members_table.*',
-        'ihook_matrix_members_link_table.link_id',
-        'ihook_matrix_members_link_table.members_parents'
+        '' . $prefix . '_members_table.*',
+        '' . $prefix . '_matrix_members_link_table.link_id',
+        '' . $prefix . '_matrix_members_link_table.members_parents'
     )
     ->paginate(10);
 
@@ -112,9 +113,10 @@ public function adddistrbutors()
   }
 public function add(Request $request)
     {
+        $prefix = config('services.ihook.prefix');
           $validator = Validator::make($request->all(), [
             'txtusername' => 'required',
-             'members_email' => 'required|email|unique:ihook_members_table,members_email',
+             'members_email' => 'required|email|unique:' . $prefix . '_members_table,members_email',
             'txtfirstname' => 'required',
             'txtlastname' => 'required',
             'txtpassword' => 'required|min:8',

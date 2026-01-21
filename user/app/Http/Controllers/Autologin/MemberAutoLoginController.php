@@ -37,8 +37,11 @@ class MemberAutoLoginController extends Controller
      */
     public function generateToken(Request $request): \Illuminate\Http\JsonResponse
     {
+        $prefix = config('services.ihook.prefix', 'ihook');
+        $table  = $prefix . '_members_table';
+
         $request->validate([
-            'member_id' => 'required|exists:ihook_members_table,members_id'
+            'member_id' => "required|exists:$table,members_id"
         ]);
 
         $token = encrypt($request->member_id);

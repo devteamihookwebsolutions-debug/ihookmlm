@@ -85,18 +85,19 @@ class RankController extends Controller
 
     public function store(Request $request)
     {
+       $prefix = config('services.ihook.prefix');
         // Log the incoming request data for debugging
         Log::info('Store method called', $request->all());
 
         // Validate request
         $validated = $request->validate([
-            'matrixid' => 'required|exists:ihook_matrix_table,matrix_id',
+            'matrixid' => 'required|exists:' . $prefix . '_matrix_table,matrix_id',
             'rank_title' => 'required|string|max:255',
             'rank_color' => 'required|string',
             'rank_icon' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
             'rank_icon_id' => 'nullable|string',
             'bonus' => 'nullable|numeric|min:0',
-            'wallet' => 'required|exists:ihook_wallettype,wallet_type_id',
+            'wallet' => 'required|exists:' . $prefix . '_wallettype,wallet_type_id',
             'directbonus' => 'nullable|numeric|min:0',
             'networkbonus' => 'nullable|numeric|min:0',
             'maxbonus' => 'nullable|numeric|min:0',
@@ -286,16 +287,17 @@ class RankController extends Controller
 
     public function update(Request $request)
     {
+       $prefix = config('services.ihook.prefix');
         // Validate request
         $validated = $request->validate([
-            'rank_id' => 'required|integer|exists:ihook_ranksetting,rank_id',
-            'matrixid' => 'required|exists:ihook_matrix_table,matrix_id',
+            'rank_id' => 'required|integer|exists:' . $prefix . '_ranksetting,rank_id',
+            'matrixid' => 'required|exists:' . $prefix . '_matrix_table,matrix_id',
             'rank_title' => 'required|string|max:255',
             'rank_color' => 'required|string',
             'rank_icon' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
             'rank_icon_id' => 'nullable|string',
             'bonus' => 'nullable|numeric|min:0',
-           'wallet' => 'required|exists:ihook_wallettype,wallet_type_id',
+           'wallet' => 'required|exists:' . $prefix . '_wallettype,wallet_type_id',
             'directbonus' => 'nullable|numeric|min:0',
             'networkbonus' => 'nullable|numeric|min:0',
             'maxbonus' => 'nullable|numeric|min:0',

@@ -172,10 +172,11 @@ public function imageUpload(Request $request)
 
 public function saveContent(Request $request)
 {
+    $prefix = config('services.ihook.prefix');
     $data = $request->json()->all();
 
     // dd($data);
-    $table = env('IHOOK_PREFIX', 'ihook') . '_newsletter_buildertemplate_table';
+    $table =  '' . $prefix . '_newsletter_buildertemplate_table';
     $categoryTemplatesId = trim($data['template_name']);
 
     // Get template

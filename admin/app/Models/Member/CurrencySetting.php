@@ -24,7 +24,13 @@ use Illuminate\Database\Eloquent\Model;
 class  CurrencySetting extends Model
 {
 
-   protected $table = 'ihook_currencysettings_table';
-       protected $primaryKey = 'currency_id'; // adjust if different
+   protected $table;
+       protected $primaryKey = 'currency_id';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_currencysettings_table';
+    }
     public $timestamps = false;
 }

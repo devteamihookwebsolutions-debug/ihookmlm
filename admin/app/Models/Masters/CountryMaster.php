@@ -25,9 +25,15 @@ use Illuminate\Database\Eloquent\Model;
 class CountryMaster extends Model {
     use HasFactory;
 
-    protected $table = 'ihook_country_master_table';
+    protected $table;
     protected $primaryKey = 'country_master_id';
-    public $incrementing = true;
+
+ public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_country_master_table';
+    }    public $incrementing = true;
     // Enable auto-increment for country_master_id
     protected $fillable = [ 'sortname', 'country_master_name' ];
 

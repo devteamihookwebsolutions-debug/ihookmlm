@@ -23,8 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class SiteSetting extends Model
 {
-    protected $table = 'ihook_sitesettings_table';
+    protected $table;
     protected $primaryKey = 'sitesettings_id';
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_sitesettings_table';
+    }
     public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = false;

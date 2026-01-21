@@ -29,31 +29,26 @@ public static function showEwalletManagement($records, $iTotal)
 {
     // dd('function reached');
     $output = '';
-
+     $prefix = config('services.ihook.prefix');
     if (count((array) $records) > 0) {
 
-        //  Get site currency once
-        // $where = 'WHERE sitesettings_name="site_currency"';
-        // $site_currency_data = MSiteDetails::getSiteSettingsDetails($where);
-        // $site_currency = is_array($site_currency_data) && isset($site_currency_data[0]['sitesettings_value'])
-        //     ? $site_currency_data[0]['sitesettings_value']
-        //     : '';
+
 $where = ['sitesettings_name' => 'site_currency'];
 $site_currency = MSiteDetails::getSiteSettingsDetails($where)->first();
         foreach ($records as $record) {
 
             //  Get related currency details
-            $currency = DB::table('ihook_currencysettings_table')
+            $currency = DB::table($prefix .'_currencysettings_table')
                 ->where('currency_id', $record->payment_user_request_currency_id)
                 ->first();
 
             //  Get user details
-            $user = DB::table('ihook_members_table')
+            $user = DB::table($prefix .'_members_table')
                 ->where('members_id', $record->paymenthistory_member_id)
                 ->first();
 
             //  Get payment settings
-            $payment = DB::table('ihook_paymentsettings_table')
+            $payment = DB::table($prefix .'_paymentsettings_table')
                 ->where('paymentsettings_id', $record->paymenthistory_mode)
                 ->first();
 

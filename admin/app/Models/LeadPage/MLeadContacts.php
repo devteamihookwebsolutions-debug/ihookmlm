@@ -46,6 +46,8 @@ public static function allcurrency($curr)
 
 public static function insertcurrency($request)
 {
+     $prefix = config('services.prefix.ihook');
+
     // Validate input
     $request->validate([
         'currency' => 'required|string',
@@ -58,13 +60,13 @@ public static function insertcurrency($request)
     $decimalSeparator = $request->decimal_separator;
 
     // Get currency symbol
-    $currencyRecord = DB::table('ihook_currencysettings_table')
+    $currencyRecord = DB::table($prefix.'currencysettings_table')
         ->where('currency_value', $currencyValue)
         ->first();
 
 
 
-    //     $currencyRecord  DB::table('ihook_currencysettings_table')
+    //     $currencyRecord  DB::table($prefix.'currencysettings_table')
     // ->updateOrInsert(
     //     ['set_currency' => 1], // condition: active currency row
     //     [
@@ -83,7 +85,7 @@ public static function insertcurrency($request)
 
 
     // Insert/Update site currency
-    DB::table('ihook_sitesettings_table')
+    DB::table($prefix.'_sitesettings_table')
         ->updateOrInsert(
             ['sitesettings_name' => 'site_currency'],
             ['sitesettings_value' => $currencySymbol
@@ -96,7 +98,7 @@ public static function insertcurrency($request)
 
 //Insert/Update Curency Format in site setting
 $currvalue = $currencyRecord->currency_value;
-        DB::table('ihook_sitesettings_table')
+        DB::table($prefix.'_sitesettings_table')
         ->updateOrInsert(
             ['sitesettings_name' => 'currency_format'],
             ['sitesettings_value' => $currvalue],
@@ -105,7 +107,7 @@ $currvalue = $currencyRecord->currency_value;
 
 
     // Insert/Update currency format
-    DB::table('ihook_currencyformat')
+    DB::table($prefix.'_currencyformat')
         ->updateOrInsert(
             ['id' => 1],
             [

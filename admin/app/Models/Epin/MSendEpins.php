@@ -33,8 +33,10 @@ class MSendEpins
 
    public static function getEpinType(): string
 {
+     $prefix = config('services.ihook.prefix');
+
     // Direct table names
-    $packageTable = 'ihook_package_table';
+    $packageTable = $prefix.'_package_table';
     $matrixTable  = 'ihook_matrix_table';
     $matrixConfig = 'ihook_matrix_configuration_table';
 

@@ -80,6 +80,8 @@ public static function getCommissionReports($records, $totalPages, $totalRecords
 
     public static function getHistoryType($historyType)
 {
+   $prefix = config('services.ihook.prefix');
+
     $historyTypes = [
         'levelcommission' => 'CUS_LEVEL_COMMISSION',
         'directcommission' => 'CUS_DIRECT_COMMISSION',
@@ -131,7 +133,7 @@ public static function getCommissionReports($records, $totalPages, $totalRecords
     $language = session('sitelang', 'en');
 
     // Fetch translation from terminology table
-   $record = DB::table('ihook_terminology_settings_table')
+   $record = DB::table($prefix .'_terminology_settings_table')
     ->where('language_key', $languageKey)
     ->where('language', $language)
     ->value('language_value');

@@ -23,12 +23,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Banner extends Model
 {
-     protected $table = 'ihook_banners_table';
+     protected $table;
         public $timestamps = false;
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_banners_table';
+    }
        protected $fillable = [
         'banner_title',
         'banner_image',
         'banner_status',
-        'banner_type',   // <-- ADD THIS LINE
+        'banner_type',
     ];
 }

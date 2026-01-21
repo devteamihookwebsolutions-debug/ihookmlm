@@ -23,5 +23,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class State extends Model
 {
-     protected $table = 'ihook_state_table';
+     protected $table;
+       public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_state_table';
+    }
 }

@@ -26,12 +26,19 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Bonus extends Model
 {
-    protected $table = 'ihook_bonus';
+    protected $table;
     protected $primaryKey = 'bonusid';
     public $incrementing = true;
     protected $keyType = 'int';
 
-    public $timestamps = false; // Since createdon/updatedon are manual
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_bonus';
+    }
+
+    public $timestamps = false;
 
     protected $fillable = [
         'bonus_name', 'matrix_id', 'periodstatus', 'reward', 'amount',

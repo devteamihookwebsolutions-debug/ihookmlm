@@ -22,8 +22,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class GeneralSetting extends Model
 {
-     protected $table = 'ihook_generalsettings_table';
+     protected $table;
     protected $primaryKey = 'id';
+         public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_generalsettings_table';
+    }
     public $timestamps = false;
 
     protected $fillable = [

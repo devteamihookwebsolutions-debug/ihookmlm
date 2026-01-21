@@ -23,7 +23,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class RegistrationSetting extends Model
 {
-     protected $table = 'ihook_registration_settings';
+     protected $table;
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_registration_settings';
+    }
 
     public $timestamps = false;
 }

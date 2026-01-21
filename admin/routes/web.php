@@ -3,6 +3,7 @@
 use Admin\App\Http\Controllers\Admin\Integration\AppStoreController;
 use Admin\App\Http\Controllers\Bonus\BonusController;
 use Admin\App\Http\Controllers\Bonus\MatchingBonusController;
+use Admin\App\Http\Controllers\CartConfig\CartConfigController;
 use Admin\App\Http\Controllers\CustomerBonus\CustomerBonusController;
 use Admin\App\Http\Controllers\Epin\EpinManagementController;
 use Admin\App\Http\Controllers\Epin\SendEpinsController;
@@ -659,18 +660,50 @@ Route::post('newsbuilderv1/savecontent',[NewsLetterManagementController::class, 
 Route::get('newsletter/preview/{id}', [NewsLetterManagementController::class, 'preview']);
 
 
-//Email Setting //
-Route::get('viewemailsettings',
-    [EmailSettingsController::class, 'viewEmailSettings']
-)->name('viewemailsettings');
+    //Email Setting //
+    Route::get('viewemailsettings',
+        [EmailSettingsController::class, 'viewEmailSettings']
+    )->name('viewemailsettings');
 
-Route::get('editemail/edit/{id}/{lid}', [EmailSettingsController::class, 'editEmail'])
-    ->name('editemail.edit');
+    Route::get('editemail/edit/{id}/{lid}', [EmailSettingsController::class, 'editEmail'])
+        ->name('editemail.edit');
 
-Route::post('mail/update/{mail_id}/{mail_lang}', [EmailSettingsController::class, 'updateEmail'])
-    ->name('mail.update');
-Route::post('addemailsetting', [EmailSettingsController::class, 'addEmailSettings'])->name('emailsettings.store');
-Route::post('addemailgeneralsetting', [EmailSettingsController::class, 'addEmailGeneralSettings'])->name('emailsettings.add');
+    Route::post('mail/update/{mail_id}/{mail_lang}', [EmailSettingsController::class, 'updateEmail'])
+        ->name('mail.update');
+    Route::post('addemailsetting', [EmailSettingsController::class, 'addEmailSettings'])->name('emailsettings.store');
+    Route::post('addemailgeneralsetting', [EmailSettingsController::class, 'addEmailGeneralSettings'])->name('emailsettings.add');
+
+    // woocommerce connect to larvel routes
+    Route::get('/cartconfig', [CartConfigController::class, 'showCartConfig'])
+        ->name('cartconfig.show');
+    Route::post('/cartconfig/validate', [CartConfigController::class, 'validateCartConfig'])
+        ->name('cartconfig.validate');
+    Route::post('/cartconfig/testwooconnection', [CartConfigController::class, 'testWooConnection'])
+        ->name('cartconfig.testwooconnection');
+    Route::post('/cartconfig/completecart', [CartConfigController::class, 'completeCart'])
+        ->name('cartconfig.completecart');
+    Route::post('/cartconfig/testsyconnection', [CartConfigController::class, 'testSyConnection'])
+        ->name('cartconfig.testsyconnection');
+
+    //  shopify connect to laravel routes
+
+// Route::prefix('shopifyconf')->group(function () {
+
+//     // Show Shopify installation page
+//     Route::get('/', [CShopifyInstallation::class, 'showShopifyInstall'])
+//         ->name('shopify.install.show');
+
+//     // Update Shopify installation
+//     Route::post('/update', [CShopifyInstallation::class, 'updateShopifyInstall'])
+//         ->name('shopify.install.update');
+
+//     // Get Shopify access token
+//     Route::get('/getaccesstoken', [CShopifyInstallation::class, 'getAccessToken'])
+//         ->name('shopify.install.token');
+
+// });
+
+
 });
 
 

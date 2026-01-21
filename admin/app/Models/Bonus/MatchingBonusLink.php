@@ -24,8 +24,14 @@ use Admin\App\Models\Rank\RankSetting;
 
 class MatchingBonusLink extends Model
 {
-    protected $table = 'ihook_matchingbonus_link';
+    protected $table;
     protected $primaryKey = 'matchingbonus_link_id';
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_matchingbonus_link';
+    }
     public $timestamps = false;
     protected $fillable = [
         'matchbonus_id',

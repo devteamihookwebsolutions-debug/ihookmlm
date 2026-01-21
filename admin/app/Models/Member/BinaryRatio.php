@@ -22,7 +22,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class BinaryRatio extends Model
 {
-    protected $table = 'ihook_binary_ratio';
+    protected $table;
+         public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_binary_ratio';
+    }
     public $timestamps = false;
     protected $primaryKey = 'binaryratio_id';
 

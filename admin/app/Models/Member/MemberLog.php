@@ -22,7 +22,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class MemberLog extends Model
 {
-       protected $table = 'ihook_members_log_table';
+       protected $table;
+            public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_log_table';
+    }
        public $timestamps = false;
 
 }

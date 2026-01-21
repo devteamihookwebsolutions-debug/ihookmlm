@@ -23,8 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
 {
-    protected $table = 'ihook_city_table';
+    protected $table;
     protected $primaryKey = 'city_id';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_city_table';
+    }
     public $incrementing = true;
     protected $fillable = ['city_name', 'country_id', 'state_id'];
 

@@ -23,8 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class MatrixConfiguration extends Model
 {
-    protected $table = 'ihook_matrix_configuration_table';
+    protected $table;
     protected $primaryKey = 'matrix_configuration_id';
+         public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_matrix_configuration_table';
+    }
     public $incrementing = true;
     public $timestamps = false;
 

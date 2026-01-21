@@ -25,6 +25,7 @@ class DEpinManagement
 {
 public static function showEpinManagement($records, $iTotal)
 {
+     $prefix = config('services.ihook.prefix');
     if (count($records) == 0) {
         return response()->json([
             'records' => [],
@@ -33,7 +34,7 @@ public static function showEpinManagement($records, $iTotal)
     }
 
     // ---- Get Site Currency ----
-$site_currency = DB::table('ihook_sitesettings_table')
+$site_currency = DB::table($prefix .'_sitesettings_table')
                     ->where('sitesettings_name', 'site_currency')
                     ->value('sitesettings_value');
 
@@ -52,7 +53,7 @@ $site_currency = !empty($site_currency) ? $site_currency : '$';
         // ---- Package Name ----
         if ($rec->epin_package == '0') {
 
-            $matrixname = DB::table('ihook_matrix_table')
+            $matrixname = DB::table($prefix .'_matrix_table')
                             ->where('matrix_id', $rec->epin_matrix_id)
                             ->value('matrix_name');
 
@@ -63,7 +64,7 @@ $site_currency = !empty($site_currency) ? $site_currency : '$';
             $package_name = 'Ewallet';
 
         } else {
-            $package_name = DB::table('ihook_package_table')
+            $package_name = DB::table($prefix .'_package_table')
                                 ->where('package_id', $rec->epin_package)
                                 ->value('package_name');
         }
@@ -80,7 +81,7 @@ $site_currency = !empty($site_currency) ? $site_currency : '$';
             $used_by_link = '-';
         } else {
 
-            $username = DB::table('ihook_members_table')
+            $username = DB::table($prefix .'_members_table')
                         ->where('members_id', $rec->epin_user_id)
                         ->value('members_username');
 
@@ -95,7 +96,7 @@ $site_currency = !empty($site_currency) ? $site_currency : '$';
             $owner_name = 'Admin';
 
         } else {
-            $owner_name = DB::table('ihook_members_table')
+            $owner_name = DB::table($prefix .'_members_table')
                             ->where('members_id', $rec->epin_member_id)
                             ->value('members_username');
         }

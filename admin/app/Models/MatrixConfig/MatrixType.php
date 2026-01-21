@@ -31,7 +31,8 @@ class MatrixType extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = env('IHOOK_PREFIX', 'ihook_') . 'matrix_type_table';
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . 'matrix_type_table';
     }
 
     public function matrices()

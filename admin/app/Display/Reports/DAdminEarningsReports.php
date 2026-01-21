@@ -134,13 +134,14 @@ class DAdminEarningsReports
 
 public static function adminEarningsDetails($records)
 {
+    $prefix = config('services.ihook.prefix');
     $record = $records->first();
 
     if (!$record) {
         return response()->json(['error' => 'No record found'], 404);
     }
 
-    $matrix = DB::table('ihook_matrix_table')
+    $matrix = DB::table($prefix .'_matrix_table')
         ->where('matrix_id', $record->history_matrix_id)
         ->first();
 

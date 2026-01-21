@@ -23,8 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class CustomerBonus extends Model
 {
-    protected $table = 'ihook_customerbonus_meta';
+    protected $table;
     protected $primaryKey = 'meta_id';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_customerbonus_meta';
+    }
     public $timestamps = true;
 
     protected $fillable = [

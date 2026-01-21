@@ -24,8 +24,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Admin extends Model
 {
-    protected $table = 'ihook_admin_table';
+    protected $table;
     protected $primaryKey = 'admin_id';
+         public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_admin_table';
+    }
     public $timestamps = false;
 
     protected $fillable = [

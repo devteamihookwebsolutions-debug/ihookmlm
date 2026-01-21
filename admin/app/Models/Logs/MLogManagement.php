@@ -26,17 +26,18 @@ class MLogManagement
 {
 public static function showUserLogs()
 {
+     $prefix = config('services.prefix.ihook');
     $perPage = 15;
     // Define the columns you want to select
     $aColumns = [
-        'ihook_members_log_table.*', // all columns from log table
-        'ihook_members_table.members_username' // joined username
+        $prefix.'_members_log_table.*', // all columns from log table
+        $prefix.'_members_table.members_username' // joined username
     ];
 
     // Build the query using Eloquent
     $query = MemberLog::select($aColumns)
-        ->leftJoin('ihook_members_table', 'ihook_members_table.members_id', '=', 'ihook_members_log_table.members_log_members_id')
-        ->orderBy('ihook_members_log_table.members_log_id', 'desc');
+        ->leftJoin($prefix.'_members_table', $prefix.'_members_table.members_id', '=', $prefix.'_members_log_table.members_log_members_id')
+        ->orderBy($prefix.'_members_log_table.members_log_id', 'desc');
 
     // Paginate results
     $records = $query->paginate($perPage);
@@ -53,8 +54,10 @@ public static function showUserLogs()
 
  public static function showAdminLogs($perPage = 15) // default 15 records per page
 {
-    $records = DB::table('ihook_admin_log_table as a')
-        ->leftJoin('ihook_admin_table as b', 'b.admin_id', '=', 'a.admin_log_admin_id')
+    $prefix = config('services.prefix.ihook');
+
+    $records = DB::table($prefix.'_admin_log_table as a')
+        ->leftJoin($prefix.'_admin_table as b', 'b.admin_id', '=', 'a.admin_log_admin_id')
         ->select('a.*', 'b.*')
         ->paginate($perPage); // <-- pagination here
 // dd($records);

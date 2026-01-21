@@ -24,7 +24,13 @@ use Illuminate\Database\Eloquent\Model;
 class Feature extends Model
 {
 
-       protected $table = 'ihook_feature_table';
+       protected $table;
+            public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_feature_table';
+    }
        protected $fillable = [
         'feature_name',
         'feature_description',

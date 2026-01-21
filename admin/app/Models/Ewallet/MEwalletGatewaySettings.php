@@ -29,8 +29,9 @@ class MEwalletGatewaySettings
 
     public static function getContent($name)
 {
+    $prefix = config('services.prefix.ihook');
     // Build table name with prefix
-    $table = 'ihook_sitesettings_table';
+    $table = $prefix.'_sitesettings_table';
 
     // Fetch the value of the column
     $value = DB::table($table)
@@ -41,6 +42,7 @@ class MEwalletGatewaySettings
 }
  public static function updateSettings($request)
     {
+       $prefix = config('services.prefix.ihook');
         // 1. Collect input
         $apiusername = $request->input('apiusername');
         $apipassword = $request->input('apipassword');
@@ -56,7 +58,7 @@ class MEwalletGatewaySettings
         ];
 
         foreach ($settings as $name => $value) {
-            DB::table('ihook_sitesettings_table')
+            DB::table($prefix.'_sitesettings_table')
                 ->updateOrInsert(
                     ['sitesettings_name' => $name],
                     ['sitesettings_value' => $value]

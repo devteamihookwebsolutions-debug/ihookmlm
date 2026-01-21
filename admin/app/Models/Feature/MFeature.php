@@ -64,9 +64,10 @@ class MFeature
 }
  public static function updateFeature(Request $request)
     {
+         $prefix = config('services.prefix.ihook');
         // dd('askldjf');
         // 1. Reset all empty descriptions to 0
-        DB::table('ihook_feature_table')
+        DB::table($prefix.'_feature_table')
             ->where('feature_description', '')
             ->update([
                 'feature_status' => 0

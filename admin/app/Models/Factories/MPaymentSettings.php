@@ -48,7 +48,9 @@ public static function showPaymentSettingsList()
 }
 public static function getBankwirePaymentSettings()
 {
-    $record = DB::table('ihook_bankwire_table')
+    $prefix = config('services.prefix.ihook');
+
+    $record = DB::table($prefix.'_bankwire_table')
         ->where('bankwire_id', 1)
         ->first();
 
@@ -77,7 +79,7 @@ public static function getBankwirePaymentSettings()
 //     // 2. Send Email Notification
 //     // -------------------------
 
-//     $email_notifications_enabled = DB::table('ihook_sitesettings_table')
+//     $email_notifications_enabled = DB::table($prefix.'_sitesettings_table')
 //         ->where('sitesettings_name', 'email_notification_admin')
 //         ->value('sitesettings_value');
 
@@ -85,14 +87,14 @@ public static function getBankwirePaymentSettings()
 
 //         $mailLang = session('sitelang_id', 1);
 
-//         $template = DB::table('ihook_mailtemplates_table')
+//         $template = DB::table($prefix.'_mailtemplates_table')
 //             ->where('mail_default_name', 'mail_send_otp')
 //             ->where('mail_status', 1)
 //             ->where('mail_lang', $mailLang)
 //             ->first();
 
 //         if (!$template) {
-//             $template = DB::table('ihook_mailtemplates_table')
+//             $template = DB::table($prefix.'_mailtemplates_table')
 //                 ->where('mail_default_name', 'mail_send_otp')
 //                 ->where('mail_status', 1)
 //                 ->where('mail_lang', 1)
@@ -114,7 +116,7 @@ public static function getBankwirePaymentSettings()
 
 //     if (!empty($admin->admin_phone)) {
 
-//         $siteName = DB::table('ihook_sitesettings_table')
+//         $siteName = DB::table($prefix.'_sitesettings_table')
 //             ->where('sitesettings_name', 'site_name')
 //             ->value('sitesettings_value');
 

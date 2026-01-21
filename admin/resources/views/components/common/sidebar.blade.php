@@ -6,7 +6,7 @@
             <!-- SIDEBAR HEADER -->
             <div :class="sidebarToggle ? 'justify-center' : 'justify-between'"
                 class="sidebar-header flex items-center gap-2 py-3">
-                <a href="index.html">
+                <a href="admin/dashboard">
                     <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
                         <img class="w-24" src="/img/logox1.png" alt="Logo" />
                     </span>

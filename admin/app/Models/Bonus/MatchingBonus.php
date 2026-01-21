@@ -24,8 +24,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class MatchingBonus extends Model
 {
-    protected $table = 'ihook_matchingbonus';
+    protected $table;
     protected $primaryKey = 'matchbonus_id';
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_matchingbonus';
+    }
     public $incrementing = true;
     public $timestamps = true;
     const CREATED_AT = 'created_on';

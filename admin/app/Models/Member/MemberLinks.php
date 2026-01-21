@@ -22,7 +22,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class MemberLinks extends Model
 {
-   protected $table = 'ihook_matrix_members_link_table';
+   protected $table;
+        public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_matrix_members_link_table';
+    }
 
     protected $primaryKey = 'link_id';
     public $timestamps = false;

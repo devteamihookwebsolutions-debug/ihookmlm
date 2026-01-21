@@ -45,6 +45,8 @@ class MUserDashboard
 }
 public static function updateUserDashboard(Request $request)
 {
+     $prefix = config('services.prefix.ihook');
+
     $dashboardId = 1;
 
     /* -----------------------------
@@ -69,7 +71,7 @@ public static function updateUserDashboard(Request $request)
             continue;
         }
 
-        DB::table('ihook_userdashboard_meta')->updateOrInsert(
+        DB::table($prefix.'_userdashboard_meta')->updateOrInsert(
             ['meta_key' => $key, 'dashboard_id' => $dashboardId],
             [
                 'meta_value' => $value,
@@ -107,7 +109,8 @@ private static function uploadFile(Request $request, $inputName, $hiddenInputNam
 
 private static function saveMeta($key, $value, $dashboardId)
 {
-    DB::table('ihook_userdashboard_meta')->updateOrInsert(
+   $prefix = config('services.prefix.ihook');
+    DB::table($prefix.'_userdashboard_meta')->updateOrInsert(
         ['meta_key' => $key, 'dashboard_id' => $dashboardId],
         [
             'meta_value' => $value,

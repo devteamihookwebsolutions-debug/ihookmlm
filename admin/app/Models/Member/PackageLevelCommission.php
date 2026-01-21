@@ -23,6 +23,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class PackageLevelCommission extends Model
 {
-       protected $table = 'ihook_packagelevelcommission_table';
+       protected $table;
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_packagelevelcommission_table';
+    }
        public $timestamps = false;
 }

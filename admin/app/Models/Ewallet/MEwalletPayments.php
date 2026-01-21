@@ -20,6 +20,7 @@
 namespace Admin\App\Models\Ewallet;
 
 use Illuminate\Support\Facades\DB;
+use Request;
 use User\App\Models\PaymentHistory;
 
 use Admin\App\Display\Ewallet\DEwalletPayments;
@@ -44,9 +45,9 @@ public static function showEwalletManagement()
     ];
 
     $perPage = 10;
-
+    $prefix = config('services.prefix.ihook');
     // Use correct prefixed table name
-    $tableName = 'ihook_paymenthistory_table';
+    $tableName = $prefix.'_paymenthistory_table';
 
     //Start query using Query Builder (not Eloquent model)
     $query = DB::table($tableName)
@@ -81,6 +82,7 @@ public static function showEwalletManagement()
 
 public static function activateEwalletPayment(Request $request)
 {
+       $prefix = config('services.prefix.ihook');
     try {
         // Get ID from request
         $paymenthistory_id = $request->input('sub1');
@@ -93,7 +95,7 @@ public static function activateEwalletPayment(Request $request)
         DB::beginTransaction();
 
         // Update paymenthistory_table status
-        $updated = DB::table('ihook_paymenthistory_table')
+        $updated = DB::table($prefix.'_paymenthistory_table')
             ->where('paymenthistory_id', $paymenthistory_id)
             ->update(['paymenthistory_status' => 'paid']);
 
@@ -103,7 +105,7 @@ public static function activateEwalletPayment(Request $request)
         }
 
         // Fetch updated payment details
-        $payment = DB::table('ihook_paymenthistory_table')
+        $payment = DB::table($prefix.'_paymenthistory_table')
             ->where('paymenthistory_id', $paymenthistory_id)
             ->first();
 

@@ -24,6 +24,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class  SubAdminMenuLink extends Model
 {
-    protected $table = 'ihook_role_management_subadminmenu_link_table';
+    protected $table;
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_role_management_subadminmenu_link_table';
+    }
     public $timestamps = false;
 }

@@ -26,9 +26,15 @@ class State extends Model
 {
     use HasFactory;
 
-    protected $table = 'ihook_state_table';
+    protected $table;
     protected $primaryKey = 'state_id';
-    public $incrementing = true; // Enable auto-increment for state_id
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_state_table';
+    }
+    public $incrementing = true;
     protected $fillable = ['state_code', 'state_name', 'country_code'];
 
     public function country()

@@ -25,7 +25,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class  UserDashboardMeta extends Model
 {
-       protected $table = 'ihook_userdashboard_meta';
+       protected $table;
+         public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_userdashboard_meta';
+    }
 
        public $timestamps = false;
 

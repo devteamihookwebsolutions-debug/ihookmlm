@@ -23,8 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class GenerationBonusLinkTable extends Model
 {
-    protected $table = 'ihook_generation_bonuslinktable';
+    protected $table;
     protected $primaryKey = 'generationalbonus_link_id';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_generation_bonuslinktable';
+    }
     public $timestamps = false;
 
     protected $fillable = [

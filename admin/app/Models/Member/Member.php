@@ -30,7 +30,13 @@ class Member extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'ihook_members_table';
+    protected $table;
+         public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_table';
+    }
     public $timestamps = false;
     protected $primaryKey = 'members_id';
 

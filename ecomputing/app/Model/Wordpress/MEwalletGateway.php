@@ -17,12 +17,14 @@
 ?><?php
 namespace Ecomputing\App\Model\Wordpress;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MEwalletGateway
 {
 
     public function checkWalletBalance()
     {
+        Log::info('Laravel: checkWalletBalance called', request()->all());
         $prefix = config('services.ihook.prefix');
         $storeprefix = config('services.ihook.store_prefix');
 
@@ -35,13 +37,13 @@ class MEwalletGateway
         $transid = 'WPE_' . $orderid;
 
         // Site settings from DB
-        $apiun_db  = DB::table($prefix . 'sitesettings_table')->where('sitesettings_name', 'ewallet-apiusername')->value('sitesettings_value');
-        $apipwd_db = DB::table($prefix . 'sitesettings_table')->where('sitesettings_name', 'ewallet-apipassword')->value('sitesettings_value');
-        $apista_db = DB::table($prefix . 'sitesettings_table')->where('sitesettings_name', 'ewallet-gateway_status')->value('sitesettings_value');
+        $apiun_db  = DB::table($prefix . '_sitesettings_table')->where('sitesettings_name', 'ewallet-apiusername')->value('sitesettings_value');
+        $apipwd_db = DB::table($prefix . '_sitesettings_table')->where('sitesettings_name', 'ewallet-apipassword')->value('sitesettings_value');
+        $apista_db = DB::table($prefix . '_sitesettings_table')->where('sitesettings_name', 'ewallet-gateway_status')->value('sitesettings_value');
 
         if ($apista_db == 1) {
             if ($apiun_db === $apiun && $apipwd_db === $apipwd) {
-                $member = DB::table($prefix . 'members_table')
+                $member = DB::table($prefix . '_members_table')
                     ->select('members_id', 'members_transaction_password')
                     ->where('members_username', $un)
                     ->first();
@@ -51,7 +53,7 @@ class MEwalletGateway
                     $balance_amount = self::getWalletCurrentBalance($member->members_id, $history_wallet_type);
 
                     if (floatval($balance_amount) >= floatval($total)) {
-                        DB::table($prefix . 'history_table')->insert([
+                        DB::table($prefix . '_history_table')->insert([
                             'history_member_id'    => $member->members_id,
                             'history_type'         => 'ewalletdeducts',
                             'history_description'  => 'E-Wallet Purchase Through Gateway',
@@ -123,7 +125,7 @@ class MEwalletGateway
     public function getWalletBalanceDetails($where)
     {
             $prefix = config('services.ihook.prefix');
-            $table = $prefix . 'history_table';
+            $table = $prefix . '_history_table';
 
             // Normalize and remove leading WHERE to use whereRaw safely
             $condition = preg_replace('/^\s*WHERE\s+/i', '', trim($where));

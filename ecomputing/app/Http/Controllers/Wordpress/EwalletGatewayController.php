@@ -20,19 +20,14 @@ namespace Ecomputing\App\Http\Controllers\Wordpress;
 
 use Ecomputing\App\Http\Controllers\Controller;
 use Ecomputing\App\Model\Wordpress\MEwalletGateway;
+use Illuminate\Support\Facades\Log;
+
 class EwalletGatewayController extends Controller
 {
-	/**
-     * This public function is used  to constructor of this class
-    */
-    public function __construct() {
-		$apikey=trim($_SERVER['HTTP_APIKEY']);
-		if($apikey!='bFkK)fFLNSbv}H-yX9='){
-		}
-	}
 
     public function checkWalletBalance()
     {
+        Log::info('Laravel: E-Wallet checkWalletBalance ENDPOINT HIT from WooCommerce');
         $walletGateway = new MEwalletGateway();
         $walletGateway->checkWalletBalance();
     }

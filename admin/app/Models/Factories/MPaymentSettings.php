@@ -48,7 +48,7 @@ public static function showPaymentSettingsList()
 }
 public static function getBankwirePaymentSettings()
 {
-    $prefix = config('services.prefix.ihook');
+    $prefix = config('services.ihook.prefix');
 
     $record = DB::table($prefix.'_bankwire_table')
         ->where('bankwire_id', 1)

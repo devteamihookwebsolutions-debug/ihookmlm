@@ -6,7 +6,7 @@
  * @package         AvatarGallery
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -26,7 +26,8 @@ class AvatarGallery extends Model
 {
     use HasFactory;
 
-    protected $table = 'ihook_avatar_gallery';
+    protected $table;
+    protected $table;
     protected $primaryKey = 'avatar_gallery_id';
     protected $fillable = [
         'avatar_gallery_id',
@@ -36,4 +37,12 @@ class AvatarGallery extends Model
         'avatar_gallery_status',
     ];
     public $timestamps = false;
+
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_avatar_gallery';
+    }
+
 }

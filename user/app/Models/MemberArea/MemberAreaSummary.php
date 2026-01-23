@@ -6,7 +6,7 @@
  * @package         MemberAreaSummary
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MemberAreaSummary extends Model
 {
-    protected $table = 'ihook_members_table';
+    protected $table;
     protected $primaryKey = 'members_id';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -46,6 +46,15 @@ class MemberAreaSummary extends Model
         'members_doj' => 'date:Y-m-d',
         'members_dob' => 'date:Y-m-d',
     ];
+
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_table';
+    }
+
+
     public function country()
     {
         return $this->belongsTo(

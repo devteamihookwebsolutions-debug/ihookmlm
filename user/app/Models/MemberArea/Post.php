@@ -6,7 +6,7 @@
  * @package         Post
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -22,12 +22,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $table = 'cart_posts';
+    protected $table;
     protected $primaryKey = 'ID';
     public $timestamps = false;
 
     public function meta()
     {
         return $this->hasMany(Postmeta::class, 'post_id', 'ID');
+    }
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.store_prefix');
+        $this->table = $prefix . '_posts';
     }
 }

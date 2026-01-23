@@ -6,7 +6,7 @@
  * @package         MCardDetails
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -221,13 +221,13 @@ class MCardDetails
         }
 
         if(!empty($stripe_subid)){
-            $sql = "SELECT * FROM `" . env('IHOOK_PREFIX') . "paymenthistory_table` ap, " . env('IHOOK_PREFIX') . "paymentsettings_table aps
+            $sql = "SELECT * FROM `" . env('IHOOK_PREFIX') . "_paymenthistory_table` ap, " . env('IHOOK_PREFIX') . "_paymentsettings_table aps
             WHERE ap.paymenthistory_mode=aps.paymentsettings_id
             AND paymenthistory_member_id='" . $user_id . "'
             ORDER BY ap.paymenthistory_id DESC LIMIT 1";
             $records = DB::select($sql)[0];
             if($records['paymentsettings_default_name'] == 'stripe'){
-                $sql = "SELECT *    FROM  " . env('IHOOK_PREFIX') . "package_table
+                $sql = "SELECT *    FROM  " . env('IHOOK_PREFIX') . "_package_table
                 WHERE package_id='". $records['paymenthistory_plan_id'] ."'";
                 $recordssss = DB::select($sql);
                 return DCardDetails::showActiveSubscription($recordssss);
@@ -274,7 +274,7 @@ class MCardDetails
             echo 'Error:' . curl_error($ch);
         }
         curl_close($ch);
-        DB::update("UPDATE " . env('IHOOK_PREFIX') . "matrix_members_link_table
+        DB::update("UPDATE " . env('IHOOK_PREFIX') . "_matrix_members_link_table
         SET members_subscription_expirydate= NOW(), members_subscription_status='2',members_account_status='2',
         stripe_subid='' WHERE members_id='" . $user_id . "' AND matrix_id='".$matrix_id."'");
         session()->put('success_message', __('Subscription Cancelled Successfully'));

@@ -6,7 +6,7 @@
  * @package         Member
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -26,7 +26,7 @@ class Member extends Authenticatable
 {
   use  Notifiable;
 
-    protected $table = 'ihook_members_table';
+    protected $table;
        protected $primaryKey = 'members_id';
      public $timestamps = false;
 
@@ -44,6 +44,13 @@ class Member extends Authenticatable
         'email_verified_at' => 'datetime',
         'members_password' => 'hashed',
     ];
+
+    public function __construct(array $attributes = [])
+      {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_table';
+      }
 
     public function getAuthPassword()
     {

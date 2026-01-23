@@ -6,7 +6,7 @@
  * @package         MDownlineLevelSales
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -45,9 +45,11 @@ public static function getDownlineDetailsNew($memberId)
         }
     };
 
+    $prefix = config('services.ihook.prefix', 'ihook');
+
     // Main query
-    $records = DB::table('ihook_members_table as a')
-        ->leftJoin('ihook_matrix_members_link_table as b', 'a.members_id', '=', 'b.members_id')
+    $records = DB::table($prefix . '_members_table as a')
+        ->leftJoin($prefix . '_matrix_members_link_table as b', 'a.members_id', '=', 'b.members_id')
         ->whereRaw("FIND_IN_SET(?, b.members_parents)", [$memberId])
         ->select([
             'a.members_username as userName',
@@ -55,19 +57,19 @@ public static function getDownlineDetailsNew($memberId)
 
             // Sponsor
             DB::raw("(SELECT members_username
-                      FROM ihook_members_table
+                      FROM {$prefix}_members_table
                       WHERE members_id = b.spillover_id) as sponsor"),
 
             // Rank
             DB::raw("(SELECT rank_value
-                      FROM ihook_ranksetting
+                      FROM {$prefix}_ranksetting
                       WHERE rank_key='rank_title'
                       AND rank_id=b.rankid
                       LIMIT 1) as ranks"),
 
             // Sales Amount
             DB::raw("(SELECT SUM(paymenthistory_amount)
-                      FROM ihook_paymenthistory_table
+                      FROM {$prefix}_paymenthistory_table
                       WHERE paymenthistory_member_id = a.members_id) as salesAmount")
         ])
         ->get();

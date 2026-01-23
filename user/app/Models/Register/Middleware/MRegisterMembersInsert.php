@@ -6,7 +6,7 @@
  * @package         MRegisterMembersInsert
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -21,7 +21,7 @@ namespace User\App\Models\Register\Middleware;
 
 use Admin\App\Models\UserManager\MInsertUserDetails;
 use Admin\App\Models\UserManager\MInsertUserMatrixLinkDetails;
-
+use Admin\App\Models\Member\Admin;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,6 +36,7 @@ use Admin\App\Models\Middleware\MMatrixDetails;
 use User\App\Models\Logs\MUserLog;
 use Admin\App\Models\Middleware\MSiteDetails;
 use Admin\App\Models\Middleware\MSendMail;
+use Admin\App\Models\Middleware\MUpdateCollection;
 use Admin\App\Models\Middleware\MUserNotifyStatus;
 use Admin\App\Models\UserManager\MBinaryPositionSpillover;
 use Admin\App\Models\Member\MatrixConfiguration;
@@ -380,7 +381,115 @@ $membersParentsStr = trim($membersParentsStr, ',');
             }
         }
     }
+    else {  //via link
+            if ($email_notification_user == '1') {
 
+                $membersId = (int) $members_id;
+
+                // Using Eloquent
+                Member::where('members_id', $membersId)
+                    ->update(['members_status' => 0]);
+
+                // OR using Query Builder
+               $updateArray = ['members_status' => 0];
+
+                // Update MySQL table
+                DB::table($prefix . '_members_table')
+                    ->where('members_id', $membersId)
+                    ->update($updateArray);
+
+                // Update MongoDB
+                $where = ['members_id' => $membersId];
+                MUpdateCollection::updateCollection($updateArray, $where, "members");
+
+                // 1. Get Mail Template
+                $mailLang = session('sitelang_id', 1);
+
+                $records = DB::table($prefix . '_mailtemplates_table')
+                    ->where('mail_default_name', 'registration_account_activation')
+                    ->where('mail_status', 1)
+                    ->where('mail_lang', $mailLang)
+                    ->first();
+
+                if (!$records) {
+                    $records = DB::table($prefix . '_mailtemplates_table')
+                        ->where('mail_default_name', 'registration_account_activation')
+                        ->where('mail_status', 1)
+                        ->where('mail_lang', 1)
+                        ->first();
+                }
+
+                if (!$records) {
+                    throw new \Exception('Mail template not found');
+                }
+
+                // 2. Update target_status
+                $linkNumber = rand(100000, 999999);
+
+                DB::table(env('PROMLM_PREFIX') . 'members_table')
+                    ->where('members_id', $members_id)
+                    ->update(['target_status' => $linkNumber]);
+
+                // 3. Prepare URL and Message
+                $activationUrl = env('APP_URL') . '/members/enable/' . $members_id . '/' . $linkNumber;
+
+                $message = str_replace(
+                    ['[name]', '[username]', '[pass]', '[mailactive]'],
+                    [$members_username, $members_email, $members_password, $activationUrl],
+                    $records->mail_content
+                );
+                MSendMail::send($records, $members_email, $message, '', '', $members_username);
+
+            }
+        }
+
+
+        $email_notification_admin = MSiteDetails::getSiteSettingValue('email_notification_admin');
+        if ($email_notification_admin == '1') {
+                    // 2. Get admin user
+        $admin = Admin::where('admin_status', 'enable')
+                      ->where('admin_type', 1)
+                      ->first();
+        // dd($admin);
+        $admin_email=$admin->admin_email;
+        // dd($admin_email);
+        if (!$admin) {
+            return false;
+        }
+
+        // 3. Get mail template for the site language
+        $mailLang = session('sitelang_id', 1); // fallback to '1'
+        // dd($mail_lang);
+        $records = DB::table($prefix .'_mailtemplates_table')
+                                ->where('mail_default_name', 'adminnotification_for_new_user')
+                                ->where('mail_status', 1)
+                                ->where('mail_lang', $mailLang)
+                                ->first();
+        // dd($template);
+        // fallback to default language if not found
+        if (!$records) {
+            $records = DB::table($prefix .'_mailtemplates_table')
+                                    ->where('mail_default_name', 'adminnotification_for_new_user')
+                                    ->where('mail_status', 1)
+                                    ->where('mail_lang', 1)
+                                    ->first();
+        }
+
+        if (!$records) {
+            return false;
+        }
+
+        // 4. Replace placeholders
+        $siteLink = url('/login'); // generates your site URL
+        $message  = str_replace(
+            ['[name]', '[username]', '[site_link]', '[members_email]'],
+            [$admin->admin_username, $members_username, $siteLink, $members_email],
+            $records->mail_content
+
+        );
+    //   dd($message);
+            MSendMail::send($records, $admin_email, $message, '', '', $members_username);
+        }
 // dd($members_id);
         if ($members_id > 0) {
              $matrixLink = new MInsertUserMatrixLinkDetails();

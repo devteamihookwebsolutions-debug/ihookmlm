@@ -6,7 +6,7 @@
  * @package         MWaitingRoom
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -36,7 +36,7 @@ class MWaitingRoom
     {
         $user_id  = session('default.customer_id');
         // $sql   = "SELECT b.members_username, b.members_doj, b.members_country,b.members_firstname, b.members_lastname,b.members_email,b.members_id,a.matrix_id FROM " . env('IHOOK_PREFIX') . "matrix_members_link_table AS a LEFT JOIN " . env('IHOOK_PREFIX') . "members_table AS b ON b.members_id = a.members_id WHERE a.direct_id = '" . $user_id . "' AND a.position_status='0' AND spillover_id='0'";
-        $sql   = "SELECT b.members_username, b.members_doj, b.members_country,b.members_firstname, b.members_lastname,b.members_email,b.members_id,a.matrix_id FROM " . env('IHOOK_PREFIX') . "matrix_members_link_table AS a LEFT JOIN " . env('IHOOK_PREFIX') . "members_table AS b ON b.members_id = a.members_id WHERE a.direct_id = '" . $user_id . "' AND a.position_status='0' AND spillover_id!='0' AND a.matrix_doj BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()";
+        $sql   = "SELECT b.members_username, b.members_doj, b.members_country,b.members_firstname, b.members_lastname,b.members_email,b.members_id,a.matrix_id FROM " . env('IHOOK_PREFIX') . "_matrix_members_link_table AS a LEFT JOIN " . env('IHOOK_PREFIX') . "_members_table AS b ON b.members_id = a.members_id WHERE a.direct_id = '" . $user_id . "' AND a.position_status='0' AND spillover_id!='0' AND a.matrix_doj BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()";
         $records = DB::select($sql);
         return DWaitingRoom::showDownlineUser($records);
     }
@@ -49,7 +49,7 @@ class MWaitingRoom
         // $wherecondition = ' AND FIND_IN_SET("'.$members_id .'",b.members_parents) OR b.members_id='.$members_id.'';
         $wherecondition = ' AND FIND_IN_SET("'.$members_id .'",b.members_parents) and b.members_id!='.$selectedUserId.'';
         $where=($searchval!='') ? 'WHERE members_username LIKE "' . $searchval . '%" '.$matrix_where.''.$wherecondition.'' :'';
-        $sql = "SELECT  a.members_username,a.members_id,b.matrix_id FROM " . env('IHOOK_PREFIX') . "members_table as a LEFT JOIN " . env('IHOOK_PREFIX') . "matrix_members_link_table as b ON a.members_id=b.members_id $where   GROUP BY members_id LIMIT 0,50 ";
+        $sql = "SELECT  a.members_username,a.members_id,b.matrix_id FROM " . env('IHOOK_PREFIX') . "_members_table as a LEFT JOIN " . env('IHOOK_PREFIX') . "_matrix_members_link_table as b ON a.members_id=b.members_id $where   GROUP BY members_id LIMIT 0,50 ";
         $records = DB::select($sql);
         return DWaitingRoom::getMemberList($records);
     }
@@ -61,7 +61,7 @@ class MWaitingRoom
         $userdetail = explode("_", $select_position);
         $position_str = $userdetail[1];
         $position_mem_id = $userdetail[0];
-        $sql_member = "SELECT members_id FROM " . env('IHOOK_PREFIX') . "members_table
+        $sql_member = "SELECT members_id FROM " . env('IHOOK_PREFIX') . "_members_table
         WHERE members_username='".$position_mem_id."'";
         $position_mem_id = DB::select($sql_member)[0]->members_id;
         $position_str = explode("POSITION", $position_str);
@@ -72,7 +72,7 @@ class MWaitingRoom
         $members_parents 		 = $matrixmemberlinkdetails[0]['members_parents'];
         $spillover_id 			 =  $matrixmemberlinkdetails[0]['spillover_id'];
         $direct_id 				 =  $matrixmemberlinkdetails[0]['direct_id'];
-        $sqlwidth = "SELECT matrix_key,matrix_value FROM  " . env('IHOOK_PREFIX') . "matrix_configuration_table
+        $sqlwidth = "SELECT matrix_key,matrix_value FROM  " . env('IHOOK_PREFIX') . "_matrix_configuration_table
             WHERE matrix_id  = '" . $matrix_id . "' AND matrix_key='level_width'";
         $level_width = DB::select($sqlwidth)[0]->matrix_value;
         $matrixdetails = MMatrixDetails::getMatrixDetails($matrix_id);
@@ -83,11 +83,11 @@ class MWaitingRoom
         if($spillover_id != 0 || $direct_id == 0){
             $childroot = $root + 1;
             $childrenmembers_parents = $members_parents.",".$position_mem_id;
-            $sql = "SELECT count(*) as total FROM " . env('IHOOK_PREFIX') . "matrix_members_link_table WHERE spillover_id='" . $position_mem_id . "' AND position='".$position."'";
+            $sql = "SELECT count(*) as total FROM " . env('IHOOK_PREFIX') . "_matrix_members_link_table WHERE spillover_id='" . $position_mem_id . "' AND position='".$position."'";
             $records = DB::select($sql)[0]->total;
             // echo '----->'.count((array)$records);
             if(empty($records)){
-                DB::update("UPDATE " . env('IHOOK_PREFIX') . "matrix_members_link_table SET
+                DB::update("UPDATE " . env('IHOOK_PREFIX') . "_matrix_members_link_table SET
                 spillover_id='" . $position_mem_id . "',
                 root='" . $childroot . "',
                 members_parents= '" . $childrenmembers_parents . "',position='".$position."',position_status ='1'
@@ -99,13 +99,13 @@ class MWaitingRoom
                 $update=['matrix.spillover_id'=>"".$direct_id."",'matrix.members_parents'=>"".$childrenmembers_parents."",'matrix.root'=>"".$childroot.""];
                 MUpdateCollection::updateCollection($update,$where,"members");
                 MTotalDownlineUpdate::updateTotalDownline($members_id,$matrix_id,$direct_id);
-                $filled_sql   = "SELECT b.members_username,b.members_id FROM " . env('IHOOK_PREFIX') . "matrix_members_link_table AS a
-                                LEFT JOIN " . env('IHOOK_PREFIX') . "members_table AS b ON b.members_id = a.members_id
+                $filled_sql   = "SELECT b.members_username,b.members_id FROM " . env('IHOOK_PREFIX') . "_matrix_members_link_table AS a
+                                LEFT JOIN " . env('IHOOK_PREFIX') . "_members_table AS b ON b.members_id = a.members_id
                                 WHERE a.spillover_id = '" . $position_mem_id . "'";
                 $filled_record = DB::select($filled_sql);
                 if(!empty($filled_record)){
                     if(count($filled_record)==2){
-                        DB::update("UPDATE ".env('IHOOK_PREFIX')."matrix_members_link_table SET
+                        DB::update("UPDATE ".env('IHOOK_PREFIX')."_matrix_members_link_table SET
                             members_filled_status ='1' WHERE members_id ='" . $position_mem_id . "'");
                     }
                 }

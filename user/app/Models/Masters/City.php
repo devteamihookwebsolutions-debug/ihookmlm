@@ -6,7 +6,7 @@
  * @package         City
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -23,7 +23,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
 {
-    protected $table = 'ihook_city_table';
+
+    protected $table;
     protected $primaryKey = 'city_id';
     public $incrementing = true;
     protected $fillable = ['city_name', 'country_id', 'state_id'];
@@ -36,5 +37,12 @@ class City extends Model
     public function state()
     {
         return $this->belongsTo(State::class, 'state_id', 'state_id');
+    }
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_city_table';
     }
 }

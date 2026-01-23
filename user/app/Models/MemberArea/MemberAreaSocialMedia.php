@@ -6,7 +6,7 @@
  * @package         MemberAreaSocialMedia
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Log;
 
 class MemberAreaSocialMedia extends Model
 {
-    protected $table = 'ihook_members_meta_table';
+    protected $table;
     protected $primaryKey = 'members_meta_id';
     public $timestamps = false;
 
@@ -32,6 +32,13 @@ class MemberAreaSocialMedia extends Model
         'members_id', 'members_email', 'sec_code', 'meta_key', 'meta_data',
         'created_on', 'created_by', 'updated_on', 'updated_by'
     ];
+
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_meta_table';
+    }
 
     public static function getSocialMediaDetails($user_id)
     {

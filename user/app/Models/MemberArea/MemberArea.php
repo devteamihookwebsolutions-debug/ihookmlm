@@ -6,7 +6,7 @@
  * @package         MemberArea
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -32,8 +32,9 @@ class MemberArea
     public static function getRevenueData(int $memberId): string
     {
         // 1. All credit entries (commissions, bonuses, fund-received …)
-        $credits = DB::table($_ENV['IHOOK_PREFIX'] . 'ihook_history_table as h')
-            ->join($_ENV['IHOOK_PREFIX'] . 'ihook_history_type_table as t', 'h.history_type_id', '=', 't.history_type_id')
+        $prefix = config('ihook.prefix', 'ihook');
+        $credits = DB::table($prefix. '_history_table as h')
+            ->join($prefix . '_history_type_table as t', 'h.history_type_id', '=', 't.history_type_id')
             ->where('h.history_member_id', $memberId)
             ->where('t.history_credit_type', 1)
             ->selectRaw('SUM(h.history_amount) as total, t.history_name')
@@ -41,8 +42,8 @@ class MemberArea
             ->pluck('total', 'history_name');
 
         // 2. All debit entries (withdrawals, deductions …)
-        $debits = DB::table($_ENV['IHOOK_PREFIX'] . 'ihook_history_table as h')
-            ->join($_ENV['IHOOK_PREFIX'] . 'ihook_history_type_table as t', 'h.history_type_id', '=', 't.history_type_id')
+        $debits = DB::table($prefix . '_history_table as h')
+            ->join($prefix . '_history_type_table as t', 'h.history_type_id', '=', 't.history_type_id')
             ->where('h.history_member_id', $memberId)
             ->where('t.history_debit_type', 1)
             ->selectRaw('SUM(h.history_amount) as total, t.history_name')
@@ -73,7 +74,7 @@ class MemberArea
     public static function getSalesData(int $memberId): string
     {
         // Get WooCommerce customer_id (members_shop_id)
-        $shopId = DB::table($_ENV['IHOOK_PREFIX'] . 'members_table')
+        $shopId = DB::table($_ENV['IHOOK_PREFIX'] . '_members_table')
             ->where('members_id', $memberId)
             ->value('members_shop_id');
 
@@ -82,13 +83,13 @@ class MemberArea
         }
 
         // All completed orders for this customer
-        $orders = DB::table($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . 'posts as p')
-            ->join($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . 'postmeta as pm', function ($join) use ($shopId) {
+        $orders = DB::table($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . '_posts as p')
+            ->join($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . '_postmeta as pm', function ($join) use ($shopId) {
                 $join->on('p.ID', '=', 'pm.post_id')
                      ->where('pm.meta_key', '=', '_customer_user')
                      ->where('pm.meta_value', '=', $shopId);
             })
-            ->join($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . 'postmeta as tot', function ($join) {
+            ->join($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . '_postmeta as tot', function ($join) {
                 $join->on('p.ID', '=', 'tot.post_id')
                      ->where('tot.meta_key', '=', '_order_total');
             })

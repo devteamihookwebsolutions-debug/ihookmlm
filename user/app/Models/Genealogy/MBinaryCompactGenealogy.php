@@ -6,7 +6,7 @@
  * @package         MBinaryCompactGenealogy
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -48,9 +48,11 @@ class MBinaryCompactGenealogy
             $members_id = $auth_user_id;
         }
 
+        $prefix = config('ihook.prefix', 'ihook');
+
         // Step 2: Determine matrix_id
         if (!$matrix_id || !is_numeric($matrix_id)) {
-            $first = DB::table('ihook_matrix_members_link_table')
+            $first = DB::table("{$prefix}_matrix_members_link_table")
                 ->where('members_id', $members_id)
                 ->orderBy('link_id')
                 ->value('matrix_id');

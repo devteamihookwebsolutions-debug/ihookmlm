@@ -6,7 +6,7 @@
  * @package         PaymentHistory
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentHistory extends Model
 {
-    protected $table = 'ihook_paymenthistory_table';
+    protected $table ;
     public $timestamps = false;
      protected $fillable = [
     'paymenthistory_member_id',
@@ -37,5 +37,12 @@ class PaymentHistory extends Model
     'paymenthistory_plan_id',
     'matrix_id',
     ];
+
+      public function __construct(array $attributes = [])
+       {
+              parent::__construct($attributes);
+              $prefix = config('services.ihook.prefix');
+              $this->table = $prefix . '_paymenthistory_table';
+       }
 
 }

@@ -6,7 +6,7 @@
  * @package         MPackageHistory
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -37,11 +37,12 @@ public static function packageHistory(Request $request)
 {
     $members_id = Auth::user()->members_id;
 
+    $prefix = config('services.ihook.prefix', 'ihook');
     // Direct table names – no prefix
-    $payment = 'ihook_paymenthistory_table';
-    $matrix  = 'ihook_matrix_table';
-    $package = 'ihook_package_table';
-    $links   = 'ihook_matrix_members_link_table';
+    $payment = $prefix . 'paymenthistory_table';
+    $matrix  = $prefix . 'matrix_table';
+    $package = $prefix . 'package_table';
+    $links   = $prefix . 'matrix_members_link_table';
 
     // BASE QUERY
     $query = DB::table($payment . ' as a')
@@ -185,16 +186,17 @@ public static function viewpackageinvoice($id)
     $user = MMembersDetails::getUserDetails($userId);
 
     // 2. Get invoice row
-    $invoice = DB::table('ihook_paymenthistory_table')
+    $prefix = config('services.ihook.prefix', 'ihook');
+
+    $invoice = DB::table($prefix . '_paymenthistory_table')
         ->where('paymenthistory_id', $id)
         ->first();
-
     if (!$invoice) {
         return "<tr><td colspan='5'>Invoice not found</td></tr>";
     }
 
     // 3. Get history row
-    $history = DB::table('ihook_history_table')
+    $history = DB::table($prefix . '_history_table')
         ->where('history_member_id',  $userId)
         ->first();
 

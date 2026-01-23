@@ -9,3 +9,4 @@ use Illuminate\Support\Facades\Route;
 // Include your admin module routes
 require base_path('admin/routes/web.php');
 require base_path('user/routes/web.php');
+require base_path('ecomputing/routes/web.php');

@@ -6,7 +6,7 @@
  * @package         MDownlineLevel
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -40,15 +40,15 @@ class MDownlineLevel
             }
 
            $sql    = "SELECT a.direct_id,a.matrix_id,e.members_username,e.members_doj,e.members_id,f.members_username as sponsor
-         FROM  " . env('IHOOK_PREFIX') . "matrix_members_link_table AS a
-        LEFT JOIN    " . env('IHOOK_PREFIX') . "members_table AS  f ON f.members_id=a.direct_id
-        LEFT JOIN    " . env('IHOOK_PREFIX') . "members_table AS  e ON e.members_id=a.members_id
+         FROM  " . env('IHOOK_PREFIX') . "_matrix_members_link_table AS a
+        LEFT JOIN    " . env('IHOOK_PREFIX') . "_members_table AS  f ON f.members_id=a.direct_id
+        LEFT JOIN    " . env('IHOOK_PREFIX') . "_members_table AS  e ON e.members_id=a.members_id
         WHERE a.members_account_status!='-1' " . $wheres . "  LIMIT " . request('start') . "," . request('length') . "";
             $records = DB::select($sql);
              $sQuery_count = "SELECT count(*) as total
-         FROM  " . env('IHOOK_PREFIX') . "matrix_members_link_table AS a
-        LEFT JOIN    " . env('IHOOK_PREFIX') . "members_table AS  f ON f.members_id=a.direct_id
-        LEFT JOIN    " . env('IHOOK_PREFIX') . "members_table AS  e ON e.members_id=a.members_id
+         FROM  " . env('IHOOK_PREFIX') . "_matrix_members_link_table AS a
+        LEFT JOIN    " . env('IHOOK_PREFIX') . "_members_table AS  f ON f.members_id=a.direct_id
+        LEFT JOIN    " . env('IHOOK_PREFIX') . "_members_table AS  e ON e.members_id=a.members_id
         WHERE a.members_account_status!='-1' " . $wheres . "";
             $iTotal = DB::select($sQuery_count)[0]->total;
         } else {
@@ -65,7 +65,7 @@ class MDownlineLevel
         $member_link = MMatrixMemberLink::getPartMatrixLinkDetails('root', $where_root);
 
         $root        = $member_link[0]['root'];
-        $sql = "SELECT members_id,root FROM  " . env('IHOOK_PREFIX') . "matrix_members_link_table
+        $sql = "SELECT members_id,root FROM  " . env('IHOOK_PREFIX') . "_matrix_members_link_table
         WHERE members_account_status!='-1' AND root>0 AND direct_id='" . $id . "' GROUP BY root ";
         $records = DB::select($sql);
 

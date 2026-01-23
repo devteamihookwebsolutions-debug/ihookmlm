@@ -6,7 +6,7 @@
  * @package         AuthController
  * @category        Controller
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.com
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/

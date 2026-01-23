@@ -6,7 +6,7 @@
  * @category        Model
  * @author          Ihook Dev Team
  * @link            https://ihookmlmsoftware.com
- * @copyright       Copyright (c) 2020 - 2021, Sunsofty.
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
  */
 /****************************************************************************
@@ -116,7 +116,7 @@ public static function insertCustomerDetails(
         'shipping_phone'            => $shipphone,
     ];
 
-    $customers_id = DB::table($prefix . 'customers')->insertGetId($insertData);
+    $customers_id = DB::table($prefix . '_customers')->insertGetId($insertData);
 
     $mail_lang = session('sitelang_id', 1);
 

@@ -55,15 +55,15 @@ public static function insertShopUsers(
     if ($cartConfigureId == 2) {
 
         // Get Shopify settings
-        $store_url = DB::table($prefix . 'sitesettings')
+        $store_url = DB::table($prefix . '_sitesettings')
             ->where('sitesettings_name', 'shop_name')
             ->value('sitesettings_value');
 
-        $access_token = DB::table($prefix . 'sitesettings')
+        $access_token = DB::table($prefix . '_sitesettings')
             ->where('sitesettings_name', 'access_token')
             ->value('sitesettings_value');
 
-        $api_key = DB::table($prefix . 'sitesettings')
+        $api_key = DB::table($prefix . '_sitesettings')
             ->where('sitesettings_name', 'api_key')
             ->value('sitesettings_value');
 

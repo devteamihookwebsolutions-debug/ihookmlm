@@ -6,7 +6,7 @@
  * @category        Model
  * @author          Ihook Dev Team
  * @link            https://ihookmlmsoftware.com
- * @copyright        Copyright (c) 2020 - 2021, Sunsofty.
+ * @copyright        Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
  */
 /****************************************************************************

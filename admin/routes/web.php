@@ -68,6 +68,7 @@ use Admin\App\Http\Controllers\Terminology\TerminologyController;
 use Admin\App\Http\Controllers\UserManager\DistributesInsertUserController;
 use Admin\App\Http\Controllers\Withdrawal\PayoutsController;
 use Admin\App\Http\Controllers\Withdrawal\WithdrawalPaymentSettingsController;
+use Admin\App\Http\Controllers\Wordpress\WordPressProductsController;
 use Admin\Http\Controllers\Integrations\GoogleMapController;
 use Illuminate\Support\Facades\Route;
 use Admin\App\Http\Controllers\Rank\RankController;
@@ -460,6 +461,29 @@ Route::get('matrix/packagelevel/{matrix_id}/{package_id}', [PackageLevelCommissi
 Route::post('matrix/validatepackagelevel', [PackageLevelCommissionController::class, 'validatePackageLevelCommission'])->name('matrix.validatepackagelevel');
 Route::post('matrix/deletepackagelevel', [PackageLevelCommissionController::class, 'deletePackageLevelCommission'])->name('matrix.deletepackagelevel');
 
+// Show WordPress Products
+Route::get('/wordpressproducts', [WordPressProductsController::class, 'showWordPressProducts'])->name('wordpressproducts.show');
+
+// Show Add Products Form
+Route::get('/wordpressproducts/add', [WordPressProductsController::class, 'showAddProducts'])->name('wordpressproducts.add');
+
+// Insert Products
+Route::post('/wordpressproducts/insert', [WordPressProductsController::class, 'insertProducts'])->name('wordpressproducts.insert');
+
+// Delete Products
+Route::delete('/wordpressproducts/delete/{id}', [WordPressProductsController::class, 'deleteProducts'])->name('wordpressproducts.delete');
+
+// Show Edit Products Form
+Route::get('/wordpressproducts/edit/{id}', [WordPressProductsController::class, 'showEditProducts'])->name('wordpressproducts.edit');
+
+// Get Products Records (maybe for AJAX)
+Route::get('/wordpressproducts/getrecords', [WordPressProductsController::class, 'getProducts'])->name('wordpressproducts.getrecords');
+
+// Show Product Details
+Route::get('/wordpressproducts/details/{id}', [WordPressProductsController::class, 'showProductDetails'])->name('wordpressproducts.details');
+
+// Show All Products
+Route::get('/wordpressproducts/all', [WordPressProductsController::class, 'allWordPressProducts'])->name('wordpressproducts.all');
 
 });
 

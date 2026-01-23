@@ -6,7 +6,7 @@
  * @package         MNetwork
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -16,14 +16,6 @@
  *****************************************************************************/
 ?>
 <?php
-/**
- * MNetwork – Laravel model for the “My Network” page
- *
- * @package    User\App\Models\Network
- * @author     Sunsofty Dev Team
- * @copyright  Copyright (c) 2020 - 2025, Sunsofty.
- * @version    8.1
- */
 
 namespace User\App\Models\Network;
 
@@ -130,9 +122,9 @@ class MNetwork
         // dd($user_id);
         $sql     = "SELECT a.*,b.matrix_id,b.matrix_name,b.matrix_type_id,b.matrix_status,c.matrix_type_id,
         c.matrix_type_id,c.matrix_type_name,d.members_status,d.members_doj,d.members_username
-        FROM " . env('IHOOK_PREFIX') . "matrix_members_link_table AS a LEFT JOIN " . env('IHOOK_PREFIX') . "_matrix_table
-        AS b ON b.matrix_id=a.matrix_id LEFT JOIN " . env('IHOOK_PREFIX') . "matrix_type_table AS c ON c.matrix_type_id=
-        b.matrix_type_id  LEFT JOIN " . env('IHOOK_PREFIX') . "members_table AS d ON d.members_id=a.members_id WHERE
+        FROM " . env('IHOOK_PREFIX') . "_matrix_members_link_table AS a LEFT JOIN " . env('IHOOK_PREFIX') . "_matrix_table
+        AS b ON b.matrix_id=a.matrix_id LEFT JOIN " . env('IHOOK_PREFIX') . "_matrix_type_table AS c ON c.matrix_type_id=
+        b.matrix_type_id  LEFT JOIN " . env('IHOOK_PREFIX') . "_members_table AS d ON d.members_id=a.members_id WHERE
         a.members_id='" . $user_id . "' GROUP BY a.matrix_id";
 
             $records = $sql;

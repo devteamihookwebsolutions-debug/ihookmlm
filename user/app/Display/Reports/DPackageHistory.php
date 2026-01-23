@@ -6,7 +6,7 @@
  * @package         DPackageHistory
  * @category        Display
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -39,9 +39,9 @@ public static function PackageHistory($records)
         // Format currency
         $amount = session('site_settings.site_currency') . ' ' .
                   MFormatNumber::formatingNumberCurrency($row->paymenthistory_amount);
-
+        $prefix = env('IHOOK_PREFIX');
         // Check current subscription
-        $current = DB::table('ihook_matrix_members_link_table')
+        $current = DB::table("{$prefix}_matrix_members_link_table")
             ->where('members_subscription_plan', $row->paymenthistory_plan_id)
             ->where('matrix_id', $row->matrix_id)
             ->where('members_id', $userId)

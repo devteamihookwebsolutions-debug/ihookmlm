@@ -6,7 +6,7 @@
  * @package         Admin
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -27,7 +27,7 @@ class Admin extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'ihook_admin_table';
+    protected $table;
     protected $primaryKey = 'admin_id';
     public $timestamps = false;
 
@@ -51,12 +51,21 @@ class Admin extends Authenticatable
 
     // ────────────────────────────────────────────────
     // Force plain storage & reading for OTP fields
-    // (prevents any accidental encryption from traits or global casts)
+    // (prevents any accidental encryption from traits or global casts)'
     // ────────────────────────────────────────────────
+
+
 
     public function setAdminOtpAttribute($value)
     {
         $this->attributes['admin_otp'] = $value; // plain value - no encrypt()
+    }
+
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_admin_table';
     }
 
     public function getAdminOtpAttribute($value)

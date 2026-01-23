@@ -5,10 +5,10 @@
  *
  * @package         DChangePosition
  * @category        Display
- * @author          Sunsofty Dev Team
- * @link            https://sunsoftny.com
- * @copyright       Copyright (c) 2020 - 2025, Sunsofty.
- * @version         Version 8.1
+ * @author          Ihook Dev Team
+ * @link            https://ihookmlmsoftware.com
+ * @copyright       Copyright (c) 2025 - 2026, Ihook.
+ * @version         Version 1.0
  */
 /****************************************************************************
  * Licence Agreement:

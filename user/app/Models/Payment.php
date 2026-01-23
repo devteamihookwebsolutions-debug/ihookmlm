@@ -6,7 +6,7 @@
  * @package         Payment
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -23,6 +23,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-       protected $table = 'ihook_paymentsettings_table';
+       protected $table;
        public $timestamps = false;
+
+        public function __construct(array $attributes = [])
+       {
+              parent::__construct($attributes);
+              $prefix = config('services.ihook.prefix');
+              $this->table = $prefix . '_paymentsettings_table';
+       }
 }

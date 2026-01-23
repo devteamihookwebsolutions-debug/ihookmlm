@@ -6,7 +6,7 @@
  * @package         Bonus_Impl
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -218,7 +218,7 @@ class Bonus_Impl
                         $matrixdetails = MMatrixDetails::getMatrixDetails($matrix_id);
                         $matrix_name = $matrixdetails['matrix_name'];
                         if ($sponser_from != 0) {
-                            $sponsor_sql = "SELECT members_username,dailybonus_cron FROM " . $_ENV['PROMLM_PREFIX'] . "members_table WHERE members_id=" . $sponser_from;
+                            $sponsor_sql = "SELECT members_username,dailybonus_cron FROM " . $_ENV['PROMLM_PREFIX'] . "_members_table WHERE members_id=" . $sponser_from;
                             $sponsor_obj = new Bin_Query();
                             $sponsor_obj->executeQuery($sponsor_sql);
                             $sponsor_records = $sponsor_obj->records;
@@ -227,7 +227,7 @@ class Bonus_Impl
                             $member_upd_id = $sponser_from;
                             $history_description = $bonus_name.' - '.__('Bonus earned from').'&nbsp;'.$direct_user . " - " .strtolower($bonustype).'&nbsp;'.strtolower(__('through')).'&nbsp;'.$matrix_name.'&nbsp;'.strtolower(__('Plan'));
                         } elseif ($sponser_from == 0) {
-                            $user_sql = "SELECT members_username,dailybonus_cron FROM " . $_ENV['PROMLM_PREFIX'] . "members_table WHERE members_id=" . $user_id;
+                            $user_sql = "SELECT members_username,dailybonus_cron FROM " . $_ENV['PROMLM_PREFIX'] . "_members_table WHERE members_id=" . $user_id;
                             $user_obj = new Bin_Query();
                             $user_obj->executeQuery($user_sql);
                             $user_records = $user_obj->records;

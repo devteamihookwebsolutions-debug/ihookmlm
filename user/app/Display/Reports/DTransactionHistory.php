@@ -6,7 +6,7 @@
  * @package         DTransactionHistory
  * @category        Display
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -163,8 +163,9 @@ public static function getHistoryType($historytype)
     // Current language (session)
     $lang = session('sitelang', 'en');
 
+    $prefix = env('IHOOK_PREFIX');
     // Query using DB::table()
-    $record = DB::table('ihook_terminology_settings_table')
+    $record = DB::table("{$prefix}_terminology_settings_table")
                 ->where('language_key', $languageKey)
                 ->where('language', $lang)
                 ->value('language_value');

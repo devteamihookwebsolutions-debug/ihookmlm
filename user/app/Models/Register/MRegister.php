@@ -6,7 +6,7 @@
  * @package         MRegister
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -20,6 +20,8 @@ namespace User\App\Models\Register;
 
 use Admin\App\Models\Member\Matrix;
 use Admin\App\Models\Member\Member;
+use Admin\App\Models\Member\State;
+use Admin\App\Models\Member\Country;
 use Admin\App\Models\Member\MemberLinks;
 use Admin\App\Models\Member\MatrixConfiguration;
 use Admin\App\Models\Middleware\MMatrixDetails;
@@ -27,9 +29,14 @@ use Admin\App\Models\Middleware\MMatrixConfiguration;
 use Admin\App\Models\Middleware\MMatrixMemberLink;
 use Admin\App\Models\Middleware\MPaymentGatewayDetails;
 use Admin\App\Models\Middleware\MPackageDetails;
+use Admin\App\Models\Middleware\MUserNotifyStatus;
 use Admin\App\Models\PaymentConquest\MInsertPaymentHistory;
 use Admin\App\Models\PaymentConquest\MPaymentSuccess;
-use DB;
+use Admin\App\Models\Middleware\MSiteDetails;
+use Admin\App\Models\Middleware\MFormatNumber;
+use Admin\App\Models\Middleware\MSendMail;
+use Illuminate\Support\Facades\DB;
+// use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -46,6 +53,7 @@ class MRegister
 
         $membersUsername = trim($request->input('members_username'));
         $sponsorUsername = trim($request->input('sponsor_id'));
+        // dd($sponsorUsername);
         $matrixId        = session('register.matrix_id');
 
         if (Member::where('members_username', $membersUsername)->exists()) {
@@ -149,7 +157,7 @@ class MRegister
             'payment_method' => $paymentMethod,
             'members_id'     => $members_id
             ]);
-            $paymenthistory_id = 1;
+            $paymenthistory_id = 1; // dummy positive id to satisfy later checks
         } else {
             $insertPayment = new MInsertPaymentHistory();
             // Use a safe random token instead of mt_rand with a very large max
@@ -243,6 +251,104 @@ class MRegister
         } else {
             Log::warning('Commission processing returned false', ['members_id' => $members_id]);
         }
+
+
+       $paymenthistory_amount     = MFormatNumber::formatPaymentAmount($member->final_fee ?? 0, 2);
+    $site_currency = MSiteDetails::getSiteSettingValue('site_currency');
+        //Plan purchase mail
+        if($paymenthistory_id > 0)
+        {
+            // dd($paymenthistory_id);
+        $prefix = config('ihook.prefix', 'ihook');
+        $email_notification_user = MSiteDetails::getSiteSettingValue('email_notification_user');
+        // dd($email_notification_user);
+        $push_notification_admin = MSiteDetails::getSiteSettingValue('push_notification_admin');
+
+        $push_notification_user  = MSiteDetails::getSiteSettingValue('push_notification_user');
+
+        if ($email_notification_user == '1') {
+            $member = Member::find($members_id);
+            if ($member) {
+            // Member info
+            $members_email=$member->members_email ?:'-';
+            $memberusername = $member->members_username ?:'-';
+            $membersCity    = $member->members_city ?: '-';
+            $membersState   = $member->members_state ?: '-';
+            $membersZip     = $member->members_zip ?: '-';
+            $membersAddr    = $member->members_address ?: '-';
+            $fee            = $member->fee ?? 0;
+            $registerFee    = $member->registerfee ?? 0;
+            $totalTaxRate   = max(0, $fee - $registerFee);
+            $totalCoupon    = max(0, $member->coupon_discount ?? 0);
+
+            // Country
+       if (!empty($member->members_country)) {
+            $countryName = Country::where('sortname', $member->members_country)
+                ->value('country_master_name') ?? '-';
+        } else {
+            $countryName = '-';
+        }
+
+        // dd($countryName);
+            // State
+      $stateName = !empty($member->members_state)
+            ? State::where('state_id', $member->members_state)->value('state_name') ?? '-'
+            : '-';
+
+        // dd($stateName);
+            } else {
+                // Handle case if member not found
+                $membersCity = $membersState = $membersZip = $membersAddr = $countryName = $stateName = '-';
+                $totalTaxRate = $totalCoupon = 0;
+            }
+             $mailLang = session('sitelang_id', 1);
+             // 2 Try to fetch invoice template first
+            $mailRecord = DB::table($prefix .'_invoicetemplates_table')
+                ->where('invoice_status', 1)
+                ->where('invoice_lang', $mailLang)
+                ->first();
+
+             if (!$mailRecord) {
+                    $mailRecord = DB::table($prefix .'_mailtemplates_table')
+                        ->where('mail_default_name', 'plan_purchase_mail')
+                        ->where('mail_status', 1)
+                        ->where('mail_lang', $mailLang)
+                        ->first();
+                }
+
+                // 4 If still not found, fallback to default language '1'
+                if (!$mailRecord) {
+                    $mailRecord = DB::table($prefix.'_mailtemplates_table')
+                        ->where('mail_default_name', 'plan_purchase_mail')
+                        ->where('mail_status', 1)
+                        ->where('mail_lang', 1)
+                        ->first();
+                }
+
+        $matrixDescriptionMsg = MatrixConfiguration::where('matrix_id', $matrix_id)
+        ->where('matrix_key', 'matrix_description')
+        ->value('matrix_value') ?? '-';
+        $message = $mailRecord->mail_content ?? '';
+        $replacements = [
+            '[name]'           => $memberusername,
+            '[planame]'        => $matrix_name,
+            '[planprice]'      => $site_currency . $paymenthistory_amount,
+            '[plandescription]' => $matrixDescriptionMsg,
+            '[address]'        => $membersAddr,
+            '[city]'           => $membersCity,
+            '[state]'          => $stateName,
+            '[country]'        => $countryName,
+            '[zipcode]'        => $membersZip,
+            '[totalprice]'     => $site_currency . $paymenthistory_amount,
+            '[subtotal]'       => $site_currency . ($fee ?? 0),
+            '[tax]'            => $site_currency . ($taxRate ?? 0),
+            '[coupon]'         => $site_currency . ($totalCoupon ?? 0),
+        ];
+        $message = str_replace(array_keys($replacements), array_values($replacements), $message);
+            MSendMail::send($mailRecord, $members_email, $message, '', '');
+           }
+        }
+
 
         Log::info('redirectMembers() completed successfully');
         return true;

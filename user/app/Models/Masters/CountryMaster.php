@@ -6,7 +6,7 @@
  * @package         CountryMaster
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -25,14 +25,23 @@ use Illuminate\Database\Eloquent\Model;
 class CountryMaster extends Model {
     use HasFactory;
 
-    protected $table = 'ihook_country_master_table';
+
+    protected $table;
     protected $primaryKey = 'country_master_id';
     public $incrementing = true;
     // Enable auto-increment for country_master_id
     protected $fillable = [ 'sortname', 'country_master_name' ];
 
 
+
     public function cities() {
         return $this->hasMany( City::class, 'country_id', 'country_master_id' );
+    }
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_country_master_table';
     }
 }

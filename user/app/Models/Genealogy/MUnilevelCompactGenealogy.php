@@ -6,7 +6,7 @@
  * @package         MUnilevelCompactGenealogy
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -43,8 +43,10 @@ class MUnilevelCompactGenealogy
             $members_id = $auth_user_id;
         }
 
+        $prefix = config('ihook.prefix', 'ihook');
+
         if (!$matrix_id || !is_numeric($matrix_id)) {
-            $matrix_id = DB::table('ihook_matrix_members_link_table')
+            $matrix_id = DB::table("{$prefix}_matrix_members_link_table")
                 ->where('members_id', $members_id)
                 ->value('matrix_id') ?? 1;
         }
@@ -112,7 +114,9 @@ class MUnilevelCompactGenealogy
 
     private static function getDirectDownlines($parent_id, $matrix_id)
     {
-        return DB::table('ihook_matrix_members_link_table')
+        $prefix = config('ihook.prefix', 'ihook');
+
+        return DB::table("{$prefix}_matrix_members_link_table")
             ->where('matrix_id', $matrix_id)
             ->where('direct_id', $parent_id)
             ->where('members_id', '!=', $parent_id)

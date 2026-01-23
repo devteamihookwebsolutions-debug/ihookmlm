@@ -6,7 +6,7 @@
  * @package         Postmeta
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -23,11 +23,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Postmeta extends Model
 {
-    protected $table = 'cart_postmeta';
+    protected $table;
     protected $primaryKey = 'meta_id';
     public $timestamps = false;
 
     protected $fillable = [
         'post_id', 'meta_key', 'meta_value',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.store_prefix');
+        $this->table = $prefix . '_postmeta';
+    }
 }

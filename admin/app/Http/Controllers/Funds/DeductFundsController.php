@@ -6,7 +6,7 @@
  * @package         DeductFundsController
  * @category        Controller
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -21,18 +21,19 @@
 namespace Admin\App\Http\Controllers\Funds;
 
 use Admin\App\Http\Controllers\Controller;
-use Admin\App\Models\Middleware\MCryptoCurrency;
 use Admin\App\Models\Middleware\MWalletType;
 use Admin\App\Models\Middleware\MSiteDetails;
 use Admin\App\Models\Middleware\MAutoSearch;
 use Admin\App\Models\Funds\MDeductFunds;
 use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Admin\App\Models\Member\Member;
+use Admin\App\Models\Middleware\MCryptoCurrency;
 use Illuminate\Support\Facades\DB;
-class DeductFundsController extends Controller
+class CDeductFundsController extends Controller
 {
 
     public function showDetect()

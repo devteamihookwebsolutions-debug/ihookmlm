@@ -6,7 +6,7 @@
  * @package         MemberHistrory
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
+ * @link            https://ihookmlmsoftware.com
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -24,7 +24,7 @@ use Carbon\Carbon;
 
 class MemberHistrory extends Model
 {
-    protected $table = 'ihook_history_table';
+    protected $table;
     protected $primaryKey = 'history_id';
     public $timestamps = false;
 
@@ -39,6 +39,14 @@ class MemberHistrory extends Model
         'payquicker_request','withdrawal_coin_type','push_notification','crypto_qty',
         'currency_id'
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_history_table';
+    }
+
     public function getFormattedDateAttribute()
     {
         return Carbon::parse($this->history_datetime)->format('d M Y');

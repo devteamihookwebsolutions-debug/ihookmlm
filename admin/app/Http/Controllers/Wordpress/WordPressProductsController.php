@@ -24,28 +24,23 @@ use Admin\App\Models\Middleware\MAdminActivityLog;
 use Admin\App\Models\Middleware\MSiteDetails;
 use Admin\App\Models\Wordpress\MWordPressProducts;
 use Exception;
+use Illuminate\Support\Facades\Log;
 class WordPressProductsController extends Controller
 {
 
     public static function showWordPressProducts()
     {
-        try {
 
         $output['products'] = MWordPressProducts::showWordPressProducts();
-
+// dd($output['products']);
         return view('wordpress/wordpressproductslist', $output);
         unset($_SESSION['success_message']);
         unset($_SESSION['error_message']);
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpresspurchasehistory/orderdetails");
-        exit();
-    }
-}
+
+        }
 
     public static function showAddProducts()
     {
-        try {
 
         if (isset($_GET['sub1'])) {
             $result = MWordPressProducts::editProducts($_GET['sub1']);
@@ -61,120 +56,152 @@ class WordPressProductsController extends Controller
         return view('wordpress/worpressaddproducts', $output);
         unset($_SESSION['success_message']);
         unset($_SESSION['error_message']);
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpressproducts/eaddproducts");
-        exit();
-    }
+
 }
 
-    public static function insertProducts()
+    public function insertProducts()
     {
-        try {
+        Log::info('WordPress product insertion/update started', [
+            'user_id' => auth()->id() ?? 'guest',
+            'ip' => request()->ip(),
+            'post_data' => request()->except(['product_image'])
+        ]);
+
         new ValidateInputs('e_product');
-        if (isset($_POST['id']) && $_POST['id'] != "")
-        {
-              //Admin Activity Log
-        MAdminActivityLog::getAdminActivity('Wordpress - Update Product');
-         //Admin Activity Log
-            MWordPressProducts::updateProducts();
-        } else {
-           MAdminActivityLog::getAdminActivity('Wordpress - Insert Product');
-            MWordPressProducts::insertProducts();
+
+        $model = new MWordPressProducts();
+
+        try {
+            if (isset($_POST['id']) && $_POST['id'] != "") {
+                Log::info('Updating existing product', ['product_id' => $_POST['id']]);
+                MAdminActivityLog::getAdminActivity('Wordpress - Update Product');
+                $model->updateProducts(request());
+                Log::info('Product update completed successfully', ['product_id' => $_POST['id']]);
+            } else {
+                Log::info('Creating new product');
+                MAdminActivityLog::getAdminActivity('Wordpress - Insert Product');
+                $model->insertProducts(request());
+                Log::info('New product insertion completed');
+            }
+
+            header('Location:' . $_ENV['BCPATH'] . '/wordpressproducts');
+            exit();
+        } catch (Exception $e) {
+            Log::error('Product insert/update failed in controller', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'post_data' => request()->all()
+            ]);
+
+            // Optional: session flash message
+            $_SESSION['error_message'] = 'Product save failed. Please check logs.';
+            header('Location:' . $_ENV['BCPATH'] . '/wordpressproducts');
+            exit();
         }
-        header('Location:' . $_ENV['BCPATH'] . '/wordpressproducts');
-        exit();
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpressproducts/insert");
-        exit();
     }
-}
 
-    public static function deleteProducts()
-    {
-        try {
-         //Admin Activity Log
-        MAdminActivityLog::getAdminActivity('Wordpress - Delete Product');
-         //Admin Activity Log
+public function deleteProducts($id)
+{
+    $id = (int) $id;
 
-        MWordPressProducts::deleteProducts();
-        header('Location:' . $_ENV['BCPATH'] . '/wordpressproducts');
-        exit();
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpressproducts/delete");
-        exit();
+    if ($id <= 0) {
+        return redirect()->back()->with('error', 'Invalid product ID');
     }
-}
 
-    public static function showEditProducts()
-    {
-        try {
-
-
-        if (isset($_GET['sub1'])) {
-            $result = MWordPressProducts::editProducts($_GET['sub1']);
-            $output['post_title'] = $result->name;
-            $output['post_name'] = strip_tags($result->short_description);
-            $output['post_content'] = strip_tags($result->description);
-            $output['regular_price'] = $result->regular_price;
-            $output['sales_price'] = $result->sale_price;
-            $output['productimage'] = $result->images[0]->src;
+    try {
+        if (auth()->check()) {
+            MAdminActivityLog::getAdminActivity('Wordpress - Delete Product');
         }
 
-        // echo '<pre>';
-        // print_r($output['productimage']);exit;
+        // Model-ல delete logic call
+        MWordPressProducts::deleteProduct($id);
 
+        return redirect($_ENV['BCPATH'] . '/wordpressproducts')
+            ->with('success', 'Product deleted successfully');
 
-        $sitesettings_val =MSiteDetails::getSiteSettingsDetails('WHERE sitesettings_name="woocommerce_secret"');
-        $output['woocommerce_secret'] = $sitesettings_val[0]['sitesettings_value'];
+    } catch (Exception $e) {
+        \Log::error('Product delete failed', [
+            'id' => $id,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
 
-
-
-       return view('wordpress/wordpressediteproducts', $output);
-        unset($_SESSION['success_message']);
-        unset($_SESSION['error_message']);
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpressproducts/edit");
-        exit();
+        return redirect()->back()->with('error', 'Delete failed: ' . $e->getMessage());
     }
 }
+    // WordPressProductsController.php
+public function showEditProducts($id)
+{
+    $id = (int) $id;
 
+    if ($id < 1) {
+        return redirect()
+            ->route('wordpressproducts.show')
+            ->with('error', 'Invalid Product ID');
+    }
+
+    $product = MWordPressProducts::editProducts($id);
+
+    if (empty($product) || isset($product->code)) {
+        \Log::warning("Product fetch failed for edit", [
+            'id' => $id,
+            'error' => $product->message ?? 'Unknown error'
+        ]);
+        return redirect()
+            ->route('wordpressproducts.show')
+            ->with('error', 'Product not found or API error');
+    }
+
+$output = [
+    'post_title'     => $product->name ?? '',
+    'post_content'   => strip_tags($product->description ?? ''),
+    'post_name'      => strip_tags($product->short_description ?? ''),
+    'regular_price'  => $product->regular_price ?? '',
+    'sales_price'    => $product->sale_price ?? '',
+    'productimage'   => $product->images[0]->src ?? '',
+    'sub1'           => $id,
+];
+
+    $sitesettings_val = MSiteDetails::getSiteSettingsDetails('WHERE sitesettings_name="woocommerce_secret"');
+    $output['woocommerce_secret'] = $sitesettings_val[0]['sitesettings_value'] ?? '';
+
+    return view('wordpress.wordpressediteproducts', $output);
+}
     public static function getProducts()
     {
-        try {
         echo MWordPressProducts::allWordPressProducts();
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpressproducts/getrecords");
-        exit();
-    }
+
 }
 
-    public static function showProductDetails()
+    public function showProductDetails($id)
     {
-        try {
-        $records = $_GET['records'] ?? null;
-        echo MWordPressProducts::showProductDetails($records);
-            exit;
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpressproducts/showeproducts");
-        exit();
+        // Force clean integer
+        $id = (int) trim($id ?? 0);
+
+        \Log::info("showProductDetails called", [
+            'received_id' => $id,
+            'raw_input'   => request()->all(),
+            'url'         => request()->fullUrl()
+        ]);
+
+        if ($id < 1) {
+            return '<div class="p-8 text-center text-red-700 bg-red-50 rounded-xl border border-red-200 shadow-sm">
+                <h3 class="text-xl font-bold mb-2">Invalid Product ID</h3>
+                <p>ID received: ' . e($id) . '<br>Please try clicking the button again.</p>
+            </div>';
+        }
+
+        $html = MWordPressProducts::getProductDetails($id);
+
+        return response($html)->header('Content-Type', 'text/html');
     }
-}
 
     public static function allWordPressProducts()
     {
-        try {
         echo MWordPressProducts::allWordPressProducts();
         exit;
-    }catch (Exception $e) {
-        $_SESSION['error_message'] = $e->getMessage();
-        header("location:" . $_ENV['BCPATH'] . "/wordpressproducts/alleproducts");
-        exit();
-    }
+
 }
 }

@@ -465,7 +465,7 @@ Route::post('matrix/deletepackagelevel', [PackageLevelCommissionController::clas
 Route::get('/wordpressproducts', [WordPressProductsController::class, 'showWordPressProducts'])->name('wordpressproducts.show');
 
 // Show Add Products Form
-Route::get('/wordpressproducts/add', [WordPressProductsController::class, 'showAddProducts'])->name('wordpressproducts.add');
+Route::get('/wordpressproducts/eaddproducts', [WordPressProductsController::class, 'showAddProducts'])->name('wordpressproducts.add');
 
 // Insert Products
 Route::post('/wordpressproducts/insert', [WordPressProductsController::class, 'insertProducts'])->name('wordpressproducts.insert');
@@ -480,10 +480,12 @@ Route::get('/wordpressproducts/edit/{id}', [WordPressProductsController::class, 
 Route::get('/wordpressproducts/getrecords', [WordPressProductsController::class, 'getProducts'])->name('wordpressproducts.getrecords');
 
 // Show Product Details
-Route::get('/wordpressproducts/details/{id}', [WordPressProductsController::class, 'showProductDetails'])->name('wordpressproducts.details');
-
+// Important: use instance method, not static
+Route::get('/wordpressproducts/showeproducts/{id}', [WordPressProductsController::class, 'showProductDetails'])
+    ->name('wordpressproducts.details')
+    ->where('id', '[0-9]+');
 // Show All Products
-Route::get('/wordpressproducts/all', [WordPressProductsController::class, 'allWordPressProducts'])->name('wordpressproducts.all');
+Route::get('/wordpressproducts/alleproducts', [WordPressProductsController::class, 'allWordPressProducts'])->name('wordpressproducts.all');
 
 });
 

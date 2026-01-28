@@ -21,6 +21,8 @@ namespace Admin\App\Models\MatrixConfig;
 
 use Admin\App\Models\Middleware\MMatrixConfiguration;
 use Admin\App\Models\Middleware\MPaymentGatewayDetails;
+use Admin\App\Models\ShopAncillary\MShopUserInsert;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Admin\App\Models\Middleware\MMatrixDetails;
 use Illuminate\Support\Facades\Hash;
@@ -44,6 +46,7 @@ class MSetMatrixConfiguration
 {
     public static function insertMatrixConfiguration(Request $request, $matrix_id)
     {
+        // dd('test');
         $adminId = Session::get('admin_id');
         $createdBy = $adminId ?? 1;
 
@@ -231,20 +234,87 @@ class MSetMatrixConfiguration
                 }
 
 
-            $defaultSponsorConfig = MatrixConfiguration::where('matrix_id', $matrix_id)
-                ->where('matrix_key', 'default_sponsor')
-                ->first();
 
-            if ($defaultSponsorConfig) {
-                $id = $defaultSponsorConfig->matrix_configuration_id;
-                MatrixConfiguration::where('matrix_configuration_id', $id)->update(['matrix_value' => $member->members_id]);
+        $defaultSponsorConfig = MatrixConfiguration::where('matrix_id', $matrix_id)
+            ->where('matrix_key', 'default_sponsor')
+            ->first();
+
+        $default_sponsor_member_id = $defaultSponsorConfig ? $defaultSponsorConfig->matrix_value : null;
+
+        Log::info("Default sponsor check after processing", [
+            'matrix_id' => $matrix_id,
+            'default_sponsor_member_id' => $default_sponsor_member_id,
+            'default_sponsor_name_was_processed' => isset($member) ? 'yes' : 'no'
+        ]);
+
+        $rest_shop_id = null;
+        $members_shop_id = null;
+
+        if ($default_sponsor_member_id) {
+
+            $member = Member::find($default_sponsor_member_id);
+
+            if ($member) {
+                Log::info("Default sponsor member found - preparing shop user insert", [
+                    'member_id' => $member->members_id,
+                    'username'  => $member->members_username,
+                    'email'     => $member->members_email
+                ]);
+
+                $members_username  = $member->members_username ?? '';
+                $members_password  = $member->members_password ?? '';
+                $members_email     = $member->members_email ?? '';
+                $members_doj       = $member->members_doj ?? now();
+                $members_firstname = $member->members_firstname ?? '';
+                $members_lastname  = $member->members_lastname ?? '';
+                $members_phone     = $member->members_phone ?? '';
+                $members_address   = $member->members_address ?? '';
+                $members_city      = $member->members_city ?? '';
+                $members_zip       = $member->members_zip ?? '';
+
+                try {
+                    Log::info("Calling MShopUserInsert::insertShopUsers", [
+                        'username' => $members_username,
+                        'email'    => $members_email,
+                        'doj'      => $members_doj
+                    ]);
+
+                    $rest_shop_id = MShopUserInsert::insertShopUsers(
+                        $members_username,
+                        $members_password,
+                        $members_email,
+                        $members_doj,
+                        $members_firstname,
+                        $members_lastname,
+                        $members_phone,
+                        $members_address,
+                        $members_city,
+                        $members_zip
+                    );
+
+                    Log::info("Shop user insert completed", [
+                        'rest_shop_id' => $rest_shop_id,
+                        'username'     => $members_username
+                    ]);
+
+                    $members_shop_id = !empty($rest_shop_id) ? $rest_shop_id : null;
+                } catch (Exception $shopEx) {
+                    Log::error("Shop user insert failed", [
+                        'error'    => $shopEx->getMessage(),
+                        'username' => $members_username,
+                        'email'    => $members_email
+                    ]);
+                }
             } else {
-                $config = new MatrixConfiguration();
-                $config->matrix_id = $matrix_id;
-                $config->matrix_key = 'default_sponsor';
-                $config->matrix_value = $member->members_id;
-                $config->save();
+                Log::warning("Default sponsor member ID found but member record missing", [
+                    'member_id' => $default_sponsor_member_id
+                ]);
             }
+        } else {
+            Log::info("No default sponsor configured for this matrix - skipping shop user insert", [
+                'matrix_id' => $matrix_id
+            ]);
+        }
 
             if (empty($request->post('members_paid_account_type')) && trim($request->post('members_account_type')) != '3') {
                 Package::where('matrix_id', $matrix_id)->delete();

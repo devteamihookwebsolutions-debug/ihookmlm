@@ -23,7 +23,7 @@ class Controller_Banner_CReferralHeaderBanner
     public function __construct()
     {
         $apikey = trim($_SERVER['HTTP_APIKEY']);
-        if ($apikey != 'bFkK)fFLNSbv}H-yX9=') {
+        if ($apikey != 'xUS0VYMyvlpziO3H0tN6xz') {
             echo  "Invalid users";
             exit;
         }

@@ -1,6 +1,6 @@
 <?php
 /**
- * This class contains public static functions related to Banner .
+ * This class contains public static functions related to WordPress/WooCommerce integration.
  *
  * @package         MWordPressEshop
  * @category        Model
@@ -10,57 +10,164 @@
  * @version         Version 1.0
  */
 /****************************************************************************
-* Licence Agreement:
+ * Licence Agreement:
  *     This program is a Commercial licensed software. You are not authorized to redistribute it and/or modify/and or sell it under any publication either user and enterprise versions of the License (or) any later version is applicable for the same. If you have received this software without a license, you must not use it, and you must destroy your copy of it immediately. If anybody illegally uses this software, please contact info@promlmsoftware.com.
-*****************************************************************************/
+ *****************************************************************************/
 ?>
 <?php
+
 namespace Admin\App\Models\Wordpress;
 
-use Admin\App\Models\Middleware\MSiteDetails;
-class MWordPressUserInsert {
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class MWordPressUserInsert
+{
     /**
-     * This public static function is used to insert new user details for wordpress
+     * Insert new customer into WooCommerce via REST API with full billing/shipping details
+     *
      * @param string $members_username
-     * @param string $members_password
+     * @param string $plain_password   // IMPORTANT: PLAIN TEXT password (not hashed!)
      * @param string $members_email
      * @param string $members_doj
-     * @return int
+     * @param array  $registrationData  // Full data from registration form/session
+     * @return int|null                 WooCommerce customer ID or null
      */
-    public static function wpRestInsert($members_username, $wp_password, $members_email, $members_doj)
-    {
-        $key_where = "WHERE sitesettings_name ='woocommerce_key' ";
-        $sitesettings = MSiteDetails::getSiteSettingsDetails($key_where);
-        $woocommerce_key = trim($sitesettings[0]['sitesettings_value']);
-        $secret_where = "WHERE sitesettings_name ='woocommerce_secret' ";
-        $sitesettings = MSiteDetails::getSiteSettingsDetails($secret_where);
-        $woocommerce_secret = trim($sitesettings[0]['sitesettings_value']);
-        $key_where = "WHERE sitesettings_name ='woocommerce_path' ";
-        $sitesettings = MSiteDetails::getSiteSettingsDetails($key_where);
-        $path = trim($sitesettings[0]['sitesettings_value']);
-        $postdata = '{
-                  "email": "' . $members_email . '",
-                  "first_name": "' . $members_username . '",
-                  "password":"' . $wp_password . '",
-                  "last_name": "' . $members_username . '",
-                  "username": "' . $members_username . '"
-                }';
-        $url = "" . $path . "/wp-json/wc/v3/customers?consumer_key=" . $woocommerce_key . "&consumer_secret=" . $woocommerce_secret . "";
+    public static function wpRestInsert(
+        $members_username,
+        $plain_password,
+        $members_email,
+        $members_doj,
+        array $registrationData = []
+    ) {
+        $prefix = config('services.ihook.prefix', 'ihook');
+
+        $settings = DB::table($prefix . '_sitesettings_table')
+            ->whereIn('sitesettings_name', [
+                'woocommerce_path',
+                'woocommerce_key',
+                'woocommerce_secret'
+            ])
+            ->pluck('sitesettings_value', 'sitesettings_name')
+            ->toArray();
+
+        $path               = trim($settings['woocommerce_path'] ?? '');
+        $woocommerce_key    = trim($settings['woocommerce_key'] ?? '');
+        $woocommerce_secret = trim($settings['woocommerce_secret'] ?? '');
+
+        Log::info('Fetched WooCommerce settings from DB', [
+            'path'          => $path,
+            'key_prefix'    => substr($woocommerce_key ?? '', 0, 10) . '...',
+            'secret_prefix' => substr($woocommerce_secret ?? '', 0, 10) . '...',
+        ]);
+
+        if (empty($path) || empty($woocommerce_key) || empty($woocommerce_secret)) {
+            Log::error('WooCommerce credentials missing');
+            return null;
+        }
+
+        // ────────────────────────────────────────────────
+        // Extract real values from registration data
+        // ────────────────────────────────────────────────
+        $first_name = $registrationData['first_name']   ?? $members_username;
+        $last_name  = $registrationData['last_name']    ?? $members_username;
+        $phone      = $registrationData['phone']        ?? '';
+        $address    = $registrationData['address']      ?? '';
+        $city       = $registrationData['city']         ?? '';
+        $state      = $registrationData['state']        ?? '';     // your state code like "1266"
+        $postcode   = $registrationData['zipcode']      ?? '';     // zipcode = postcode in Woo
+        $country    = $registrationData['country']      ?? 'IN';   // country code like "DZ"
+
+        // Build billing & shipping objects (WooCommerce format)
+        $billing = [
+            'first_name' => $first_name,
+            'last_name'  => $last_name,
+            'address_1'  => $address,
+            'address_2'  => '',                 // add if you have second line
+            'city'       => $city,
+            'state'      => $state,
+            'postcode'   => $postcode,
+            'country'    => $country,
+            'email'      => $members_email,
+            'phone'      => $phone,
+        ];
+
+        // Usually shipping = billing unless you have separate fields
+        $shipping = $billing;
+
+        $payload = [
+            'email'      => $members_email,
+            'username'   => $members_username,
+            'password'   => $plain_password,   // ← PLAIN TEXT only!
+            'first_name' => $first_name,
+            'last_name'  => $last_name,
+            'billing'    => $billing,
+            'shipping'   => $shipping,
+        ];
+
+        $json_payload = json_encode($payload);
+
+        // Use /index.php to avoid 307 redirect (nginx/WordPress issue)
+        $url = rtrim($path, '/') . '/index.php/wp-json/wc/v3/customers'
+             . '?consumer_key=' . urlencode($woocommerce_key)
+             . '&consumer_secret=' . urlencode($woocommerce_secret);
+
+        Log::info('Sending to WooCommerce', [
+            'url'     => $url,
+            'payload' => array_merge($payload, ['password' => '***hidden***']),
+        ]);
+
         $curl = curl_init();
-        curl_setopt_array(
-            $curl,
-            array(
-                CURLOPT_URL => $url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => "", CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => "POST", CURLOPT_POSTFIELDS => $postdata,
-                CURLOPT_HTTPHEADER => array("cache-control: no-cache", "content-type: application/json", "postman-token: 59a6f202-ddd2-e493-73b0-a3018d0c0976"),
-            )
-        );
-        $response = curl_exec($curl);
-        $data_json = json_decode($response, 2);
-        // print_R($data_json); exit;
-        $err = curl_error($curl);
+        curl_setopt_array($curl, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 60,
+            CURLOPT_CUSTOMREQUEST  => 'POST',
+            CURLOPT_POSTFIELDS     => $json_payload,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_FOLLOWLOCATION => true,
+        ]);
+
+        $response   = curl_exec($curl);
+        $http_code  = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $curl_error = curl_error($curl);
+
+        Log::info('WooCommerce API response', [
+            'http_code'    => $http_code,
+            'curl_error'   => $curl_error,
+            'raw_response' => substr($response ?? '', 0, 4000),
+        ]);
+
+        if ($curl_error) {
+            Log::error('cURL failed', ['error' => $curl_error]);
+            curl_close($curl);
+            return null;
+        }
+
         curl_close($curl);
-        return $data_json['id'];
+
+        $data = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || empty($data['id'])) {
+            Log::error('Invalid JSON or no customer ID', [
+                'json_error' => json_last_error_msg(),
+                'http_code'  => $http_code,
+            ]);
+            return null;
+        }
+
+        if ($http_code >= 200 && $http_code < 300) {
+            Log::info('Customer created with full billing/shipping', [
+                'customer_id' => $data['id'],
+                'billing'     => $data['billing'] ?? 'missing',
+                'shipping'    => $data['shipping'] ?? 'missing',
+            ]);
+            return (int) $data['id'];
+        }
+
+        Log::error('WooCommerce returned error', ['response' => $data]);
+        return null;
     }
 }
-?>

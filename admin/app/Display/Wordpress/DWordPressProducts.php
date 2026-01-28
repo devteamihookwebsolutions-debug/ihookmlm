@@ -218,7 +218,7 @@ public static function showProductDetails($product)  // better name than $record
                     </h3>
 
                     <p class="text-xl md:text-2xl font-bold text-blue-600">
-                        ' . ($product->price_html ?? '<span class="text-gray-500">Price not available</span>') . '
+                        ' . ($product->get_price()_html ?? '<span class="text-gray-500">Price not available</span>') . '
                     </p>
                 </div>
 

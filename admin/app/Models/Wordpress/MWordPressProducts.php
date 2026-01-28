@@ -917,7 +917,7 @@ Log::debug('Stock status meta added', ['status' => $stockStatus]);
 
     $product = json_decode($result);
 
-    if (json_last_error() !== JSON_ERROR_NONE || empty($product->id)) {
+    if (json_last_error() !== JSON_ERROR_NONE || empty($product->get_id())) {
         return null;
     }
 
@@ -995,7 +995,7 @@ public static function getProductDetails($id)
 
     $product = json_decode($response);
 
-    if (json_last_error() !== JSON_ERROR_NONE || empty($product->id)) {
+    if (json_last_error() !== JSON_ERROR_NONE || empty($product->get_id())) {
         return '<div class="p-6 bg-orange-50 text-orange-800 rounded-lg border border-orange-200">
             Invalid response format from WooCommerce
         </div>';

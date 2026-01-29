@@ -19,7 +19,10 @@
 
 namespace Admin\App\Models\Ewallet;
 
+use Admin\App\Models\Middleware\MFormatNumber;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
+use Session;
 use User\App\Models\PaymentHistory;
 
 use Admin\App\Display\Ewallet\DEwalletPayments;
@@ -72,9 +75,10 @@ public static function activateEwalletPayment(Request $request)
 
         // Start DB Transaction
         DB::beginTransaction();
+        $prefix = config('services.ihook.prefix');
 
         // Update paymenthistory_table status
-        $updated = DB::table('ihook_paymenthistory_table')
+        $updated = DB::table($prefix.'_paymenthistory_table')
             ->where('paymenthistory_id', $paymenthistory_id)
             ->update(['paymenthistory_status' => 'paid']);
 
@@ -84,7 +88,7 @@ public static function activateEwalletPayment(Request $request)
         }
 
         // Fetch updated payment details
-        $payment = DB::table('ihook_paymenthistory_table')
+        $payment = DB::table($prefix.'_paymenthistory_table')
             ->where('paymenthistory_id', $paymenthistory_id)
             ->first();
 
@@ -102,7 +106,7 @@ public static function activateEwalletPayment(Request $request)
         $formatted_amount = MFormatNumber::formatingNumberCurrency($payment->paymenthistory_amount ?? 0);
 
         // Insert new history record
-        DB::table('ihook_history_table')->insert([
+        DB::table($prefix.'_history_table')->insert([
             'history_member_id'     => $payment->paymenthistory_member_id,
             'history_amount'        => $formatted_amount,
             'history_type'          => 'ewalletcredits',

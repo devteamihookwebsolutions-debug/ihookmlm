@@ -39,7 +39,7 @@ public static function PackageHistory($records)
         // Format currency
         $amount = session('site_settings.site_currency') . ' ' .
                   MFormatNumber::formatingNumberCurrency($row->paymenthistory_amount);
-        $prefix = env('IHOOK_PREFIX');
+        $prefix = config('services.ihook.prefix');
         // Check current subscription
         $current = DB::table("{$prefix}_matrix_members_link_table")
             ->where('members_subscription_plan', $row->paymenthistory_plan_id)

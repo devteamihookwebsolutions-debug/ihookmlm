@@ -29,7 +29,7 @@ class MPayouts
 {
 public static function showWithdrawal()
 {
-    // dd('asdfkahjd');
+        $prefix = config('services.ihook.prefix');
     // List of selected columns
     $columns = [
         'a.history_id',
@@ -50,9 +50,9 @@ public static function showWithdrawal()
     ];
 
     // Query (no prefix)
-    $records = DB::table('ihook_members_table AS b')
-        ->leftJoin('ihook_history_table AS a', 'a.history_member_id', '=', 'b.members_id')
-        ->leftJoin('ihook_paymentsettings_table AS c', 'c.paymentsettings_id', '=', 'b.members_payment_id')
+    $records = DB::table($prefix.'_members_table AS b')
+        ->leftJoin($prefix.'_history_table AS a', 'a.history_member_id', '=', 'b.members_id')
+        ->leftJoin($prefix.'_paymentsettings_table AS c', 'c.paymentsettings_id', '=', 'b.members_payment_id')
         ->select($columns)
         ->where('a.history_type', 'withdraw_pending')
         ->get();
@@ -66,8 +66,9 @@ public static function showWithdrawal()
 
     public static function showCompletedWithdrawal()
 {
+     $prefix = config('services.ihook.prefix');
     // dd('ajksdf');
-    $records = DB::table('ihook_members_table as b')
+    $records = DB::table($prefix.'_members_table as b')
         ->select(
             'a.history_id',
             'a.history_member_id',
@@ -87,8 +88,8 @@ public static function showWithdrawal()
             'a.history_wallet_type',
             'a.withdrawal_coin_type'
         )
-        ->leftJoin('ihook_history_table as a', 'a.history_member_id', '=', 'b.members_id')
-        ->leftJoin('ihook_paymentsettings_table as c', 'c.paymentsettings_id', '=', 'b.members_payment_id')
+        ->leftJoin($prefix.'_history_table as a', 'a.history_member_id', '=', 'b.members_id')
+        ->leftJoin($prefix.'_paymentsettings_table as c', 'c.paymentsettings_id', '=', 'b.members_payment_id')
         ->where('a.history_type', 'withdrawal')
         ->where('a.history_description', '!=', 'withdrawal commission paid')
         ->get();
@@ -100,28 +101,29 @@ public static function showWithdrawal()
 
 public static function showCancelleddWithdrawal()
 {
+    $prefix = config('services.ihook.prefix');
     // dd('function reached');
     $records = History::query()
         ->select(
-            'ihook_history_table.history_id',
-            'ihook_history_table.history_member_id',
-            'ihook_history_table.history_type',
-            'ihook_history_table.history_description',
-            'ihook_history_table.account_id',
-            'ihook_members_table.members_username',
-            'ihook_history_table.history_amount',
-            'ihook_members_table.members_account_number',
-            'ihook_history_table.history_datetime',
-            'ihook_members_table.members_lastname',
-            'ihook_members_table.members_payment_id',
-            'ihook_paymentsettings_table.paymentsettings_name',
-            'ihook_history_table.updated_on',
-            'ihook_history_table.history_wallet_type'
+            $prefix.'_history_table.history_id',
+            $prefix.'_history_table.history_member_id',
+            $prefix.'_history_table.history_type',
+            $prefix.'_history_table.history_description',
+            $prefix.'_history_table.account_id',
+            $prefix.'_members_table.members_username',
+            $prefix.'_history_table.history_amount',
+            $prefix.'_members_table.members_account_number',
+            $prefix.'_history_table.history_datetime',
+            $prefix.'_members_table.members_lastname',
+            $prefix.'_members_table.members_payment_id',
+            $prefix.'_paymentsettings_table.paymentsettings_name',
+            $prefix.'_history_table.updated_on',
+            $prefix.'_history_table.history_wallet_type'
         )
-        ->leftJoin('ihook_members_table', 'ihook_history_table.history_member_id', '=', 'ihook_members_table.members_id')
-        ->leftJoin('ihook_paymentsettings_table', 'ihook_members_table.members_payment_id', '=', 'ihook_paymentsettings_table.paymentsettings_id')
-        ->where('ihook_history_table.history_type', 'withdrawal')
-        ->where('ihook_history_table.history_description', '!=', 'withdrawal commission paid')
+        ->leftJoin($prefix.'_members_table', $prefix.'_history_table.history_member_id', '=', $prefix.'_members_table.members_id')
+        ->leftJoin($prefix.'_paymentsettings_table', $prefix.'_members_table.members_payment_id', '=', $prefix.'_paymentsettings_table.paymentsettings_id')
+        ->where($prefix.'_history_table.history_type', 'withdrawal')
+        ->where($prefix.'_history_table.history_description', '!=', 'withdrawal commission paid')
         ->get();
 
     $iTotal = $records->count();

@@ -138,8 +138,9 @@ class MWordPressProducts{
 
                 $mimeType = mime_content_type($fullPath) ?: 'image/png';
 
-                $wpUsername    = env('WP_APP_USERNAME', '');
-                $wpAppPassword = env('WP_APP_PASSWORD', '');
+
+                $wpUsername = config('services.wordpress.username');
+                $wpAppPassword = config('services.wordpress.password');
 
                 if (empty($wpUsername) || empty($wpAppPassword)) {
                     Log::warning('WP Application Password missing – image upload skipped.');
@@ -499,8 +500,8 @@ if ($request->hasFile('product_image') && $request->file('product_image')->isVal
         $mimeType = mime_content_type($fullPath) ?: $file->getMimeType() ?: 'image/png';
 
         // Get Application Password from .env
-        $wpUsername    = env('WP_APP_USERNAME', '');
-        $wpAppPassword = env('WP_APP_PASSWORD', '');
+        $wpUsername = config('services.wordpress.username');
+        $wpAppPassword = config('services.wordpress.password');
 
         if (empty($wpAppPassword) || empty($wpUsername)) {
             Log::warning('WP Application Password or Username missing in .env – image upload skipped. Add WP_APP_USERNAME & WP_APP_PASSWORD.');

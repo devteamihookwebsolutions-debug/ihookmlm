@@ -23,9 +23,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class SmtpSetting extends Model
 {
-  protected $table = 'ihook_smtp_settings_table';
+  protected $table;
     public $timestamps = false;
     protected $primaryKey = 'smtp_id';
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_smtp_settings_table';
+    }
 
     protected $fillable = [
         'smtp_hname', 'smtp_port', 'smtp_user', 'smtp_pass',

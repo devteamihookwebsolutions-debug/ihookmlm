@@ -29,8 +29,9 @@ class MIntegrations
      */
     public static function getIntegrationList($sub1 = 'all')
     {
+     $prefix = config('services.ihook.prefix');
          // Build the query for modules
-    $query = DB::table(env('IHOOK_PREFIX') . '_thirdpartyintegration_modules')
+    $query = DB::table($prefix . '_thirdpartyintegration_modules')
         ->where('thirdpartyintegration_modules_default_name', '!=', 'shopify')
         ->where('thirdpartyintegration_modules_default_name', '!=', 'wordpress');
 
@@ -41,7 +42,7 @@ class MIntegrations
 
         $records = $query->get();
 
-        $recordscat = DB::table(env('IHOOK_PREFIX') . '_thirdpartyintegration_categories')
+        $recordscat = DB::table($prefix . '_thirdpartyintegration_categories')
             ->where('thirdpartyintegration_categories_status', 1)
             ->where('thirdpartyintegration_categories_default_name', '!=', 'shopping')
             ->get();

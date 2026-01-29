@@ -30,13 +30,15 @@ class MProduct
     {
         $members_shop = MMemberDetails::getPartMembersDetails('members_shop_id', $member_id);
         $members_shop_id = $members_shop['members_shop_id'];
+         $prefix = config('services.ihook.prefix');
+        $storeprefix = config('services.ihook.store_prefix');
 
-        return DB::table(env('IHOOK_STORE_PREFIX') . '_posts as a')
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as b', function ($join) {
+        return DB::table($storeprefix . '_posts as a')
+            ->leftJoin($storeprefix . '_postmeta as b', function ($join) {
                 $join->on('b.post_id', '=', 'a.ID')
                      ->where('b.meta_key', '_customer_user');
             })
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as c', function ($join) {
+            ->leftJoin($storeprefix . '_postmeta as c', function ($join) {
                 $join->on('c.post_id', '=', 'b.post_id')
                      ->where('c.meta_key', '_order_total');
             })
@@ -53,16 +55,17 @@ class MProduct
     {
         $members_shop = MMemberDetails::getPartMembersDetails('members_shop_id', $member_id);
         $members_shop_id = $members_shop['members_shop_id'];
+        $storeprefix = config('services.ihook.store_prefix');
 
         $start = date('Y-m-d H:i:s', strtotime($start_date));
         $end   = date('Y-m-d 23:59:59', strtotime($end_date));
 
-        return DB::table(env('IHOOK_STORE_PREFIX') . '_posts as a')
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as b', function ($join) {
+        return DB::table($storeprefix . '_posts as a')
+            ->leftJoin($storeprefix . '_postmeta as b', function ($join) {
                 $join->on('b.post_id', '=', 'a.ID')
                      ->where('b.meta_key', '_customer_user');
             })
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as c', function ($join) {
+            ->leftJoin($storeprefix . '_postmeta as c', function ($join) {
                 $join->on('c.post_id', '=', 'b.post_id')
                      ->where('c.meta_key', '_order_total');
             })
@@ -80,18 +83,19 @@ class MProduct
     {
         $members_shop = MMemberDetails::getPartMembersDetails('members_shop_id', $member_id);
         $members_shop_id = $members_shop['members_shop_id'];
+        $storeprefix = config('services.ihook.store_prefix');
 
-        return DB::table(env('IHOOK_STORE_PREFIX') . '_posts as a')
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as b', function ($join) use ($members_shop_id) {
+        return DB::table($storeprefix . '_posts as a')
+            ->leftJoin($storeprefix . '_postmeta as b', function ($join) use ($members_shop_id) {
                 $join->on('b.post_id', '=', 'a.ID')
                      ->where('b.meta_key', '_customer_user')
                      ->where('b.meta_value', $members_shop_id);
             })
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_woocommerce_order_items as c', function ($join) {
+            ->leftJoin($storeprefix . '_woocommerce_order_items as c', function ($join) {
                 $join->on('c.order_id', '=', 'b.post_id')
                      ->where('c.order_item_type', 'line_item');
             })
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_woocommerce_order_itemmeta as d', function ($join) {
+            ->leftJoin($storeprefix . '_woocommerce_order_itemmeta as d', function ($join) {
                 $join->on('d.order_item_id', '=', 'c.order_item_id')
                      ->where('d.meta_key', '_qty');
             })
@@ -107,21 +111,22 @@ class MProduct
     {
         $members_shop = MMemberDetails::getPartMembersDetails('members_shop_id', $member_id);
         $members_shop_id = $members_shop['members_shop_id'];
+        $storeprefix = config('services.ihook.store_prefix');
 
         $start = date('Y-m-d H:i:s', strtotime($start_date));
         $end   = date('Y-m-d 23:59:59', strtotime($end_date));
 
-        return DB::table(env('IHOOK_STORE_PREFIX') . '_posts as a')
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as b', function ($join) use ($members_shop_id) {
+        return DB::table($storeprefix . '_posts as a')
+            ->leftJoin($storeprefix . '_postmeta as b', function ($join) use ($members_shop_id) {
                 $join->on('b.post_id', '=', 'a.ID')
                      ->where('b.meta_key', '_customer_user')
                      ->where('b.meta_value', $members_shop_id);
             })
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_woocommerce_order_items as c', function ($join) {
+            ->leftJoin($storeprefix . '_woocommerce_order_items as c', function ($join) {
                 $join->on('c.order_id', '=', 'b.post_id')
                      ->where('c.order_item_type', 'line_item');
             })
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_woocommerce_order_itemmeta as d', function ($join) {
+            ->leftJoin($storeprefix . '_woocommerce_order_itemmeta as d', function ($join) {
                 $join->on('d.order_item_id', '=', 'c.order_item_id')
                      ->where('d.meta_key', '_qty');
             })

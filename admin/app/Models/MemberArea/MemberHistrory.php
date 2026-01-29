@@ -24,8 +24,14 @@ use Carbon\Carbon;
 
 class MemberHistrory extends Model
 {
-    protected $table = 'ihook_history_table';
+    protected $table;
     protected $primaryKey = 'history_id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_history_table';
+    }
     public $timestamps = false;
 
     protected $fillable = [

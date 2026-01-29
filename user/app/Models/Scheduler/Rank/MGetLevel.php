@@ -33,10 +33,12 @@ class MGetLevel
      */
     public static function getLevel($member_id, $matrix_id, $levelcnt)
     {
+                 $prefix = config('services.ihook.prefix');
+
         /* -------------------------------------------------
          * Get level width from matrix configuration
          * ------------------------------------------------- */
-        $level_width = DB::table(env('IHOOK_PREFIX') . '_matrix_configuration_table')
+        $level_width = DB::table($prefix . '_matrix_configuration_table')
             ->where('matrix_id', $matrix_id)
             ->where('matrix_key', 'level_width')
             ->value('matrix_value');
@@ -65,7 +67,7 @@ class MGetLevel
         for ($i = 0; $i < $levelcnt; $i++) {
             $j = $i + 1;
 
-            $total_level = DB::table(env('IHOOK_PREFIX') . '_matrix_members_link_table')
+            $total_level = DB::table($prefix . '_matrix_members_link_table')
                 ->whereRaw('FIND_IN_SET(?, members_parents)', [$member_id])
                 ->where('root', $level)
                 ->where('matrix_id', $matrix_id)

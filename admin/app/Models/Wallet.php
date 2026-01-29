@@ -26,8 +26,14 @@ class Wallet extends Model
  {
     use HasFactory;
 
-    protected $table = 'ihook_wallettype';
+    protected $table;
     protected $primaryKey = 'wallet_type_id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_wallettype';
+    }
     public $timestamps = false;
     // Adjust if needed
 }

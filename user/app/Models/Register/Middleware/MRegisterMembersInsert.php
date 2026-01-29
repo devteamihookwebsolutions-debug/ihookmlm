@@ -71,6 +71,7 @@ class MRegisterMembersInsert
         $members_lastname       = $data['last_name'];
         $members_email          = $data['email'];
         $members_password       = Hash::make($data['password']);
+        $plain_password         = $data['password'];
         $members_dob            = $formattedDate;
         $members_address        = $data['address'];
         $members_country        = $data['country'];
@@ -83,6 +84,7 @@ class MRegisterMembersInsert
         $group_id       = 1;
         $members_from   = 1;
         $status         = 1;
+        // dd($wp_user);
         // Insert user details
          $paymentMethod = $data['payment'] ?? '';
             $packageId = $data['Package'] ?? 0;
@@ -98,7 +100,7 @@ class MRegisterMembersInsert
                     throw new Exception("E-PIN code is required for this payment method.");
                 }
 
-                $epin = DB::table('ihook_epin_table')
+                $epin = DB::table($prefix.'_epin_table')
                     ->where('epin_code', $epin_code)
                     ->where('epin_status', 0)
                     ->first();
@@ -119,6 +121,7 @@ class MRegisterMembersInsert
         $insertUserDetails = new MInsertUserDetails();
         $members_id = $insertUserDetails->insertUserDetails(
         $members_username,
+        $plain_password,
         $members_password,
         $members_email,
         $members_firstname,
@@ -134,6 +137,7 @@ class MRegisterMembersInsert
         $members_payment_id,
         $epin_code
         );
+
         // dd($members_id);
         // Store in session using Laravel's Session
         Session::put('register.members_id', $members_id);

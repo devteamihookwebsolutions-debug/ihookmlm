@@ -26,7 +26,7 @@ class MWalletBalance
 {
     public static function getWalletCurrentBalance($user_id, $history_wallet_type)
     {
-        $prefix = env('IHOOK_PREFIX', '');
+        $prefix = config('services.ihook.prefix');
 
         // Correct table names with underscore
         $typeTable     = $prefix . '_history_type_table';
@@ -83,7 +83,7 @@ class MWalletBalance
     // Optional: Keep old method if other code still uses it (but fix it too!)
     public static function getWalletBalanceDetails($where, $bindings = [])
     {
-        $prefix = env('IHOOK_PREFIX', '');
+        $prefix = config('services.ihook.prefix');
         $sql = "SELECT COALESCE(SUM(history_amount), 0) AS total
                 FROM {$prefix}_history_table
                 {$where}";

@@ -26,8 +26,9 @@ class MText {
 
 
         // Check if the 'lang' parameter is set in the POST request
+        $prefix = config('services.ihook.prefix');
 
-        $sql = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "sitesettings_table WHERE sitesettings_name='admin_site_language'";
+        $sql = "SELECT * FROM " . $prefix . "sitesettings_table WHERE sitesettings_name='admin_site_language'";
         $language = $sql[0]['sitesettings_value'];
         if ($_SESSION['adminsitelang'] == "") {
             $_SESSION['adminsitelang'] = "en";
@@ -40,15 +41,18 @@ class MText {
 
    public static function getLanguage()
    {
-        $sql = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "language_table";
+            $prefix = config('services.ihook.prefix');
+
+        $sql = "SELECT * FROM " . $prefix . "language_table";
             $records = $sql;
             return DText::getLanguage($records);
     }
 
     public static function setSelectedlanguage() {
+        $prefix = config('services.ihook.prefix');
 
         if (isset($_POST['lang'])) {
-            $sql = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "language_table WHERE lang_code='" . $_POST['lang'] . "'";
+            $sql = "SELECT * FROM " . $prefix . "language_table WHERE lang_code='" . $_POST['lang'] . "'";
             $language = $sql[0]['lang_code'];
             $_SESSION['adminsitelang'] = $language;
             $_SESSION['adminsitelang_flag'] = $sql[0]['lang_flag'];

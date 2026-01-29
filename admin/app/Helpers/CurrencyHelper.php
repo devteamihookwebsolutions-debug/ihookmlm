@@ -24,11 +24,13 @@ class CurrencyHelper
 {
     public static function getSymbol($currencyCode = null)
     {
+
         if (!$currencyCode) {
             $currencyCode = self::getSiteCurrency();
         }
         return Cache::remember("currency_symbol_{$currencyCode}", 86400, function () use ($currencyCode) {
-            $currency = DB::table('ihook_currencysettings_table')
+            $prefix = config('services.ihook.prefix');
+            $currency = DB::table($prefix.'_currencysettings_table')
                 ->where('currency_name', $currencyCode)
                 ->orWhere('currency', $currencyCode)
                 ->first();
@@ -41,8 +43,10 @@ class CurrencyHelper
 
     public static function getSiteCurrency()
     {
+
         return Cache::remember('site_currency', 86400, function () {
-            $setting = DB::table('ihook_sitesettings_table')
+            $prefix = config('services.ihook.prefix');
+            $setting = DB::table($prefix.'_sitesettings_table')
                 ->where('sitesettings_name', 'site_currency')
                 ->value('sitesettings_value');
             return $setting ?: 'USD';

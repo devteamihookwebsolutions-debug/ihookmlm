@@ -120,7 +120,7 @@ public static function showLession()
     $totalTitles = (int) $totalTitles;
     $output = '';
 
-    $prefix = env('IHOOK_PREFIX');
+        $prefix = config('services.ihook.prefix');
 
     for ($i = 0; $i < $totalTitles; $i++) {
         $j   = $i + 1;
@@ -169,7 +169,7 @@ public static function showLession()
                      ';
 
 
-                $sql_check2 = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "premium_courses_lesson where course_id = " . $id . " and courses_topics_id=" . $subtitle_id . "";
+                $sql_check2 = "SELECT * FROM " . $prefix . "premium_courses_lesson where course_id = " . $id . " and courses_topics_id=" . $subtitle_id . "";
                 $obj_check2 = new Bin_Query();
                 $obj_check2->executeQuery($sql_check2);
                 $subtitle2 = $obj_check2->records;
@@ -598,7 +598,9 @@ public static function showLession()
 
     public static function getCourseDetails($id, $key)
     {
-        return DB::table($_ENV['IHOOK_PREFIX'] . '_premium_courses')
+                $prefix = config('services.ihook.prefix');
+
+        return DB::table($prefix . '_premium_courses')
             ->where('course_id', $id)
             ->where('course_key', $key)
             ->value('course_value');
@@ -634,7 +636,9 @@ public static function showLession()
 
     public static function showCourseFaq(Request $request)
 {
- $course_id = $request->query('sub1');
+            $prefix = config('services.ihook.prefix');
+
+        $course_id = $request->query('sub1');
 
         if (!$course_id && Session::has('course_id')) {
             $course_id = Session::get('course_id');
@@ -648,7 +652,7 @@ public static function showLession()
 
         Log::info('Using course_id for subcourse update:', ['course_id' => $course_id]);
 
-    $sql = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "_premium_courses_faq
+    $sql = "SELECT * FROM " . $prefix . "_premium_courses_faq
             WHERE courses_id = " . (int)$course_id;
 
     $records = DB::select($sql);
@@ -667,8 +671,10 @@ public static function showLession()
 
     public static function showSubLession()
     {
+                $prefix = config('services.ihook.prefix');
+
         $course_id = request()->route('sub1');
-        $records = DB::table($_ENV['IHOOK_PREFIX'] . '_premium_courses')
+        $records = DB::table($prefix . '_premium_courses')
             ->where('courses_id', $course_id)
             ->get();
 
@@ -723,6 +729,8 @@ public static function showLession()
 
     public static function editLession()
     {
+                $prefix = config('services.ihook.prefix');
+
         $id = request()->route('sub1');
         $totaltitels = MPremiumCourses::getCourses($id, 'totaltitle');
         $output = '';
@@ -732,7 +740,7 @@ public static function showLession()
             $key = "subtitle" . $j;
             $subtitle = MPremiumCourses::getCourses($id, $key);
 
-            $subtitleRecord = DB::table($_ENV['IHOOK_PREFIX'] . '_premium_courses')
+            $subtitleRecord = DB::table($prefix . '_premium_courses')
                 ->where('course_id', $id)
                 ->where('course_key', $key)
                 ->first();

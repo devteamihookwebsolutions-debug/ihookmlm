@@ -38,7 +38,9 @@ class MMatrixDetails
 
 public static function getAllActiveMatrices()
 {
-    return DB::table('ihook_matrix_table')
+            $prefix = config('services.ihook.prefix');
+
+    return DB::table($prefix.'_matrix_table')
         ->select('matrix_id', 'matrix_name')
         ->where('matrix_status', 1)
         ->orderBy('matrix_name')
@@ -54,7 +56,8 @@ public static function getAllActiveMatrices()
     public static function getMemberMatrices($memberId)
     {
         // dd($memberId);
-        return DB::table('ihook_matrix_members_link_table AS link')
+                $prefix = config('services.ihook.prefix');
+        return DB::table($prefix.'_matrix_members_link_table AS link')
             ->join('matrix AS m', 'link.matrix_id', '=', 'm.matrix_id')
             ->where('link.members_id', $memberId)
             ->select('m.matrix_id', 'm.matrix_name')

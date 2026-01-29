@@ -22,8 +22,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $table = 'cart_posts';
+    protected $table;
     protected $primaryKey = 'ID';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $storeprefix = config('services.ihook.store_prefix');
+        $this->table = $storeprefix . '_posts';
+    }
     public $timestamps = false;
 
     public function meta()

@@ -53,7 +53,7 @@ class Rank_Impl
             'cryptocurrency', 'matrix_id', 'rank_icon', 'wallet'
         ];
 
-        $prefix = env('IHOOK_PREFIX');
+         $prefix = config('services.ihook.prefix');
 
         $records = DB::table("{$prefix}_ranksetting")
             ->where('rank_id', $rankid)

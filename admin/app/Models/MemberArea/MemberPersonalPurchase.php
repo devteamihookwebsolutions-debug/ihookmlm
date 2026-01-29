@@ -23,8 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class MemberPersonalPurchase extends Model
 {
-    protected $table = 'ihook_order_table';
+    protected $table;
     protected $primaryKey = 'ihook_order_id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_order_table';
+    }
     public $timestamps = false;
 
     protected $fillable = [

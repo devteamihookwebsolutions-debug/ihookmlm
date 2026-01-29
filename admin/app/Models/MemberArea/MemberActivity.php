@@ -23,8 +23,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class MemberActivity extends Model
 {
-    protected $table = 'ihook_members_log_table';
+    protected $table;
     protected $primaryKey = 'members_log_id';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_log_table';
+    }
+
     public $incrementing = true;
 
     // CORRECT: Use 'int', NOT 'bigint'

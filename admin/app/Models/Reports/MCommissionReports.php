@@ -35,9 +35,9 @@ public static function getCommissionReports(Request $request)
 
     $queryValue = $request->input('query');
 // dd($queryValue);
-    // ✅ Build base query
-    $query = DB::table('ihook_history_table as a')
-        ->leftJoin('ihook_members_table as b', 'a.history_member_id', '=', 'b.members_id')
+        $prefix = config('services.ihook.prefix');
+    $query = DB::table($prefix.'_history_table as a')
+        ->leftJoin($prefix.'_members_table as b', 'a.history_member_id', '=', 'b.members_id')
         ->select(
             'a.history_id',
             'b.members_username',

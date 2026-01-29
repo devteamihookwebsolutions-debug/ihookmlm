@@ -24,8 +24,14 @@ use Illuminate\Support\Facades\Log;
 
 class MemberAreaWebsite extends Model
 {
-    protected $table = 'ihook_members_meta_table';
+    protected $table;
     protected $primaryKey = 'members_meta_id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_meta_table';
+    }
     public $timestamps = false;
 
     protected $fillable = [

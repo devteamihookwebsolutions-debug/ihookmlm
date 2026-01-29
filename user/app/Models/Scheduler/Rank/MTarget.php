@@ -36,24 +36,26 @@ class MTarget
         // Get member shop ID
         $membersShop = MMemberDetails::getPartMembersDetails('members_shop_id', $memberId);
         $membersShopId = $membersShop['members_shop_id'] ?? null;
+        $storeprefix = config('services.ihook.store_prefix');
+         $prefix = config('services.ihook.prefix');
 
         // Get total PV (kept as-is)
         $totalPv = MTotalPV::getTotalPV($memberId, $matrixId);
 
         // Payment history total
-        $totalPayment = DB::table(env('IHOOK_PREFIX') . '_paymenthistory_table')
+        $totalPayment = DB::table($prefix . '_paymenthistory_table')
             ->where('paymenthistory_member_id', $memberId)
             ->where('matrix_id', $matrixId)
             ->where('paymenthistory_status', 'paid')
             ->sum('paymenthistory_amount');
 
         // WooCommerce order total
-        $totalOrder = DB::table(env('IHOOK_STORE_PREFIX') . '_posts as a')
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as b', function ($join) {
+        $totalOrder = DB::table($storeprefix . '_posts as a')
+            ->leftJoin($storeprefix . '_postmeta as b', function ($join) {
                 $join->on('b.post_id', '=', 'a.ID')
                      ->where('b.meta_key', '_customer_user');
             })
-            ->leftJoin(env('IHOOK_STORE_PREFIX') . '_postmeta as c', function ($join) {
+            ->leftJoin($storeprefix . '_postmeta as c', function ($join) {
                 $join->on('c.post_id', '=', 'b.post_id')
                      ->where('c.meta_key', '_order_total');
             })

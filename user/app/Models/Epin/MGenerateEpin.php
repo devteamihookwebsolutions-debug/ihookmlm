@@ -32,7 +32,7 @@ class MGenerateEpin
             Log::info('E-Pin Generation Started', $request->all());
 
             // Fix 1: Get prefix properly
-            $prefix = env('IHOOK_PREFIX');
+        $prefix = config('services.ihook.prefix');
             if (empty($prefix)) {
                 Log::error('IHOOK_PREFIX not set in .env');
                 Session::flash('error_message', 'System configuration error. Contact admin.');
@@ -175,7 +175,7 @@ class MGenerateEpin
 
     public static function getPackageAmount($packageId, $typeId)
     {
-        $prefix = env('IHOOK_PREFIX');
+        $prefix = config('services.ihook.prefix');
 
         if ($typeId == '1') {
             return DB::table("{$prefix}_package_table")

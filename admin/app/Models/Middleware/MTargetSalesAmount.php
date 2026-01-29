@@ -31,15 +31,16 @@ class MTargetSalesAmount
      */
     public static function salesTargetByAmountOld($members_id, $matrix_id)
     {
+       $prefix = config('services.ihook.prefix');
         // Sum of paid payment history
-        $total = DB::table(env('IHOOK_PREFIX') . '_paymenthistory_table')
+        $total = DB::table($prefix . '_paymenthistory_table')
             ->where('paymenthistory_member_id', $members_id)
             ->where('matrix_id', $matrix_id)
             ->where('paymenthistory_status', 'paid')
             ->sum('paymenthistory_amount');
 
         // Personal shop sales
-        $shop_sales = DB::table(env('IHOOK_PREFIX') . '_matrix_members_link_table')
+        $shop_sales = DB::table($prefix . '_matrix_members_link_table')
             ->where('members_id', $members_id)
             ->where('matrix_id', $matrix_id)
             ->value('personal_sales') ?? 0;
@@ -56,9 +57,11 @@ class MTargetSalesAmount
      */
     public static function salesTargetByAmount($members_id, $matrix_id)
     {
-        return DB::table(env('IHOOK_PREFIX') . '_history_table as a')
+        $prefix = config('services.ihook.prefix');
+
+        return DB::table($prefix . '_history_table as a')
             ->leftJoin(
-                env('IHOOK_PREFIX') . '_matrix_members_link_table as b',
+                $prefix . '_matrix_members_link_table as b',
                 'b.members_id',
                 '=',
                 'a.history_member_id'
@@ -86,10 +89,11 @@ class MTargetSalesAmount
     ) {
         $start = date('Y-m-d H:i:s', strtotime($start_date));
         $end   = date('Y-m-d 23:59:59', strtotime($end_date));
+        $prefix = config('services.ihook.prefix');
 
-        return DB::table(env('IHOOK_PREFIX') . '_history_table as a')
+        return DB::table($prefix . '_history_table as a')
             ->leftJoin(
-                env('IHOOK_PREFIX') . '_matrix_members_link_table as b',
+                $prefix . '_matrix_members_link_table as b',
                 'b.members_id',
                 '=',
                 'a.history_member_id'

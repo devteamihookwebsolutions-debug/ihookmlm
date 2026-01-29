@@ -24,26 +24,29 @@ class MAutoSearchMembers {
 
     public static function getMembers($searchval,$matrix_id,$wherecondition)
     {
+        $prefix = config('services.ihook.prefix');
         $matrix_where=$matrix_id>0 ? 'AND b.matrix_id='.$matrix_id.'' :'';
         $where=($searchval!='') ? 'WHERE members_username LIKE "' . $searchval . '%" '.$matrix_where.''.$wherecondition.'' :'';
-         $sql = "SELECT  a.members_username,a.members_id FROM " . $_ENV['IHOOK_PREFIX'] . "members_table as a LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "matrix_members_link_table as b ON a.members_id=b.members_id $where  AND b.members_status>0  GROUP BY members_id LIMIT 0,50 ";
+         $sql = "SELECT  a.members_username,a.members_id FROM " . $prefix . "_members_table as a LEFT JOIN " . $prefix . "_matrix_members_link_table as b ON a.members_id=b.members_id $where  AND b.members_status>0  GROUP BY members_id LIMIT 0,50 ";
 
         return DAutoSearchMembers::getMembers($sql);
     }
 
     public static function getAllMembersNew()
     {
-         $sql = "SELECT  a.members_username,a.members_id FROM " . $_ENV['IHOOK_PREFIX'] . "members_table as a LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "matrix_members_link_table as b ON a.members_id=b.members_id AND b.members_status>0 order by a.members_username asc";
+        $prefix = config('services.ihook.prefix');
+         $sql = "SELECT  a.members_username,a.members_id FROM " . $prefix . "_members_table as a LEFT JOIN " . $prefix . "_matrix_members_link_table as b ON a.members_id=b.members_id AND b.members_status>0 order by a.members_username asc";
 
         return DAutoSearchMembers::getAllMembersNew($sql);
     }
 
     public static function getMembersList($searchval,$matrix_id,$wherecondition): void
     {
+        $prefix = config('services.ihook.prefix');
         // dd($matrix_id);
         $matrix_where=$matrix_id>0 ? 'AND b.matrix_id='.$matrix_id.'' :'';
         $where=($searchval!='') ? 'WHERE members_username LIKE "' . $searchval . '%" '.$matrix_where.''.$wherecondition.'' :'';
-        $sql = "SELECT  a.members_username,a.members_id FROM " . $_ENV['IHOOK_PREFIX'] . "members_table as a LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "matrix_members_link_table as b ON a.members_id=b.members_id $where  AND b.members_status>0  GROUP BY members_id LIMIT 0,50 ";
+        $sql = "SELECT  a.members_username,a.members_id FROM " . $prefix . "_members_table as a LEFT JOIN " . $prefix . "_matrix_members_link_table as b ON a.members_id=b.members_id $where  AND b.members_status>0  GROUP BY members_id LIMIT 0,50 ";
 
         // Check if records exist and return as JSON
         if (!empty($obj->records)) {
@@ -57,9 +60,10 @@ class MAutoSearchMembers {
 
     public static function getMembersValId($searchval,$matrix_id,$wherecondition)
     {
+         $prefix = config('services.ihook.prefix');
         $matrix_where=$matrix_id>0 ? 'AND b.matrix_id='.$matrix_id.'' :'';
         $where=($searchval!='') ? 'WHERE members_username LIKE "' . $searchval . '%" '.$matrix_where.''.$wherecondition.'' :'';
-         $sql = "SELECT  a.members_username,a.members_id FROM " . $_ENV['IHOOK_PREFIX'] . "members_table as a LEFT JOIN " . $_ENV['IHOOK_PREFIX'] . "matrix_members_link_table as b ON a.members_id=b.members_id $where  AND b.members_status>0  GROUP BY members_id LIMIT 0,50 ";
+         $sql = "SELECT  a.members_username,a.members_id FROM " . $prefix . "_members_table as a LEFT JOIN " . $prefix . "_matrix_members_link_table as b ON a.members_id=b.members_id $where  AND b.members_status>0  GROUP BY members_id LIMIT 0,50 ";
 
         return DAutoSearchMembers::getMembersValId($sql);
     }

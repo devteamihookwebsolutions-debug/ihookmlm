@@ -39,7 +39,8 @@
                 $currentCategoryName = 'All';
 
                 if ($sub1 !== 'all' && is_numeric($sub1)) {
-                    $cat = DB::table(env('IHOOK_PREFIX') . '_thirdpartyintegration_categories')
+                     $prefix = config('services.ihook.prefix');
+                    $cat = DB::table($prefix . '_thirdpartyintegration_categories')
                         ->where('thirdpartyintegration_categories_id', $sub1)
                         ->where('thirdpartyintegration_categories_status', 1)
                         ->first();

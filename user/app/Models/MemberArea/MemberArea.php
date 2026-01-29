@@ -73,8 +73,10 @@ class MemberArea
      */
     public static function getSalesData(int $memberId): string
     {
-        // Get WooCommerce customer_id (members_shop_id)
-        $shopId = DB::table($_ENV['IHOOK_PREFIX'] . '_members_table')
+         $prefix = config('services.ihook.prefix');
+        $storePrefix = config('services.ihook.store_prefix');
+        $wpdbname = config('services.wordpress.dbname');
+        $shopId = DB::table($prefix. '_members_table')
             ->where('members_id', $memberId)
             ->value('members_shop_id');
 
@@ -83,13 +85,13 @@ class MemberArea
         }
 
         // All completed orders for this customer
-        $orders = DB::table($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . '_posts as p')
-            ->join($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . '_postmeta as pm', function ($join) use ($shopId) {
+        $orders = DB::table($wpdbname . '.' . $storePrefix . '_posts as p')
+            ->join($wpdbname . '.' . $storePrefix . '_postmeta as pm', function ($join) use ($shopId) {
                 $join->on('p.ID', '=', 'pm.post_id')
                      ->where('pm.meta_key', '=', '_customer_user')
                      ->where('pm.meta_value', '=', $shopId);
             })
-            ->join($_ENV['WP_DBNAME'] . '.' . $_ENV['STORE_PREFIX'] . '_postmeta as tot', function ($join) {
+            ->join($wpdbname . '.' . $storePrefix . '_postmeta as tot', function ($join) {
                 $join->on('p.ID', '=', 'tot.post_id')
                      ->where('tot.meta_key', '=', '_order_total');
             })

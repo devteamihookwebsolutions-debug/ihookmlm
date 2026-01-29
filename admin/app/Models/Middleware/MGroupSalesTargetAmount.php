@@ -32,8 +32,9 @@ class MGroupSalesTargetAmount
      */
     public static function groupSalesTarget($member_id, $matrix_id)
     {
+         $prefix = config('services.ihook.prefix');
         // Get member's own shop sales
-        $shop_sales = DB::table(env('IHOOK_PREFIX') . '_matrix_members_link_table')
+        $shop_sales = DB::table($prefix . '_matrix_members_link_table')
             ->where('members_id', $member_id)
             ->where('matrix_id', $matrix_id)
             ->value('total_sales') ?? 0;

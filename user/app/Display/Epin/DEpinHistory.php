@@ -30,7 +30,7 @@ class DEpinHistory
     public static function epinRecordsUnused($epinrecords, $iTotal)
     {
         $output = "";
-        $prefix = env('IHOOK_PREFIX');
+        $prefix = config('services.ihook.prefix');
         $serialNo = 1;
 
         foreach ($epinrecords as $row) {
@@ -81,7 +81,7 @@ class DEpinHistory
 public static function epinRecordsUsed($epinrecords, $iTotal)
 {
     $output = "";
-    $prefix = env('IHOOK_PREFIX');
+        $prefix = config('services.ihook.prefix');
     $serialNo = 1;
 
     foreach ($epinrecords as $row) {

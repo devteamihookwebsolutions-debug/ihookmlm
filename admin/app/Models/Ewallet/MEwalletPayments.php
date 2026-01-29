@@ -19,6 +19,7 @@
 
 namespace Admin\App\Models\Ewallet;
 
+use Admin\App\Models\Middleware\MFormatNumber;
 use Illuminate\Support\Facades\DB;
 use Request;
 use User\App\Models\PaymentHistory;
@@ -45,7 +46,7 @@ public static function showEwalletManagement()
     ];
 
     $perPage = 10;
-    $prefix = config('services.prefix.ihook');
+    $prefix = config('services.ihook.prefix');
     // Use correct prefixed table name
     $tableName = $prefix.'_paymenthistory_table';
 
@@ -82,7 +83,7 @@ public static function showEwalletManagement()
 
 public static function activateEwalletPayment(Request $request)
 {
-       $prefix = config('services.prefix.ihook');
+       $prefix = config('services.ihook.prefix');
     try {
         // Get ID from request
         $paymenthistory_id = $request->input('sub1');
@@ -123,7 +124,7 @@ public static function activateEwalletPayment(Request $request)
         $formatted_amount = MFormatNumber::formatingNumberCurrency($payment->paymenthistory_amount ?? 0);
 
         // Insert new history record
-        DB::table('ihook_history_table')->insert([
+        DB::table($prefix.'_history_table')->insert([
             'history_member_id'     => $payment->paymenthistory_member_id,
             'history_amount'        => $formatted_amount,
             'history_type'          => 'ewalletcredits',

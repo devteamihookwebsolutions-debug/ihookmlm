@@ -28,9 +28,10 @@ public static function getPVReports(Request $request)
     $perPage = (int) $request->input('perPage', 10);
     $page = (int) $request->input('page', 1);
     $queryValue = trim($request->input('query', ''));
+        $prefix = config('services.ihook.prefix');
 
-    $query = Reports::from('ihook_history_table as a')
-        ->join('ihook_members_table as b', 'a.history_member_id', '=', 'b.members_id')
+    $query = Reports::from($prefix.'_history_table as a')
+        ->join($prefix.'_members_table as b', 'a.history_member_id', '=', 'b.members_id')
         ->where('a.history_type', '=', 'pv')
         ->select(
             'a.history_id',

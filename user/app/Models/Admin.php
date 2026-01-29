@@ -29,6 +29,12 @@ class Admin extends Authenticatable
 
     protected $table;
     protected $primaryKey = 'admin_id';
+       public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_admin_table';
+    }
     public $timestamps = false;
 
     protected $fillable = [
@@ -61,12 +67,7 @@ class Admin extends Authenticatable
         $this->attributes['admin_otp'] = $value; // plain value - no encrypt()
     }
 
-     public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $prefix = config('services.ihook.prefix');
-        $this->table = $prefix . '_admin_table';
-    }
+
 
     public function getAdminOtpAttribute($value)
     {

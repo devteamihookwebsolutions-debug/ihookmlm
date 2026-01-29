@@ -31,11 +31,11 @@ class MBonusAchieved
 
 public static function bonusAchieved(Request $request)
 {
-    $prefix = 'ihook_'; // fallback prefix
+        $prefix = config('services.ihook.prefix');
     //  dd($prefix);
-    $bonusAchievedTable = $prefix . 'bonusachieved';
-    $bonusTable = $prefix . 'bonus';
-    $membersTable = $prefix . 'members_table';
+    $bonusAchievedTable = $prefix . '_bonusachieved';
+    $bonusTable = $prefix . '_bonus';
+    $membersTable = $prefix . '_members_table';
 
     $limit = $request->input('perPage', 10);
     $page = $request->input('page', 1);

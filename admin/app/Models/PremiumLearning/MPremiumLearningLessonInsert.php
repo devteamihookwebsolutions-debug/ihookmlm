@@ -255,8 +255,9 @@ class MPremiumLearningLessonInsert
 
         $inputData = $request->except(['do', 'action', 'sub1', '_token']);
         Log::info('Filtered request data:', $inputData);
+        $prefix = config('services.ihook.prefix');
 
-        $tableName = env('IHOOK_PREFIX') . '_premium_courses';
+        $tableName = $prefix . '_premium_courses';
         Log::info('Target table:', ['table' => $tableName]);
 
         $processedCount = 0;

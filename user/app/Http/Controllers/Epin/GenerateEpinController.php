@@ -60,7 +60,7 @@ class GenerateEpinController extends Controller
 
     private function getWalletBalance($memberId, $walletType)
     {
-        $prefix = config('app.db_prefix', env('IHOOK_PREFIX', ''));
+        $prefix = config('services.ihook.prefix');
 
         $balance = DB::table("{$prefix}_history_table as h")
             ->join("{$prefix}_history_type_table as htt", function($join) {

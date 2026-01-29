@@ -36,10 +36,11 @@ class MRankReports
 
         $columnIndex = (int) $request->input('columnIndex');
         $queryValue = $request->input('query');
+        $prefix = config('services.ihook.prefix');
 
         // Base query
-        $query =Reports::from('ihook_history_table as a')
-            ->leftJoin('ihook_members_table as b', 'a.history_member_id', '=', 'b.members_id')
+        $query =Reports::from($prefix.'_history_table as a')
+            ->leftJoin($prefix.'_members_table as b', 'a.history_member_id', '=', 'b.members_id')
             ->where('a.history_type', '=', $value)
             ->select(
                 'a.history_member_id',

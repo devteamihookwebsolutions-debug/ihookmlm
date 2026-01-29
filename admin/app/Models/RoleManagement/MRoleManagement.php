@@ -62,11 +62,12 @@ public static function updateRole($request)
 
     $overallMenuArray = array_merge($mainMenu, $subMenu);
     sort($overallMenuArray);
+        $prefix = config('services.ihook.prefix');
 
     // If ALL menu selected
     if ($mainMenu[0] === 'all_menu') {
 
-        $allMenus = DB::table('ihook_subadmintablemenu_table')
+        $allMenus = DB::table($prefix.'_subadmintablemenu_table')
             ->where('status', '1')
             ->pluck('subadmin_id')
             ->toArray();
@@ -80,14 +81,14 @@ public static function updateRole($request)
     }
 
     // Check role exists
-    $recordExists = DB::table('ihook_role_management_subadminmenu_link_table')
+    $recordExists = DB::table($prefix.'_role_management_subadminmenu_link_table')
         ->where('role_id', $roleId)
         ->exists();
 
     if ($recordExists) {
 
         // Update role
-        DB::table('ihook_role_management_subadminmenu_link_table')
+        DB::table($prefix.'_role_management_subadminmenu_link_table')
             ->where('role_id', $roleId)
             ->update([
                 'accesscontrol_id' => $overallMenu,
@@ -96,7 +97,7 @@ public static function updateRole($request)
             ]);
 
         // Update subadmin table
-        DB::table('ihook_subadmin_link_table')
+        DB::table($prefix.'_subadmin_link_table')
             ->updateOrInsert(
                 ['role_id' => $roleId],
                 ['accesscontrol_id' => $overallMenu]
@@ -110,7 +111,7 @@ public static function updateRole($request)
 
 public static function create_role($request)
 {
-    // dd('ashd');
+        $prefix = config('services.ihook.prefix');
     // Validate the request
     $request->validate([
         'recipient_name' => 'required|string|max:255',
@@ -130,7 +131,7 @@ public static function create_role($request)
 
     // Handle "all_menu" selection
     if ($mainMenu[0] === 'all_menu') {
-        $allMenus = DB::table('ihook_subadmintablemenu_table')
+        $allMenus = DB::table($prefix.'_subadmintablemenu_table')
             ->where('status', 1)
             ->pluck('subadmin_id')
             ->toArray();
@@ -145,7 +146,7 @@ public static function create_role($request)
     // Determine copy role ID if user selects an existing role
     $copyRoleId = 0;
     if ($roleType != 0) {
-        $copyRole = DB::table('ihook_role_management_roles_table')
+        $copyRole = DB::table($prefix.'_role_management_roles_table')
             ->where('id', $roleType)
             ->first();
 
@@ -155,7 +156,7 @@ public static function create_role($request)
     }
 
     // Insert new role
-    $roleId = DB::table('ihook_role_management_roles_table')->insertGetId([
+    $roleId = DB::table($prefix.'_role_management_roles_table')->insertGetId([
         'role_name' => $roleName,
         'created_on' => now(),
          'updated_on' => now(),
@@ -164,7 +165,7 @@ public static function create_role($request)
 // dd($roleId);
     // If copying an existing role, fetch its access controls
     if ($copyRoleId > 0) {
-        $copyRoleAccess = DB::table('ihook_role_management_subadminmenu_link_table')
+        $copyRoleAccess = DB::table($prefix.'_role_management_subadminmenu_link_table')
             ->where('role_id', $copyRoleId)
             ->first();
 
@@ -175,7 +176,7 @@ public static function create_role($request)
     }
 
     // Insert role access
-    DB::table('ihook_role_management_subadminmenu_link_table')->insert([
+    DB::table($prefix.'_role_management_subadminmenu_link_table')->insert([
         'role_id' => $roleId,
         'accesscontrol_id' => $overallMenu,
         'copy_id' => $copyRoleId,
@@ -190,12 +191,14 @@ public static function create_role($request)
 }
 public static function deleteRole($id)
 {
+     $prefix = config('services.ihook.prefix');
+
     // dd($id);
-    DB::table('ihook_role_management_roles_table')
+    DB::table($prefix.'_role_management_roles_table')
         ->where('id', $id)
         ->delete();
 
-    DB::table('ihook_role_management_subadminmenu_link_table')
+    DB::table($prefix.'_role_management_subadminmenu_link_table')
         ->where('role_id', $id)
         ->delete();
 

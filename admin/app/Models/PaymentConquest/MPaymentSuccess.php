@@ -205,7 +205,8 @@ class MPaymentSuccess
                 'direct_id' => $direct_id
             ]);
         }
-        $membersPaidAccountType = DB::table('ihook_matrix_configuration_table')
+        $prefix = config('services.ihook.prefix');
+        $membersPaidAccountType = DB::table($prefix.'_matrix_configuration_table')
             ->where('matrix_key', 'members_paid_account_type')
             ->value('matrix_value');
 

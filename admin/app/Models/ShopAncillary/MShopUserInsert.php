@@ -28,6 +28,7 @@ class MShopUserInsert
     public static function insertShopUsers(
         $members_username,
         $members_password,
+        $plain_password,
         $members_email,
         $members_doj,
         $members_firstname,
@@ -88,7 +89,7 @@ class MShopUserInsert
 
     $wp_user_id = MWordPressUserInsert::wpRestInsert(
         $members_username,
-        $members_password,
+        $plain_password,
         $members_email,
         $members_doj,
         $registrationData
@@ -96,7 +97,8 @@ class MShopUserInsert
 
     Log::info('WordPress user creation result', [
         'username'   => $members_username,
-        'wp_user_id' => $wp_user_id
+        'wp_user_id' => $wp_user_id,
+        'wp-password' => $plain_password
     ]);
 
     Log::info('Sent registration data to WooCommerce sync', [

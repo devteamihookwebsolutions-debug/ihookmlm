@@ -30,8 +30,8 @@ class MRankDetails
      */
     public static function getRankDetails($where)
     {
-        // 그대로 SQL structure maintain pannirukken
-        $sql = "SELECT * FROM " . $_ENV['IHOOK_PREFIX'] . "ranksetting " . $where;
+        $prefix = config('services.ihook.prefix');
+        $sql = "SELECT * FROM " . $prefix . "ranksetting " . $where;
 
         $records = DB::select($sql);
 

@@ -32,7 +32,9 @@ class MTotalPV
      */
     public static function getTotalPV(int $memberId, int $matrixId)
     {
-        return DB::table(env('IHOOK_PREFIX') . '_history_table')
+                $prefix = config('services.ihook.prefix');
+
+        return DB::table($prefix . '_history_table')
             ->where('history_member_id', $memberId)
             ->where('history_type', 'pv')
             ->where('history_matrix_id', $matrixId)
@@ -56,8 +58,9 @@ class MTotalPV
     ) {
         $startDate = date('Y-m-d H:i:s', strtotime($startDate));
         $endDate   = date('Y-m-d 23:59:59', strtotime($endDate));
+        $prefix = config('services.ihook.prefix');
 
-        return DB::table(env('IHOOK_PREFIX') . '_history_table')
+        return DB::table($prefix . '_history_table')
             ->where('history_member_id', $memberId)
             ->where('history_type', 'pv')
             ->where('history_matrix_id', $matrixId)

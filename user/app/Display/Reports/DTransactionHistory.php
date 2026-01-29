@@ -163,7 +163,7 @@ public static function getHistoryType($historytype)
     // Current language (session)
     $lang = session('sitelang', 'en');
 
-    $prefix = env('IHOOK_PREFIX');
+        $prefix = config('services.ihook.prefix');
     // Query using DB::table()
     $record = DB::table("{$prefix}_terminology_settings_table")
                 ->where('language_key', $languageKey)

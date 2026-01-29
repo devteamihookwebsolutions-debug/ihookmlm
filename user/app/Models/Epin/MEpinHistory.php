@@ -29,6 +29,7 @@ class MEpinHistory
 
     public static function epinRecordsUnused()
     {
+         $prefix = config('services.ihook.prefix');
             $user = Auth::user();
             $user_id = $user->members_id;
 
@@ -36,7 +37,7 @@ class MEpinHistory
             return DEpinHistory::epinRecordsUnused(collect(), 0);
         }
 
-        $records = DB::table(env('IHOOK_PREFIX') . '_epin_table')
+        $records = DB::table($prefix . '_epin_table')
             ->where('epin_member_id', $user_id)
             ->where(function ($query) {
                 $query->where('epin_status', 0)
@@ -50,6 +51,7 @@ class MEpinHistory
 
     public static function epinRecordsUsed()
     {
+        $prefix = config('services.ihook.prefix');
         $user = Auth::user();
         $user_id = $user->members_id;
 
@@ -57,7 +59,7 @@ class MEpinHistory
             return DEpinHistory::epinRecordsUsed(collect(), 0);
         }
 
-        $records = DB::table(env('IHOOK_PREFIX') . '_epin_table')
+        $records = DB::table($prefix . '_epin_table')
             ->where('epin_member_id', $user_id)
             ->where('epin_status', 1)
             ->orderBy('epin_id', 'desc')
@@ -94,7 +96,7 @@ class MEpinHistory
 
     public static function getEpinType($err = '')
     {
-        $prefix = env('IHOOK_PREFIX');
+        $prefix = $prefix;
         $member = Auth::user();
 
         if (!$member) {

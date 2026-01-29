@@ -26,8 +26,15 @@ class AvatarGallery extends Model
 {
     use HasFactory;
 
-    protected $table = 'ihook_avatar_gallery';
+    protected $table;
     protected $primaryKey = 'avatar_gallery_id';
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_avatar_gallery';
+    }
+
     protected $fillable = [
         'avatar_gallery_id',
         'avatar_gallery_name',

@@ -44,9 +44,10 @@ class MAutoSearch
 }
 public static function getMembersList($searchval, $matrix_id, $wherecondition = '')
 {
+     $prefix = config('services.ihook.prefix');
     // Start query
-    $query = DB::table(env('IHOOK_PREFIX') . 'members_table as a')
-        ->leftJoin(env('IHOOK_PREFIX') . 'matrix_members_link_table as b', 'a.members_id', '=', 'b.members_id')
+    $query = DB::table($prefix . '_members_table as a')
+        ->leftJoin($prefix . '_matrix_members_link_table as b', 'a.members_id', '=', 'b.members_id')
         ->select('a.members_username', 'a.members_id')
         ->where('b.members_status', '>', 0);
 
@@ -79,8 +80,8 @@ public static function getMembersList($searchval, $matrix_id, $wherecondition = 
 public static function getAllMembers()
 {
     // dd('funcion reached');
-    $table = (new Member)->getTable(); // 'ihook_members_table'
-    $joinTable = str_replace('members_table', 'matrix_members_link_table', $table); // 'ihook_matrix_members_link_table'
+    $table = config('services.ihook.prefix');
+    $joinTable = str_replace('_members_table', '_matrix_members_link_table', $table); // 'ihook_matrix_members_link_table'
 
     $records = Member::query()
         ->from($table . ' as a') // give an alias to main table

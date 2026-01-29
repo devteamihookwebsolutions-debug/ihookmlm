@@ -32,16 +32,15 @@ class MBinaryPositionSpillover
 public static function getSpilloverFromPosition($matrix_id, $position, $position_direct_id)
 {
     $spillover_id = $position_direct_id;
-
-
     $leftSpill = MemberLinks::where('matrix_id', $matrix_id)
         ->where('position', 1)
         ->where('members_filled_status', 0)
         ->whereRaw('FIND_IN_SET(?, members_parents)', [$position_direct_id])
         ->whereNotExists(function ($q) {
+             $prefix = config('services.ihook.prefix');
             $q->select(DB::raw(1))
-              ->from('ihook_matrix_members_link_table as child')
-              ->whereColumn('child.direct_id', 'ihook_matrix_members_link_table.members_id')
+              ->from($prefix.'_matrix_members_link_table as child')
+              ->whereColumn('child.direct_id', $prefix.'_matrix_members_link_table.members_id')
               ->where('child.position', 1)
               ->where('child.members_filled_status', 0);
         })
@@ -62,9 +61,10 @@ public static function getSpilloverFromPosition($matrix_id, $position, $position
         ->where('members_filled_status', 0)
         ->whereRaw('FIND_IN_SET(?, members_parents)', [$position_direct_id])
         ->whereNotExists(function ($q) {
+            $prefix = config('services.ihook.prefix');
             $q->select(DB::raw(1))
-              ->from('ihook_matrix_members_link_table as child')
-              ->whereColumn('child.direct_id', 'ihook_matrix_members_link_table.members_id')
+              ->from($prefix.'_matrix_members_link_table as child')
+              ->whereColumn('child.direct_id', $prefix.'_matrix_members_link_table.members_id')
               ->where('child.position', 2)
               ->where('child.members_filled_status', 0);
         })

@@ -32,7 +32,9 @@ class MDirectReferal
      */
     public static function directReferal($member_id, $matrix_id)
     {
-        return DB::table(env('IHOOK_PREFIX') . '_matrix_members_link_table')
+                 $prefix = config('services.ihook.prefix');
+
+        return DB::table($prefix . '_matrix_members_link_table')
             ->where('direct_id', $member_id)
             ->where('matrix_id', $matrix_id)
             ->count();
@@ -49,7 +51,9 @@ class MDirectReferal
      */
     public static function directReferalWithDateRange($member_id, $matrix_id, $start_date = null, $end_date = null)
     {
-        $query = DB::table(env('IHOOK_PREFIX') . '_matrix_members_link_table')
+         $prefix = config('services.ihook.prefix');
+
+        $query = DB::table($prefix . '_matrix_members_link_table')
             ->where('direct_id', $member_id)
             ->where('matrix_id', $matrix_id)
             ->where('members_subscription_status', '1');

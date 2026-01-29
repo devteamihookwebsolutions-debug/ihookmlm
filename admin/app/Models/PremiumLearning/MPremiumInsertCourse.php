@@ -82,10 +82,11 @@ class MPremiumInsertCourse
             Log::warning('No banner provided (neither file nor cropped image)');
             $bannerimagepath = trim($request->input('banner', ''));
         }
+        $prefix = config('services.ihook.prefix');
 
         /* ---------- Get Next Course ID ---------- */
         try {
-            $lastCourse = DB::table(env('IHOOK_PREFIX') . '_premium_courses')
+            $lastCourse = DB::table($prefix . '_premium_courses')
                 ->orderByDesc('course_id')
                 ->first();
 
@@ -105,7 +106,7 @@ class MPremiumInsertCourse
                     continue;
                 }
 
-                DB::table(env('IHOOK_PREFIX') . '_premium_courses')->insert([
+                DB::table($prefix . '_premium_courses')->insert([
                     'course_id'    => $courseId,
                     'course_key'   => $key,
                     'course_value' => is_string($value) ? $value : json_encode($value),
@@ -126,7 +127,7 @@ class MPremiumInsertCourse
         /* ---------- Insert Banner Path ---------- */
         if (!empty($bannerimagepath)) {
             try {
-                DB::table(env('IHOOK_PREFIX') . '_premium_courses')->insert([
+                DB::table($prefix . '_premium_courses')->insert([
                     'course_id'    => $courseId,
                     'course_key'   => 'banner_path',
                     'course_value' => $bannerimagepath,
@@ -140,7 +141,7 @@ class MPremiumInsertCourse
 
         /* ---------- Remove old banner key (if any) ---------- */
         try {
-            $deleted = DB::table(env('IHOOK_PREFIX') . '_premium_courses')
+            $deleted = DB::table($prefix . '_premium_courses')
                 ->where('course_id', $courseId)
                 ->where('course_key', 'banner')
                 ->delete();

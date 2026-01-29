@@ -76,7 +76,7 @@ class MWordPressUserInsert
         $city       = $registrationData['city']         ?? '';
         $state      = $registrationData['state']        ?? '';     // your state code like "1266"
         $postcode   = $registrationData['zipcode']      ?? '';     // zipcode = postcode in Woo
-        $country    = $registrationData['country']      ?? 'IN';   // country code like "DZ"
+        $country    = $registrationData['country']      ?? 'US';   // country code like "DZ"
 
         // Build billing & shipping objects (WooCommerce format)
         $billing = [

@@ -27,8 +27,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class MemberAreaSummary extends Model
 {
-    protected $table = 'ihook_members_table';
+    protected $table;
     protected $primaryKey = 'members_id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_members_table';
+    }
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = false;

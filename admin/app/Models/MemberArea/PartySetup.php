@@ -23,9 +23,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class PartySetup extends Model
 {
-    protected $table = 'ihook_party_setup';   // your table name
-    public $timestamps = false;               // no created_at/updated_at
+    protected $table;
+    public $timestamps = false;
     protected $primaryKey = 'id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_party_setup';
+    }
     public $incrementing = true;
 
     protected $fillable = [

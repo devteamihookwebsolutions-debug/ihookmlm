@@ -29,6 +29,7 @@ class MInsertUserDetails
 {
     public function insertUserDetails(
         $members_username,
+        $plain_password,
         $members_password,
         $members_email,
         $members_firstname,
@@ -78,10 +79,11 @@ class MInsertUserDetails
             'email'      => $members_email,
             'doj'        => $member->members_doj
         ]);
+        $prefix = config('services.ihook.prefix');
 
         // EPIN update logic
         if (!empty($epin_code)) {
-            DB::table('ihook_epin_table')
+            DB::table($prefix.'_epin_table')
                 ->where('epin_code', $epin_code)
                 ->where('epin_status', 0)
                 ->update([
@@ -105,6 +107,7 @@ class MInsertUserDetails
             $rest_shop_id = MShopUserInsert::insertShopUsers(
                 $members_username,
                 $members_password,
+                $plain_password,
                 $members_email,
                 $member->members_doj,
                 $members_firstname,
@@ -123,6 +126,33 @@ class MInsertUserDetails
                 'username'          => $members_username,
                 'email'             => $members_email
             ]);
+              if ($rest_shop_id > 0) {
+            $prefix = config('services.ihook.prefix');
+
+            $updated = DB::table($prefix . '_members_table')
+                ->where('members_id', $members_id)
+                ->update([
+                    'members_shop_id' => (int) $rest_shop_id,
+                ]);
+
+            if ($updated) {
+                Log::info("Shop/WordPress user linked successfully", [
+                    'members_id'      => $members_id,
+                    'members_shop_id' => $rest_shop_id,
+                    'username'        => $members_username
+                ]);
+            } else {
+                Log::warning("Failed to update members_shop_id in database", [
+                    'members_id' => $members_id
+                ]);
+            }
+        } else {
+            Log::error("Failed to create WordPress/WooCommerce user", [
+                'username'   => $members_username,
+                'members_id' => $members_id
+            ]);
+
+        }
 
 
         return $members_id;

@@ -32,9 +32,10 @@ class MDownlineSales
      */
     public static function getDownlineMLMSales($members_id, $matrix_id)
     {
-        return DB::table(env('IHOOK_PREFIX') . '_matrix_members_link_table as a')
+       $prefix = config('services.ihook.prefix');
+        return DB::table($prefix . '_matrix_members_link_table as a')
             ->leftJoin(
-                env('IHOOK_PREFIX') . '_paymenthistory_table as b',
+                $prefix . '_paymenthistory_table as b',
                 'b.paymenthistory_member_id',
                 '=',
                 'a.members_id'

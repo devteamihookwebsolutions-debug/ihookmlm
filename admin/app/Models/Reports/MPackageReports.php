@@ -35,11 +35,12 @@ class MPackageReports
 
         $columnIndex = (int) $request->input('columnIndex');
         $queryValue = $request->input('query');
+        $prefix = config('services.ihook.prefix');
 
         // Base query
-        $query = DB::table('ihook_matrix_members_link_table as a')
-            ->leftJoin('ihook_members_table as b', 'a.members_id', '=', 'b.members_id')
-            ->leftJoin('ihook_package_table as c', 'a.members_subscription_plan', '=', 'c.package_id')
+        $query = DB::table($prefix.'_matrix_members_link_table as a')
+            ->leftJoin($prefix.'_members_table as b', 'a.members_id', '=', 'b.members_id')
+            ->leftJoin($prefix.'_package_table as c', 'a.members_subscription_plan', '=', 'c.package_id')
             ->select(
                 'a.members_id',
                 'b.members_username',

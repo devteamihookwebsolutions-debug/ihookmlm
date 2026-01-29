@@ -24,9 +24,10 @@ class MCryptoExchange
 {
     public static function cryptoExchange($crypto_currency_id, $direct_commision = 0)
     {
+        $prefix = config('services.ihook.prefix');
         $cryptocurrency = DB::select(
             "SELECT crypto_default_name
-             FROM ihook_crypto_currency_and_token
+             FROM ".$prefix ."_crypto_currency_and_token
              WHERE crypto_currency_id = ?",
             [$crypto_currency_id]
         );

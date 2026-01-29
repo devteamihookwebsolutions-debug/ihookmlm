@@ -25,8 +25,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentHistory extends Model
 {
-    protected $table = 'ihook_paymenthistory_table';
+    protected $table;
     protected $primaryKey = 'paymenthistory_id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_paymenthistory_table';
+    }
     public $timestamps = false;
 
     protected $fillable = [

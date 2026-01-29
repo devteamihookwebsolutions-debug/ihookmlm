@@ -32,7 +32,9 @@ class MPaymentGatewayDetails
      */
     public static function getPaymentGatewayDetails(array $conditions = []): ?object
     {
-        return DB::table('ihook_paymentsettings_table')
+                $prefix = config('services.ihook.prefix');
+
+        return DB::table($prefix.'_paymentsettings_table')
             ->where($conditions)
             ->first();
     }
@@ -59,7 +61,9 @@ class MPaymentGatewayDetails
 
        public static function getPaymentGatewayDetailss($where = "")
     {
-        $table = "ihook_paymentsettings_table";
+                $prefix = config('services.ihook.prefix');
+
+        $table = $prefix."_paymentsettings_table";
 
         $sql = "SELECT * FROM $table $where LIMIT 1";
 

@@ -36,7 +36,7 @@ class MAdminEarningReports
         $columnIndex = (int) $request->input('columnIndex', 0);
         $queryValue = $request->input('query', null);
 
-        $prefix = 'ihook_';
+        $prefix = config('services.ihook.prefix');
         // dd($prefix);
         $wheres = '';
 
@@ -142,13 +142,15 @@ class MAdminEarningReports
 
 public static function adminEarningsDetails($id)
 {
+            $prefix = config('services.ihook.prefix');
+
     if (empty($id)) {
         return response()->json(['error' => 'Invalid ID'], 400);
     }
 
     // history table query
-    $historyQuery = DB::table('ihook_history_table as a')
-        ->join('ihook_members_table as b', 'a.history_members_ref_id', '=', 'b.members_id')
+    $historyQuery = DB::table($prefix.'_history_table as a')
+        ->join($prefix.'_members_table as b', 'a.history_members_ref_id', '=', 'b.members_id')
         ->select(
             'a.history_id',
             'a.history_type',
@@ -168,8 +170,8 @@ public static function adminEarningsDetails($id)
         ->where('a.history_id', $id);
 
     // payment history query
-    $paymentQuery = DB::table('ihook_paymenthistory_table as c')
-        ->join('ihook_members_table as d', 'c.paymenthistory_member_id', '=', 'd.members_id')
+    $paymentQuery = DB::table($prefix.'_paymenthistory_table as c')
+        ->join($prefix.'_members_table as d', 'c.paymenthistory_member_id', '=', 'd.members_id')
         ->select(
             'c.paymenthistory_id as history_id',
             'c.paymenthistory_type as history_type',

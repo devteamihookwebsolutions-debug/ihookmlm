@@ -26,8 +26,9 @@ class MGraphicalRankGenealogy
     public static function updateGenealogyDetails($members_id, $matrix_id)
     {
         $rank_color_css = '';
+        $prefix = config('services.ihook.prefix');
 
-        $recordDefault = DB::table($_ENV['IHOOK_PREFIX'].'_matrix_members_link_table')
+        $recordDefault = DB::table($prefix.'_matrix_members_link_table')
             ->where('matrix_id', $matrix_id)
             ->where('members_id', $members_id)
             ->first();
@@ -39,16 +40,16 @@ class MGraphicalRankGenealogy
         $recordsdefault = (array) $recordDefault;
         $default_members_id = $recordsdefault['members_id'];
 
-        $referralslinkdetails = DB::table($_ENV['IHOOK_PREFIX'].'_matrix_members_link_table as a')
-            ->leftJoin($_ENV['IHOOK_PREFIX'].'_members_table as b', 'a.members_id', '=', 'b.members_id')
-            ->leftJoin($_ENV['IHOOK_PREFIX'].'_members_table as c', 'c.members_id', '=', 'a.direct_id')
-            ->leftJoin($_ENV['IHOOK_PREFIX'].'_ranksetting as d', 'd.rank_id', '=', 'a.rankid')
-            ->leftJoin($_ENV['IHOOK_PREFIX'].'_ranksetting as e', function($join) use ($matrix_id){
+        $referralslinkdetails = DB::table($prefix.'_matrix_members_link_table as a')
+            ->leftJoin($prefix.'_members_table as b', 'a.members_id', '=', 'b.members_id')
+            ->leftJoin($prefix.'_members_table as c', 'c.members_id', '=', 'a.direct_id')
+            ->leftJoin($prefix.'_ranksetting as d', 'd.rank_id', '=', 'a.rankid')
+            ->leftJoin($prefix.'_ranksetting as e', function($join) use ($matrix_id){
                 $join->on('e.rank_id', '=', 'a.rankid')
                      ->where('e.rank_key', '=', 'rank_icon_path')
                      ->where('e.matrix_id', '=', $matrix_id);
             })
-            ->leftJoin($_ENV['IHOOK_PREFIX'].'_ranksetting as f', function($join) use ($matrix_id){
+            ->leftJoin($prefix.'_ranksetting as f', function($join) use ($matrix_id){
                 $join->on('f.rank_id', '=', 'a.rankid')
                      ->where('f.rank_key', '=', 'rank_color')
                      ->where('f.matrix_id', '=', $matrix_id);
@@ -81,7 +82,7 @@ class MGraphicalRankGenealogy
         $referralslinkdetails = $referralslinkdetails->toArray();
         $totalusers = count($referralslinkdetails);
 
-        $defaultSponsor = DB::table($_ENV['IHOOK_PREFIX'].'_matrix_configuration_table')
+        $defaultSponsor = DB::table($prefix.'_matrix_configuration_table')
             ->where('matrix_key', 'default_sponsor')
             ->where('matrix_id', $matrix_id)
             ->value('matrix_value');

@@ -46,5 +46,15 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+    'authorize' => [
+        'sandbox' => env('AUTHORIZENET_SANDBOX', true),
+        'api_login_id' => env('AUTHORIZENET_API_LOGIN_ID'),
+        'transaction_key' => env('AUTHORIZENET_TRANSACTION_KEY'),
+    ],
+    'wordpress' => [
+        'dbname' => env('WP_DBNAME'),
+        'username' => env('WP_APP_USERNAME'),
+        'password' => env('WP_APP_PASSWORD'),
+    ],
 
 ];

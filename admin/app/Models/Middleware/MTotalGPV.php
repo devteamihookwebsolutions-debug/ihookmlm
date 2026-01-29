@@ -23,8 +23,9 @@ class MTotalGPV{
      public static function getTotalGPV($members_id, $matrix_id)
     {
         // dd($matrix_id);
-       $total = Reports::from('ihook_history_table as a')
-    ->leftJoin('ihook_matrix_members_link_table as b', 'b.members_id', '=', 'a.history_member_id')
+          $prefix = config('services.ihook.prefix');
+       $total = Reports::from($prefix.'_history_table as a')
+    ->leftJoin($prefix.'_matrix_members_link_table as b', 'b.members_id', '=', 'a.history_member_id')
     ->whereRaw("FIND_IN_SET(?, b.members_parents)", [$members_id])
     ->where('a.history_type', 'pv')
     ->where('a.history_matrix_id', $matrix_id)

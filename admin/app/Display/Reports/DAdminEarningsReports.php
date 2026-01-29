@@ -27,6 +27,7 @@ class DAdminEarningsReports
 {
     public static function adminEarnings($records, $iTotal, $iTotalRecords)
 {
+  $prefix = config('services.ihook.prefix');
     $memData = [];
 
     foreach ($records as $record) {
@@ -73,7 +74,7 @@ class DAdminEarningsReports
         // === Currency Symbol ===
         $currencySymbol = null;
         if (!empty($record->currency_id)) {
-            $currency = DB::table($_ENV['IHOOK_PREFIX'] . 'currencysettings_table')
+            $currency = DB::table($prefix . 'currencysettings_table')
                 ->where('currency_id', $record->currency_id)
                 ->first();
 

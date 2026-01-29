@@ -82,6 +82,7 @@ class MRegister
     public static function redirectMembers(Request $request)
     {
         Log::info('redirectMembers() started');
+         $prefix = config('services.ihook.prefix');
 
         $data = $request->all();
 
@@ -104,7 +105,7 @@ class MRegister
         }
         Log::info('Member inserted successfully', ['members_id' => $members_id]);
 
-        $membersPaidAccountType = DB::table('ihook_matrix_configuration_table')
+        $membersPaidAccountType = DB::table($prefix.'_matrix_configuration_table')
             ->where('matrix_key', 'members_paid_account_type')
             ->value('matrix_value');
 

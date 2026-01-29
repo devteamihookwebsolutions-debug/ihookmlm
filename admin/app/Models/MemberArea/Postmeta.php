@@ -23,8 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Postmeta extends Model
 {
-    protected $table = 'cart_postmeta';
+    protected $table;
     protected $primaryKey = 'meta_id';
+      public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $storeprefix = config('services.ihook.store_prefix');
+        $this->table = $storeprefix . '_postmeta';
+    }
     public $timestamps = false;
 
     protected $fillable = [

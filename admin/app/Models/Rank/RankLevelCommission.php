@@ -26,7 +26,13 @@ class RankLevelCommission extends Model
 {
     use HasFactory;
 
-    protected $table = 'ihook_rank_levelcommission';
+    protected $table;
+     public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $prefix = config('services.ihook.prefix');
+        $this->table = $prefix . '_rank_levelcommission';
+    }
     protected $fillable = ['rank_id', 'level', 'commission'];
     public $timestamps = false;
 }

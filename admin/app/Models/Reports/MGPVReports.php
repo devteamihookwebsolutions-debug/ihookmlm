@@ -35,17 +35,18 @@ class MGPVReports
 
         $queryValue = $request->input('query');
         $columnIndex = $request->input('columnIndex', 0);
+        $prefix = config('services.ihook.prefix');
 
         // Base query
         $recordsQuery = MemberLinks::query()
-            ->leftJoin('ihook_members_table as b', 'ihook_matrix_members_link_table.members_id', '=', 'b.members_id')
+            ->leftJoin($prefix.'_members_table as b', $prefix.'_matrix_members_link_table.members_id', '=', 'b.members_id')
             ->select(
-                'ihook_matrix_members_link_table.members_id',
-                'ihook_matrix_members_link_table.matrix_id',
+                $prefix.'_matrix_members_link_table.members_id',
+                $prefix.'_matrix_members_link_table.matrix_id',
                 'b.members_username'
             )
-            ->where('ihook_matrix_members_link_table.members_account_status', '1')
-            ->where('ihook_matrix_members_link_table.members_status', '1');
+            ->where($prefix.'_matrix_members_link_table.members_account_status', '1')
+            ->where($prefix.'_matrix_members_link_table.members_status', '1');
 
         // Search filter
         if (!empty($queryValue) && $columnIndex == 1) {

@@ -37,8 +37,8 @@ class MSendEpins
 
     // Direct table names
     $packageTable = $prefix.'_package_table';
-    $matrixTable  = 'ihook_matrix_table';
-    $matrixConfig = 'ihook_matrix_configuration_table';
+    $matrixTable  = $prefix.'_matrix_table';
+    $matrixConfig = $prefix.'_matrix_configuration_table';
 
     // ----- Query 1 -----
     $records = DB::table("$packageTable as a")
@@ -60,9 +60,11 @@ class MSendEpins
 
 public static function updateEpins(Request $request)
 {
+     $prefix = config('services.ihook.prefix');
+
     $request->validate([
         'user_list' => 'required|array|min:1',
-        'user_list.*' => 'required|integer|exists:ihook_members_table,members_id',
+        'user_list.*' => 'required|integer|exists:' . $prefix . '_members_table,members_id',
         'count' => 'required|integer|min:1',
         'epin_type' => 'required|string',
         'epin_amount_package' => 'nullable|string',
@@ -131,8 +133,8 @@ public static function updateEpins(Request $request)
 
 public static function getPackageAmount($id, $type)
 {
-
-    $packageTable = 'ihook_package_table';
+   $prefix = config('services.ihook.prefix');
+    $packageTable = $prefix.'_package_table';
 
     if ($type == 1) {
 

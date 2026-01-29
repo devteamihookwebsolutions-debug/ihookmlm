@@ -26,7 +26,7 @@ class MLogManagement
 {
 public static function showUserLogs()
 {
-     $prefix = config('services.prefix.ihook');
+     $prefix = config('services.ihook.prefix');
     $perPage = 15;
     // Define the columns you want to select
     $aColumns = [
@@ -54,7 +54,7 @@ public static function showUserLogs()
 
  public static function showAdminLogs($perPage = 15) // default 15 records per page
 {
-    $prefix = config('services.prefix.ihook');
+    $prefix = config('services.ihook.prefix');
 
     $records = DB::table($prefix.'_admin_log_table as a')
         ->leftJoin($prefix.'_admin_table as b', 'b.admin_id', '=', 'a.admin_log_admin_id')

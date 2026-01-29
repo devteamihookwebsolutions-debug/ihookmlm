@@ -29,7 +29,7 @@ class MEwalletGatewaySettings
 
     public static function getContent($name)
 {
-    $prefix = config('services.prefix.ihook');
+    $prefix = config('services.ihook.prefix');
     // Build table name with prefix
     $table = $prefix.'_sitesettings_table';
 
@@ -42,7 +42,7 @@ class MEwalletGatewaySettings
 }
  public static function updateSettings($request)
     {
-       $prefix = config('services.prefix.ihook');
+       $prefix = config('services.ihook.prefix');
         // 1. Collect input
         $apiusername = $request->input('apiusername');
         $apipassword = $request->input('apipassword');

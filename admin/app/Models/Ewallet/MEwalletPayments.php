@@ -45,7 +45,7 @@ public static function showEwalletManagement()
     ];
 
     $perPage = 10;
-    $prefix = config('services.prefix.ihook');
+    $prefix = config('services.ihook.prefix');
     // Use correct prefixed table name
     $tableName = $prefix.'_paymenthistory_table';
 
@@ -82,7 +82,7 @@ public static function showEwalletManagement()
 
 public static function activateEwalletPayment(Request $request)
 {
-       $prefix = config('services.prefix.ihook');
+       $prefix = config('services.ihook.prefix');
     try {
         // Get ID from request
         $paymenthistory_id = $request->input('sub1');

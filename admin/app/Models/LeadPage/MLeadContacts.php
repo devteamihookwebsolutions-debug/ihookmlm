@@ -46,7 +46,7 @@ public static function allcurrency($curr)
 
 public static function insertcurrency($request)
 {
-     $prefix = config('services.prefix.ihook');
+     $prefix = config('services.ihook.prefix');
 
     // Validate input
     $request->validate([

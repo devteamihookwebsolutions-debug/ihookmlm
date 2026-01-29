@@ -30,6 +30,7 @@ use User\App\Http\Controllers\Network\DownlineLevelController;
 use User\App\Http\Controllers\Network\WaitingRoomController;
 
 use Illuminate\Support\Facades\Route;
+use User\App\Http\Controllers\Wpautologin\WordpressAutoLoginController;
 
 Route::prefix('user')->name('user.')->group(function () {
 
@@ -278,6 +279,10 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/rank/loginbackurl', [RankController::class, 'loginbackurl']);
     Route::get('/rank/getresponce', [RankController::class, 'getresponce']);
     Route::get('/rank/squareup', [RankController::class, 'squareup']);
+
+    // wordpress autologin route
+    Route::get('/wordpress/autologin/{members_id}', WordpressAutoLoginController::class)
+        ->name('wp.autologin');
 
 });
 

@@ -516,7 +516,28 @@
     <!-- App js -->
     <script type="module" src="{{ asset('js/app.js') }}"></script>
 
+<script>
+  function openWordpressAutoLogin(membersId) {
+    fetch(`/user/wordpress/autologin/${membersId}`, {
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.url) {
+            window.open(data.url, '_blank');
+        } else {
+            alert('Cannot generate login link');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Error generating auto-login link');
+    });
+}
 
+</script>
 </body>
 
 </html>

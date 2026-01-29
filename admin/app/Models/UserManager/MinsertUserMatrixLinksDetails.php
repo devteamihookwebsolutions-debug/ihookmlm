@@ -6,7 +6,7 @@
  * @package         MinsertUserMatrixLinksDetails
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.com
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -27,58 +27,64 @@ use Admin\App\Models\UserManager\MPackageExpiryDateCalculate;
 
 class MinsertUserMatrixLinksDetails
 {
-public static function insertUserMatrixLinkDetails(
+
+public static function insertUserMatrixLinkssDetails(
     $members_id,
     $direct_id,
-    $members_plans,
-    $members_subscription_plan,
-    $entry_criteria,
-    $paymenthistory_mode,
-    $spillover_id,
-    $position,
-    $methodtype,
-    $usertype,
-    $sponsor_username,
-    $root,
-    $members_parents,
-    $paymentdetails_temp_mode,
-    $matrix_type_id,
-    $stripe_cusid,
-    $stripe_subid,
-    $chargebee_subid,
-    $members_subscription_expirydate
-) {
+    $members_plans = null,
+    $members_subscription_plan = null,
+    $entry_criteria = null,
+    $paymenthistory_mode = null,
+    $spillover_id = null,
+    $position = null,
+    $methodtype = null,
+    $usertype = null,
+    $sponsor_username = null,
+    $root = null,
+    $members_parents = null,
+    $tempmode = null,
+    $matrix_type_id = null,
+    $stripe_cusid = null,
+    $stripe_subid = null,
+    $chargebee_subid = null,
+    $members_subscription_expirydate = null
+)
+
+
+ {
+
+//  echo 'hai test<pre>';
+//  exit();
+
     // Handle free / offline / online
-    if ($paymentdetails_temp_mode == 'freeplan') {
+    if ($tempmode == 'freeplan') {
+//         echo 'hais this is the freeplan<pre>';
+// print_r($direct_id);
+//         exit();
         $paymenthistory_status = 'notpaid';
         $members_account_status = '0';
         $members_status = '0';
         $members_subscription_status = '0';
         $members_verified = '0';
-    } elseif ($paymentdetails_temp_mode == 'offline') {
+    } elseif ($tempmode == 'offline') {
+//           echo 'hais this is the offline<pre>';
+// print_r($direct_id);
+//         exit();
         $paymenthistory_status = 'notpaid';
         $members_account_status = '-1';
         $members_status = '1';
         $members_subscription_status = '-1';
         $members_verified = '1';
     } else {
+//           echo 'hais this is else <pre>';
+// print_r($direct_id);
+//         exit();
         $paymenthistory_status = 'paid';
         $members_account_status = '1';
         $members_status = '1';
         $members_subscription_status = '1';
         $members_verified = '1';
     }
-
-    // Subscription expiry
-    // if ($members_subscription_plan > 0) {
-    //     dd('function reached or not');
-    //     $totaldays = MPackageExpiryDateCalculate::getPackageExpireDays($members_subscription_plan);
-
-    //     $members_subscription_expirydate = date('Y-m-d', strtotime("+$totaldays days"));
-    // } else {
-    //     $members_subscription_expirydate = '0000-00-00';
-    // }
-
     // Default leg
     $defaultleg = ($matrix_type_id == '1' || $matrix_type_id == '2') ? '5' : '0';
 
@@ -97,6 +103,9 @@ public static function insertUserMatrixLinkDetails(
     $memberLink->members_subscription_date = date('Y-m-d');
     $memberLink->members_subscription_status = $members_subscription_status;
 $expiry = $members_subscription_expirydate;
+
+// echo '<pre>';
+// print_r($memberLink->direct_id);exit();
 
 // If value is empty, zero-date, or invalid → set NULL
 if (
@@ -126,6 +135,23 @@ if (
 return $memberLink;
 
 }
+
+
+
+// public static function insertUserMatrixLinkssDetails( $members_id,
+//     $direct_id,
+//     $members_plans,  $members_subscription_plan,$entry_criteria,$paymenthistory_mode,
+//     // $spillover_id,$methodtype,$tempmode
+//     $position,$usertype,$sponsor_username,$root,$members_parents,$matrix_type_id,$stripe_cusid,
+//     $stripe_subid,$chargebee_subid,$members_subscription_expirydate
+//     )
+// {
+//     echo "FUNCTION REACHED <br>";
+//     echo "<pre>";
+//     print_r(func_get_args());
+//     exit();
+// }
+
 
 }
 ?>

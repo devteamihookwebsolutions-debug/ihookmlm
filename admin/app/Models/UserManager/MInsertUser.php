@@ -6,7 +6,7 @@
  * @package         MInsertUser
  * @category        Model
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.com
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -20,6 +20,7 @@
 namespace Admin\App\Models\UserManager;
 use Admin\App\Models\UserManager\MInsertUserDetails;
 use Admin\App\Models\UserManager\MInsertUserMatrixLinkDetails;
+use Admin\App\Models\UserManager\MinsertUserMatrixLinksDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -49,6 +50,7 @@ class MInsertUser
 
     {
         $prefix = config('services.ihook.prefix');
+
 
        $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:' . $prefix . '_members_table,members_email',
@@ -91,6 +93,8 @@ class MInsertUser
     $members_package = $data['Package'] ?? '';
     // dd($members_subscription_plan);
     $direct_id = $data['sponsor_id'] ?? null;
+
+    // echo '<pre>';
 
     $members_group_id = '1';
     $members_from = '1';
@@ -200,8 +204,8 @@ $format_paymenthistory_amount = MFormatNumber::formatingNumberCurrency($paymenth
 
 $result = PaymentHistory::create([
     'paymenthistory_member_id' => $members_id,
-    'paymenthistory_amount' => $raw_amount,           // No comma, no formatting
-    'payment_amt_exclusive' => $raw_amount,           // No comma, no formatting
+    'paymenthistory_amount' => $raw_amount,
+    'payment_amt_exclusive' => $raw_amount,
     'paymenthistory_mode' => $paymenthistory_mode,
     'paymenthistory_trans_id' => $paymenthistory_trans_id,
     'paymenthistory_date' => now(),
@@ -210,11 +214,11 @@ $result = PaymentHistory::create([
     'matrix_id' => $matrix_id,
     'paymenthistory_plan_id' => $members_subscription_plan,
 ]);
-     //end: insert  in payment history
+
 
 // dd($result);
 
-// Fetch sponsor details
+
 $sponsor = Member::where('members_id', $direct_id)->first();
 // dd($sponsor);
 if ($sponsor) {
@@ -225,24 +229,25 @@ if ($sponsor) {
     $sponsor_username = $sponsor->members_username;
     // dd($sponsor_username);
 } else {
-    // Handle the case where sponsor is not found
+
     $position_direct_id = null;
     $sponsor_username = null;
 }
 
 // Fetch matrix details
 $matrix = Matrix::find($matrix_id);
+
 // dd($matrix);
 if ($matrix) {
     $matrixname = $matrix->matrix_name;
     // dd($matrixname);
     $matrix_type_id = $matrix->matrix_type_id;
-    // dd($matrix_type_id);
+
 } else {
-    // Handle the case where matrix is not found
     $matrixname = null;
     $matrix_type_id = null;
 }
+
 // ----------------------------------------
 // CORRECT AUTO POSITION LOGIC (Left → Right → Spillover)
 // ----------------------------------------
@@ -268,37 +273,71 @@ if (!$leftExists) {
 
 }
 
-//get member parent start
-if ($position > 0 && $matrix_type_id == '1') {
-    // dd('condition reached or not');
-    // Get spillover ID from position
-    $spillover_id = MBinaryPositionSpillover::getSpilloverFromPosition($matrix_id, $position, $position_direct_id);
-    // dd($spillover_id);
 
-    // Fetch matrix link details
+// //get member parent start
+// if ($position > 0 && $matrix_type_id == '1') {
+//   // Get spillover ID from position
+
+//     $spillover_id = MBinaryPositionSpillover::getSpilloverFromPosition($matrix_id, $position, $position_direct_id);
+//     // dd($spillover_id);
+//     // echo '<spillover_id variable use<pre>';
+
+//     // Fetch matrix link details
+//     $matrixLink = MemberLinks::where('members_id', $spillover_id)
+//         ->where('matrix_id', $matrix_id)
+//         ->first();
+//     // echo '<Matrix variable use<pre>';
+//     // print_r($matrixLink);exit();
+// // dd($matrixLink);
+//     if ($matrixLink) {
+//         // dd('funciron reached or not');
+//         $parentroot = $matrixLink->root;
+//         // dd($parentroot);
+//         $sponsor_members_parents = $matrixLink->members_parents;
+// // dd($sponsor_members_parents);
+//         $root = $parentroot + 1;
+//         // dd($root);
+//         $members_parents = $sponsor_members_parents . ',' . $spillover_id;
+//         // dd($members_parents);
+//     } else {
+//         $root = 0;
+//         $members_parents = '0';
+//     }
+// } else {
+//     $root = 0;
+//     $members_parents = '0';
+// }
+
+
+$spillover_id = null;
+$root = 0;
+$members_parents = '0';
+
+//get member parent start
+if ($position > 0 && $matrix_type_id == 1) {
+
+    $spillover_id = MBinaryPositionSpillover::getSpilloverFromPosition(
+        $matrix_id,
+        $position,
+        $position_direct_id
+    );
+
     $matrixLink = MemberLinks::where('members_id', $spillover_id)
-                                  ->where('matrix_id', $matrix_id)
-                                  ->first();
-// dd($matrixLink);
+        ->where('matrix_id', $matrix_id)
+        ->first();
+
     if ($matrixLink) {
-        // dd('funciron reached or not');
         $parentroot = $matrixLink->root;
-        // dd($parentroot);
         $sponsor_members_parents = $matrixLink->members_parents;
-// dd($sponsor_members_parents);
         $root = $parentroot + 1;
-        // dd($root);
         $members_parents = $sponsor_members_parents . ',' . $spillover_id;
-        // dd($members_parents);
-    } else {
-        $root = 0;
-        $members_parents = '0';
     }
-} else {
-    $root = 0;
-    $members_parents = '0';
 }
+
+
  // end member parents
+
+
             $entry_criteria = 'admin';
             $usertype = 'admin';
             // tempmode logic: if account type 2 use offline else freeplan (you used members_account_type earlier)
@@ -308,29 +347,35 @@ if ($position > 0 && $matrix_type_id == '1') {
             $stripe_subid = '';
             $chargebee_subid = '';
             $members_subscription_expirydate = '0000-00-00';
-        $result = MinsertUserMatrixLinksDetails::insertUserMatrixLinkDetails(
-            $members_id,
-            $sponsor_id,
-            $matrix_id,
-            $members_subscription_plan,
-            $entry_criteria,
-            $paymenthistory_mode,
-            $spillover_id,
-            $position,
-            'admin_register',
-            $usertype,
-            $sponsor_username,
-            $root,
-            $members_parents,
-            $tempmode,
-            $matrix_type_id,
-            $stripe_cusid,
-            $stripe_subid,
-            $chargebee_subid,
-            $members_subscription_expirydate
-        );
+
+// echo 'check';
+// exit();
+$result = MinsertUserMatrixLinksDetails::insertUserMatrixLinkssDetails(
+    $members_id,
+    $direct_id,
+    $members_plans,
+    $members_subscription_plan,
+    $entry_criteria,
+    $paymenthistory_mode,
+    $spillover_id,
+    $position,
+    'admin_register',
+    $usertype,
+    $sponsor_username,
+    $root,
+    $members_parents,
+    $tempmode,
+    $matrix_type_id,
+    $stripe_cusid,
+    $stripe_subid,
+    $chargebee_subid,
+    $members_subscription_expirydate
+);
 
 
+
+
+            // print_r($result);exit();
                return redirect()->route('admin.distributors.index')->with('success', __('Member has been successfully registered'));
             } else {
                 return redirect()->route('admin.distributors.index')->with('error', __('Member has not been registered'));

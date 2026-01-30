@@ -34,8 +34,20 @@ class Admin extends Model
     }
     public $timestamps = false;
 
-    protected $fillable = [
-        'admin_email',
+      protected $fillable = [
+        'admin_username',
         'admin_password',
+        'admin_status',
+        'intro_status',
+        'admin_email',
+        'admin_phone',
+        'allaccess_control',
+        'admin_login_verified',
+        'admin_otp_decrypt',
+        'admin_otp',
+        'push_token',
+        'admin_profile_image',
+        'admin_type',
+        'created_on'
     ];
 }

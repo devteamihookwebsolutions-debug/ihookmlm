@@ -37,16 +37,21 @@ class Admin extends Authenticatable
     }
     public $timestamps = false;
 
-    protected $fillable = [
+     protected $fillable = [
         'admin_username',
         'admin_password',
+        'admin_status',
+        'intro_status',
         'admin_email',
         'admin_phone',
+        'allaccess_control',
+        'admin_login_verified',
+        'admin_otp_decrypt',
+        'admin_otp',
+        'push_token',
         'admin_profile_image',
-        'admin_status',
         'admin_type',
-        'admin_otp',               // make sure it's fillable
-        'admin_otp_expires_at',
+        'created_on'
     ];
 
     protected $hidden = [

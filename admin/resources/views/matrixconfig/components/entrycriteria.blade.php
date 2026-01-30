@@ -59,3 +59,13 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selected = document.querySelector('input[name="members_account_type"]:checked');
+    if (selected) {
+        showMembersAccount(parseInt(selected.value));
+    }
+});
+</script>
+

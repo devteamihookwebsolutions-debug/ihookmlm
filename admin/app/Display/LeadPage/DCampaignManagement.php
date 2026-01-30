@@ -20,6 +20,85 @@ namespace Admin\App\Display\LeadPage;
 class DCampaignManagement
 {
 
+// public static function showNewsletterSettings($user_list, $temp_records, $memlist, $user_type = null)
+// {
+//     // If $user_type is not passed, fallback to $_GET or null
+//     $user_type = $user_type ?? ($_GET['user_type'] ?? null);
+
+//     $output = '';
+
+//     // Subject field
+//     $output .= '<div class="mb-5">
+//         <label class="block mb-3 text-xs text-gray-600 dark:text-gray-300">' . __('Subject') . '</label>
+//         <input type="text" name="news_subject" id="news_subject"
+//             class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+//             value="" placeholder="' . __('Subject') . '" aria-describedby="news_subject-error" required>
+//         <p id="news_subject-error" class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">Please enter a valid Subject</p>
+//     </div>';
+
+//     // User list dropdown
+//     $output .= '<div class="mb-5">
+//         <label class="block mb-3 text-xs text-gray-600 dark:text-gray-300">' . __('Select User List') . '</label>
+//         <select id="listusers" name="listusers" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" onchange="selectUsers(this.value);" aria-describedby="listusers-error" required>
+//             <option value="">' . __('Select') . '</option>
+//             <option value="0">All Users</option>
+//             <option value="1">Active Users</option>
+//             <option value="2">Suspended Users</option>
+//             <option value="3">Only Subscribe Users</option>
+//             <option value="4">Premium Users</option>
+//             <option value="5">Free Users</option>
+//             <option value="6">Unverified Users</option>
+//             <option value="7">Custom Users</option>';
+
+//     // Loop through $user_list safely
+//     foreach ($user_list as $key => $item) {
+//         $label = is_object($item) ? ($item->name ?? '') : $item;
+//         $selected = ($user_type == $key) ? 'selected="selected"' : '';
+//         $output .= '<option value="' . $key . '" ' . $selected . '>' . htmlspecialchars($label) . '</option>';
+//     }
+
+//     // Loop through $memlist safely
+//     foreach ($memlist as $key1 => $item1) {
+//         $label = is_object($item1) ? ($item1->name ?? '') : $item1;
+//         $selected = ($user_type == $key1) ? 'selected="selected"' : '';
+//         $output .= '<option value="' . $key1 . '" ' . $selected . '>' . htmlspecialchars($label) . '</option>';
+//     }
+
+//     $output .= '</select>
+//         <p id="listusers-error" class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">Please Select any option</p>
+//     </div>';
+
+//     // Placeholder for user emails (dynamic)
+//     $output .= '<div class="mb-5">
+//         <div class="mb-5" id="showuseremail"></div>
+//     </div>';
+
+//     // Template dropdown
+//     $output .= '<div class="mb-5">
+//         <label class="block mb-3 text-xs text-gray-600 dark:text-gray-300">' . __('Template') . '</label>
+//         <select id="newslettertemplate" name="newslettertemplate" class="bg-gray-50 border border-gray-300 text-gray-600 text-xs rounded-lg block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" onchange="showPay(this.value);" aria-describedby="newslettertemplate-error" required>
+//             <option value="">' . __('Select') . '</option>';
+
+//     // Loop through $temp_records safely
+//     foreach ($temp_records as $record) {
+//       // dd($temp_records);
+//         $id = $record->category_templates_id ?? '';
+//         $name = $record->category_templates_name ?? '';
+//         $output .= '<option value="' . $id . '">' . htmlspecialchars($name) . '</option>';
+//     }
+
+//     $output .= '</select>
+//         <p id="newslettertemplate-error" class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">Please Select any option</p>
+//     </div>';
+
+//     // News content section
+//     $output .= '<div class="hidden items-center space-x-4" id="showimagenews">
+//         <label class="block mb-2 text-sm font-medium text-black dark:text-white">' . __('News Content') . '</label>
+//         <div class="w-full lg:w-2/3 md:w-3/4 sm:w-full" id="showimage"></div>
+//     </div>';
+
+//     return $output;
+// }
 public static function showNewsletterSettings($user_list, $temp_records, $memlist, $user_type = null)
 {
     // dd($temp_records);

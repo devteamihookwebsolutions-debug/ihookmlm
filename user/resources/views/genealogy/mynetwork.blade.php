@@ -112,7 +112,7 @@
                                 @php
                                     $original_member_id = session('original_network_member_id') ?? auth()->user()->members_id;
                                     $original_matrix_id = session('original_network_matrix_id') ??
-                                        \DB::table(config('ihook.prefix', 'ihook').'_matrix_members_link_table')
+                                        \DB::table(config('services.ihook.prefix', 'ihook').'_matrix_members_link_table')
                                             ->where('members_id', $original_member_id)
                                             ->orderBy('link_id')
                                             ->value('matrix_id') ?? 1;

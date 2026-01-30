@@ -103,4 +103,35 @@ class Member extends Authenticatable
     {
         return $this->hasOne(Member::class, 'members_id', 'members_id');
     }
+    public static function getMemberEmail($memberEmail)
+    {
+        return self::where('members_email', $memberEmail)->first();
+    }
+
+    public function getMemberId($memberEmail)
+    {
+        return self::where('members_email', $memberEmail)->value('members_id');
+    }
+
+    // public static function getUser($member_id)
+    // {
+
+    //     return self::where('members_id', $member_id)->get();
+    // }
+
+     public static function getUser($member_id)
+    {
+        return self::where('members_id', $member_id)
+            ->select('members_id', 'members_firstname', 'members_lastname', 'members_username')
+            ->first();
+    }
+
+    public static function getMembers($query)
+    {
+        return self::where('members_username', 'like', "%{$query}%")
+            ->orWhere('members_firstname', 'like', "%{$query}%")
+            ->limit(10)
+            ->get(['members_id', 'members_username', 'members_firstname']);
+    }
+
 }

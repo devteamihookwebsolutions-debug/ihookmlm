@@ -22,6 +22,7 @@ use Admin\App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Admin\App\Models\LeadPage\MCampaignManagement;
+
 use Exception;
 use Illuminate\Container\Attributes\Log;
 
@@ -57,13 +58,6 @@ public function viewMailTemplate(Request $request, $id)
     return MCampaignManagement::viewMailTemplate($request, $id);
 }
 
-// public function sendNewsletter(Request $request)
-// {
-//     MCampaignManagement::sendNewsletter($request);
-
-//     return redirect()->back()
-//         ->with('success', 'Newsletter sent successfully.');
-// }
 public function sendNewsletter(Request $request)
 {
     $request->validate([

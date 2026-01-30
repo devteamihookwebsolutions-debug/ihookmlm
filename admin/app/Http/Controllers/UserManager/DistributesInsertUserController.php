@@ -6,7 +6,7 @@
  * @package         DistributesInsertUserController
  * @category        Controller
  * @author          Ihook Dev Team
- * @link            https://ihookmlmsoftware.com
+ * @link            https://ihookmlmsoftware.ihookmlmsoftware.com/landingpage/home.html
  * @copyright       Copyright (c) 2025 - 2026, Ihook.
  * @version         Version 1.0
 **/
@@ -41,7 +41,6 @@ public function index(){
 }
 public function fetch(Request $request)
 {
-            $prefix = config('services.ihook.prefix');
 
     // IMPORTANT: Tell Laravel to parse JSON input
     $input = $request->json()->all();
@@ -50,42 +49,75 @@ public function fetch(Request $request)
     $skip = $input['skip'] ?? 0;
     $requiresCounts = $input['requiresCounts'] ?? false;
 
+
+    $prefix = config('services.ihook.prefix', 'ihook');
+
+    $members_link = "{$prefix}_matrix_members_link_table";
+    $membersTable = "{$prefix}_members_table";
+
+
     // Build base query
+    // $query = Member::leftJoin(
+    //         'ihook_matrix_members_link_table',
+    //         'ihook_matrix_members_link_table.members_id',
+    //         '=',
+    //         'ihook_members_table.members_id'
+    //     )
+    //     ->leftJoin(
+    //         'ihook_members_table as directid',
+    //         'directid.members_id',
+    //         '=',
+    //         'ihook_matrix_members_link_table.direct_id'
+    //     )
+    //     ->select(
+    //         'ihook_members_table.*',
+    //         'ihook_matrix_members_link_table.link_id',
+    //         'ihook_matrix_members_link_table.members_parents',
+    //         'directid.members_username as directid_username'
+    //     );
+
     $query = Member::leftJoin(
-            '' . $prefix . '_matrix_members_link_table',
-            '' . $prefix . '_matrix_members_link_table.members_id',
-            '=',
-            '' . $prefix . '_members_table.members_id'
-        )
-        ->leftJoin(
-            '' . $prefix . '_members_table as directid',
-            'directid.members_id',
-            '=',
-            '' . $prefix . '_matrix_members_link_table.direct_id'
-        )
-        ->select(
-            '' . $prefix . '_members_table.*',
-            '' . $prefix . '_matrix_members_link_table.link_id',
-            '' . $prefix . '_matrix_members_link_table.members_parents',
-            'directid.members_username as directid_username'
-        );
+        $members_link,
+        "{$members_link}.members_id",
+        '=',
+        "{$membersTable}.members_id"
+    )
+    ->leftJoin(
+        "{$membersTable} as directid",
+        "directid.members_id",
+        '=',
+        "{$members_link}.direct_id"
+    )
+    ->select(
+        "{$membersTable}.*",
+        "{$members_link}.link_id",
+        "{$members_link}.members_parents",
+        "directid.members_username as directid_username"
+    );
+
 
 
 
     if (!empty($input['search']) && isset($input['search'][0]['key'])) {
 
         $searchKey = $input['search'][0]['key'];
-        $prefix = config('services.ihook.prefix');
 
-        $query->where(function ($q) use ($searchKey, $prefix) { // <-- add $prefix here
-            $q->where($prefix . '_members_table.members_username', 'LIKE', "%{$searchKey}%")
-            ->orWhere($prefix . '_members_table.members_email', 'LIKE', "%{$searchKey}%")
-            ->orWhere($prefix . '_members_table.members_firstname', 'LIKE', "%{$searchKey}%")
-            ->orWhere($prefix . '_members_table.members_lastname', 'LIKE', "%{$searchKey}%")
+        $query->where(function ($q) use ($searchKey): void {
+            $prefix = config('services.ihook.prefix', 'ihook');
+            $q->where($prefix.'_members_table.members_username', 'LIKE', "%{$searchKey}%")
+            ->orWhere($prefix.'_members_table.members_email', 'LIKE', "%{$searchKey}%")
+            ->orWhere($prefix.'_members_table.members_firstname', 'LIKE', "%{$searchKey}%")
+            ->orWhere($prefix.'_members_table.members_lastname', 'LIKE', "%{$searchKey}%")
             ->orWhere('directid.members_username', 'LIKE', "%{$searchKey}%");
         });
-    }
 
+        // $q->where("{$membersTable}.members_username", 'LIKE', "%{$searchKey}%")
+        //     ->orWhere("{$membersTable}.members_email", 'LIKE', "%{$searchKey}%")
+        //     ->orWhere("{$membersTable}.members_firstname", 'LIKE', "%{$searchKey}%")
+        //     ->orWhere("{$membersTable}.members_lastname", 'LIKE', "%{$searchKey}%")
+        //     ->orWhere('directid.members_username', 'LIKE', "%{$searchKey}%");
+
+    }
 
     if (!empty($input['where'])) {
 
@@ -102,14 +134,19 @@ public function fetch(Request $request)
 
             //  Map grid fields to DB columns (IMPORTANT)
             $columnMap = [
-                'members_id'         => '' . $prefix . '_members_table.members_id',
-                'members_username'   => '' . $prefix . '_members_table.members_username',
-                'members_email'      => '' . $prefix . '_members_table.members_email',
-                'members_firstname'  => '' . $prefix . '_members_table.members_firstname',
-                'members_lastname'   => '' . $prefix . '_members_table.members_lastname',
-                'directid_username'  => 'directid.members_username',
-                'members_status'     => '' . $prefix . '_members_table.members_status',
-                'account_status'     => '' . $prefix . '_members_table.account_status',
+                'members_id'        => "{$membersTable}.members_id",
+                'members_username'  => "{$membersTable}.members_username",
+                'members_email'     => "{$membersTable}.members_email",
+                'members_firstname' => "{$membersTable}.members_firstname",
+                'members_lastname'  => "{$membersTable}.members_lastname",
+                'directid_username' => 'directid.members_username',
+                'members_status'    => "{$membersTable}.members_status",
+                'account_status'    => "{$membersTable}.account_status",
+                'members_phone'     => "{$membersTable}.members_phone",
+                'members_doj'       => "{$membersTable}.members_doj",
+                'members_doj'       => "{$membersTable}.members_doj",
+
+
             ];
 
             // Apply sorting only if column is allowed
@@ -119,7 +156,7 @@ public function fetch(Request $request)
         }
     } else {
         // Default sorting
-        $query->orderByDesc('' . $prefix . '_members_table.members_id');
+        $query->orderByDesc("{$membersTable}.members_id");
     }
 
 
@@ -175,24 +212,26 @@ public function checkEmail(Request $request)
         return response()->json(['exists' => $exists]);
     }
 
-public function fetchState(Request $request)
+    public function fetchState(Request $request)
     {
+
         $states = getStatesByCountryCode($request->sortname);
         return response()->json(['states' => $states]);
     }
-public function adddistrbutors()
-  {
-      return view('admin::distributors.add_distributors');
-  }
+    public function adddistrbutors()
+    {
+        return view('admin::distributors.add_distributors');
+    }
 
     public function insertUser(Request $request)
     {
-                $prefix = config('services.ihook.prefix');
-
+        // echo 'hai this is the function';
+        // exit();
         // dd($request->all());
+        $prefix = config('services.ihook.prefix', 'ihook');
         $validator = Validator::make($request->all(), [
             'user_name' => 'required',
-            'email' => 'required|email|unique:' . $prefix . '_members_table,members_email',
+            'email' => "required|email|unique:{$prefix}_members_table,members_email",
             'first_name' => 'required',
             'last_name' => 'required',
             'password' => 'required|min:8',
@@ -208,31 +247,24 @@ public function adddistrbutors()
             'package'=>'required'
         ]);
 
-        $data = $request->all();
-        // echo "<pre>";
-        // print_r($data);exit;
 
-     try {
-        $userInserter = new MInsertUser();
-        // dd($userInserter);
-        $success = $userInserter->insertUser($request);
-        // dd($success);
-        //   $userInserter = new MInsertUser();
-        //    $success = $userInserter->insertUser($request);
-        //    dd($success);exit;
-        if ($success) {
-            //  show success message
-            return redirect()->route('admin.distributors.index')->with('success', 'Member has been successfully registered!');
-        } else {
-            return redirect()->back()->with('error', 'Member registration failed.');
+        try {
+            $userInserter = new MInsertUser();
+
+            $success = $userInserter->insertUser($request);
+            if ($success) {
+                //  show success message
+                return redirect()->route('admin.distributors.index')->with('success', 'Member has been successfully registered!');
+            } else {
+                return redirect()->back()->with('error', 'Member registration failed.');
+            }
+
+
+        } catch (\Exception $e) {
+            // Log or debug
+            // Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
-
-
-    } catch (\Exception $e) {
-        // Log or debug
-        // Log::error($e->getMessage());
-        return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
     }
-}
 }
 ?>

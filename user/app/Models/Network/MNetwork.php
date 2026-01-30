@@ -32,7 +32,7 @@ class MNetwork
     /** Get the table prefix (config → fallback to 'ihook') */
     private static function prefix(): string
     {
-        return self::$prefix ??= config('ihook.prefix', 'ihook');
+        return self::$prefix ??= config('services.ihook.prefix', 'ihook');
     }
 
     public static function getActiveNetworkDetails($matrix_id): ?string

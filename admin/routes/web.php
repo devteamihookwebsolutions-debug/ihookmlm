@@ -49,6 +49,7 @@ use Admin\App\Http\Controllers\PremiumLearning\PremiumCoursesController;
 use Admin\App\Http\Controllers\PremiumLearning\PremiumLearningLessonController;
 use Admin\App\Http\Controllers\PremiumLearning\PremiumLearningLessonUpdateController;
 use Admin\App\Http\Controllers\RoleManagement\RoleManagementController;
+use Admin\App\Http\Controllers\RoleManagement\SubAdminManagementController;
 use Admin\App\Http\Controllers\SystemModule\SystemManagementController;
 use Admin\App\Http\Controllers\MemberArea\TransactionController;
 use Admin\App\Http\Controllers\MemberArea\WalletController;
@@ -77,7 +78,9 @@ use Illuminate\Support\Facades\Session;
 use Admin\App\Http\Controllers\Genealogy\TabularGenealogyController;
 use Admin\App\Http\Controllers\Factories\UserDashboardController;
 use Admin\App\Http\Controllers\Features\FeaturesController;
+use Admin\App\Http\Controllers\ForgotPasswordController;
 
+use Admin\App\Http\Controllers\LeadPage\LeadSponsorController;
 
 // Reusable auth check (Closure)
 $middleware = function ($request, $next) {
@@ -105,6 +108,37 @@ Route::prefix('admin')
         // Route::match(['get', 'post'], 'userManager', [DistributesInsertUserController::class, 'index'])->name('distributors.index');
         // Route::get('userManager', [DistributesInsertUserController::class, 'index'])
         //     ->name('distributors.index');
+
+          // forgot password functions related routes
+
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showEmailForm'])
+        ->name('forgot.password');
+
+    // Send OTP
+    Route::post('forgot-password/send-otp', [ForgotPasswordController::class, 'sendOtp'])
+        ->name('forgot.password.send');
+
+    Route::get('verify-otp', [ForgotPasswordController::class, 'showOtpForm'])
+        ->name('forgot.password.verify');
+
+    // Show OTP verify form
+    Route::get('forgot-password/verify', [ForgotPasswordController::class, 'showOtpForm'])
+        ->name('forgot.password.verify');
+
+    // Verify OTP
+    Route::post('forgot-password/verify', [ForgotPasswordController::class, 'verifyOtp'])
+        ->name('forgot.password.verify.post');
+
+    // Show reset password form
+    Route::get('forgot-password/reset', [ForgotPasswordController::class, 'showResetForm'])
+        ->name('reset.password');
+
+    // Update password
+    Route::post('forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])
+        ->name('reset.password.post');
+    // resend otp
+   Route::post('resend-otp', [ForgotPasswordController::class, 'resendOtp'])
+    ->name('otp.resend');
 
         //   Route::post('userManager/fetch', [DistributesInsertUserController::class, 'fetch']);
         Route::get('userManager', [DistributesInsertUserController::class, 'index'])->name('distributors.index');
@@ -710,6 +744,39 @@ Route::get('newsletter/preview/{id}', [NewsLetterManagementController::class, 'p
         ->name('cartconfig.completecart');
     Route::post('/cartconfig/testsyconnection', [CartConfigController::class, 'testSyConnection'])
         ->name('cartconfig.testsyconnection');
+
+
+        Route::get('/subadmin', [SubAdminManagementController::class, 'showSubAdminSettings'])
+     ->name('subadmin');
+
+
+    Route::get('/subadmin/add', [SubAdminManagementController::class, 'showAddSubAdmin'])
+        ->name('subadmin.add');
+
+
+     Route::post('/subadmin/add', [SubAdminManagementController::class, 'addSubAdminDetails'])
+        ->name('subadmin.store');
+
+    Route::get('/subadmin/edit/{id}', [SubAdminManagementController::class, 'showEditSubAdmin'])
+        ->name('subadmin.editsubadmin');
+
+    Route::post('/subadmin/update', [SubAdminManagementController::class, 'updateSubAdmin'])
+        ->name('subadmin.update');
+Route::delete('subadmin/delete/{id}', [SubAdminManagementController::class, 'deleteSubAdmin'])
+     ->name('subadmin.delete');
+        // Lead registration mail
+
+    Route::get('/leadsponsor', [LeadSponsorController::class, 'addLeads'])
+    ->name('leadsponsor');
+
+    Route::post('/leadsponsor/store', [LeadSponsorController::class, 'store'])
+    ->name('leads.store');
+    Route::get('/get-states/{country_sortname}', [LeadSponsorController::class, 'getStates'] )->name('lead.get.states');
+    Route::get('lead/check-email', [LeadSponsorController::class, 'checkEmail'])->name('user.lead.check-email');
+
+    // routes/web.php
+    Route::get('/sponsors/search', [LeadSponsorController::class, 'searchSponsor']);
+
 
     //  shopify connect to laravel routes
 

@@ -54,51 +54,161 @@
                         <link rel="stylesheet" href="{{ asset('css/material.css') }}" media="print"
     onload="this.onload=null;this.removeAttribute('media');">
 <script src="{{ asset('js/ej2.min.js') }}"></script>
-<style type="text/css">
-    /* Your full dark mode + watermark hide CSS here (same as before) */
-    div:has(> a[href*="syncfusion.com"]) { display: none !important; }
-    .e-grid .e-leftfreeze.e-freezeleftborder { border-right: none; }
-    .e-grid .e-content { transform: translateZ(0); }
-    /* ... rest of your dark CSS ... */
-    .dark .e-grid .e-gridheader,
-    .dark .e-grid .e-headercell { color: #a3a3a3; }
-    .dark .e-grid .e-rowcell { color: #e5e5e5; }
-    /* ... etc ... */
-    #Gridstring_excelDlg_dialog-content
-    {
-          display:none;
-    }
+<style>
+/* Hide Syncfusion watermark */
+div:has(> a[href*="syncfusion.com"]) { display: none !important; }
+
+/* Performance fixes */
+.e-grid .e-leftfreeze.e-freezeleftborder { border-right: none; }
+.e-grid .e-content { transform: translateZ(0); }
+
+/* ========================= */
+/* 🌙 DARK MODE SYNCFUSION */
+/* ========================= */
+
+.dark .e-grid {
+    background: #1f2937 !important;        /* dark:bg-gray-800 */
+    color: #9ca3af !important;             /* dark:text-gray-400 */
+    border: 1px solid #374151 !important;  /* dark:border-gray-700 */
+    border-radius: 0.75rem !important;     /* rounded-lg */
+}
+
+/* Header */
+.dark .e-grid .e-gridheader {
+    background: #1f2937 !important;
+    border-bottom: 1px solid #374151 !important;
+}
+
+.dark .e-grid .e-headercell {
+    background: #1f2937 !important;
+    color: #d1d5db !important; /* text-gray-300 */
+    border-color: #374151 !important;
+    font-weight: 600;
+}
+
+/* Rows */
+.dark .e-grid .e-rowcell {
+    background: #1f2937 !important;
+    color: #9ca3af !important; /* text-gray-400 */
+    border-color: #374151 !important;
+}
+
+/* Row hover */
+.dark .e-grid .e-row:hover .e-rowcell {
+    background: #f9fafb !important;
+    color: #111827 !important;
+}
+/* Toolbar */
+.dark .e-toolbar {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+.dark .e-toolbar .e-tbar-btn {
+    color: #d1d5db !important;
+}
+
+/* Pager */
+.dark .e-grid .e-pager {
+    background: #1f2937 !important;
+    color: #9ca3af !important;
+    border-top: 1px solid #374151 !important;
+}
+
+/* Inputs / search */
+.dark .e-input-group,
+.dark .e-input {
+    background: #111827 !important;  /* dark:bg-gray-900 */
+    color: #d1d5db !important;
+    border-color: #374151 !important;
+}
+
+/* Filter popup */
+.dark .e-excelfilter,
+.dark .e-filter-popup {
+    background: #1f2937 !important;
+    color: #d1d5db !important;
+    border-color: #374151 !important;
+}
+
+/* Dropdowns */
+.dark .e-dropdownbase {
+    background: #1f2937 !important;
+    color: #d1d5db !important;
+}
+
+/* Dialogs */
+.dark .e-dialog {
+    background: #1f2937 !important;
+    color: #d1d5db !important;
+}
+
+/* Buttons */
+.dark .e-btn {
+    background: #1f2937 !important;
+    color: #d1d5db !important;
+    border-color: #374151 !important;
+}
+
+/* Scrollbar nice look */
+.dark .e-grid ::-webkit-scrollbar {
+    width: 8px;
+}
+.dark .e-grid ::-webkit-scrollbar-track {
+    background: #111827;
+}
+.dark .e-grid ::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 6px;
+}
 </style>
-<main class="flex-grow">
-    <div>
-        @include('components.common.info_message')
+    <main class="flex-grow">
+        <div>
+            @include('components.common.info_message')
 
-        <div class="bg-white dark:bg-gray-900 dark:border-gray-700 border border-gray-200 rounded-lg shadow-sm p-6 mb-10">
-            <div id="Grid"></div>
+            <div class="bg-white dark:bg-gray-900 dark:border-gray-700 border border-gray-200 rounded-lg shadow-sm p-6 mb-10">
+                <div id="Grid"></div>
+            </div>
+
+            <!-- Toggle Column Drawer Button -->
+            <div class="fixed bottom-5 right-5 z-50">
+                <button id="toggleColumnBtn"
+                    class="bg-gray-800 hover:bg-gray-900 text-white rotate-90 fixed right-[-58px] top-[275px] rounded-lg px-5 py-3 shadow-2xl flex items-center gap-2">
+                    Toggle Columns
+                </button>
+            </div>
+
+            <!-- Drawer - Hidden by default -->
+            <div id="drawer-right-example"
+                class="fixed top-[314px] right-10 z-40 h-[calc(100vh-330px)] w-700 bg-white dark:bg-gray-900 shadow-xl
+                    transform translate-x-full transition-transform duration-300 ease-in-out overflow-hidden">
+
+                <!-- FULL HEIGHT FLEX CONTAINER -->
+                <div class="p-5 h-full flex flex-col">
+
+                    <!-- HEADER (FIXED) -->
+                    <div class="flex justify-between items-center mb-4 shrink-0">
+                        <h5 class="text-lg font-semibold">Toggle Columns</h5>
+                        <button id="closeDrawerBtn" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+                    </div>
+
+                    <!-- SCROLLABLE BODY -->
+                    <div id="columnToggleList"
+                        class="space-y-3 overflow-y-auto pr-2 flex-1
+                            scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-
-<!-- Toggle Column Drawer Button -->
-<div class="fixed bottom-5 right-5 z-50">
-    <button id="toggleColumnBtn"
-        class="bg-gray-800 hover:bg-gray-900 text-white rotate-90 fixed right-[-58px] top-[400px] rounded-lg px-5 py-3 shadow-2xl flex items-center gap-2">
-        Toggle Columns
-    </button>
-</div>
-
-<!-- Drawer - Hidden by default -->
-<div id="drawer-right-example"
-     class="fixed top-[314px] right-10 z-40 h-screen w-80 bg-white dark:bg-gray-900 shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out">
-    <div class="p-5">
-        <div class="flex justify-between items-center mb-4">
-            <h5 class="text-lg font-semibold">Toggle Columns</h5>
-            <button id="closeDrawerBtn" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
-        </div>
-        <div id="columnToggleList" class="space-y-3"></div>
-    </div>
-</div>
-    </div>
-</main>
+    </main>
 <!--data loaded-->
+<script>
+
+
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const STORAGE_KEY = 'distributors_grid_columns_v1';
@@ -119,6 +229,12 @@ document.addEventListener('DOMContentLoaded', function () {
         { field: 'members_address', headerText: 'Address', width: 250 },
         { field: 'state_name', headerText: 'State', width: 130, allowSorting: false },
         { field: 'country_name', headerText: 'Country', width: 130, allowSorting: false },
+        { field: 'rank', headerText: 'Rank', width: 130, allowSorting: false },
+        { field: 'members_phone', headerText: 'Phone', width: 140 },
+        { field: 'members_doj', headerText: 'Doj', width: 140 },
+
+
+
 
 
         // 1. ACCOUNT STATUS - NEW COLUMN
@@ -211,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
         allowResizing: true,
         allowReordering: true,
         toolbar: ['Search'],
-        height: "650px",
+        // height: "450px",
         width: "100%",
         frozenColumns: 2,
 

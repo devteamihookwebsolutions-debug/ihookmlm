@@ -99,7 +99,7 @@ class MCompactGenealogy
         $output .= '</div><ul class="pt-14 relative flex flex-row items-baseline justify-center">';
 
         $firstchildroot = $parentroot + 1;
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         $sqlmembers = "SELECT SQL_CALC_FOUND_ROWS
                 a.*,
@@ -192,7 +192,7 @@ class MCompactGenealogy
         $outputChild = '<ul class="pt-14 relative flex flex-row items-baseline justify-center">';
 
         if ($members_id > 0) {
-            $prefix = config('ihook.prefix', 'ihook');
+            $prefix = config('services.ihook.prefix', 'ihook');
 
             $sql = "SELECT SQL_CALC_FOUND_ROWS
                     a.*,

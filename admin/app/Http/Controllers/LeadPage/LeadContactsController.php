@@ -30,79 +30,39 @@ class  LeadContactsController extends Controller
 
 public function currencysetting()
 {
-    $prefix = config('services.ihook.prefix');
-
     // Get currency settings from model
     $currencySettings = MLeadContacts::getcurrencyformat();
-  // dd($currencySettings);
 
- // $currencySeparator=$currencySettings->thousand_seperator;
-
- // dd($currencySeparator);
     // Get active currency from DB
-    $getcurrencyformat = DB::table('' . $prefix . '_currencyformat')
-        ->where('id', 1)
+    $getcurrencyformat = DB::table('ihook_currencysettings_table')
+        ->where('set_currency', 1)
         ->first();
-
- // GET CURRENCY SYMBOL
-$currencySymbol=$getcurrencyformat->currency;
-
-//dd($currencySymbol);
-
-
-// GET CURRENCY DETAILS
-$currencyDetails = DB::table('' . $prefix . '_currencysettings_table')
-    ->where('currency_symbol', $currencySymbol)
-    ->first();
-
-     // dd($currencyDetails);
-
-
 
     // If no active currency is found, provide default values
     if (!$getcurrencyformat) {
-      //  dd("insideloop");
         $getcurrencyformat = (object)[
             'currency' => 'USD',           // default currency
             'thousand_seperator' => '10',  // default thousand separator
             'decimal_seperator' => '2',    // default decimal separator
         ];
     }
-
+// dd($getcurrencyformat);
     // Get the currency code
     $curr = $getcurrencyformat->currency;
-
-
-
+    //   dd($curr);
     // Get all currencies
     $allCurrency = MLeadContacts::allcurrency($curr);
-//dd($allCurrency);
+// dd($allCurrency);
     // Return Blade view with data
-
-
-    // return view('bulkuserupload.currencysetting', [
-    //     'currency_settings' => $currencySettings,
-    //     'allcurrency' => $allCurrency,
-    //     'getcurrencyformat' => $getcurrencyformat, // pass to Blade safely
-    //     'success' => session('success'),
-    //     'error_message' => session('error_message'),
-    // ]);
-
-      return view('bulkuserupload.currencysetting', [
+    return view('bulkuserupload.currencysetting', [
         'currency_settings' => $currencySettings,
         'allcurrency' => $allCurrency,
-        'getcurrencyformat' => $currencyDetails, // pass to Blade safely
+        'getcurrencyformat' => $getcurrencyformat, // pass to Blade safely
         'success' => session('success'),
         'error_message' => session('error_message'),
     ]);
-
-
-//currencyDetails
-
 }
 public function insertcurrency(Request $request) // inject Request
-
-
 {
     // Call model function with request
     return MLeadContacts::insertcurrency($request);

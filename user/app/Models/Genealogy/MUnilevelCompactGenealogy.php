@@ -43,7 +43,7 @@ class MUnilevelCompactGenealogy
             $members_id = $auth_user_id;
         }
 
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         if (!$matrix_id || !is_numeric($matrix_id)) {
             $matrix_id = DB::table("{$prefix}_matrix_members_link_table")
@@ -114,7 +114,7 @@ class MUnilevelCompactGenealogy
 
     private static function getDirectDownlines($parent_id, $matrix_id)
     {
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         return DB::table("{$prefix}_matrix_members_link_table")
             ->where('matrix_id', $matrix_id)

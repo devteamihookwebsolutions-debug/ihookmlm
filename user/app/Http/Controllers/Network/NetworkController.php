@@ -56,7 +56,7 @@ class NetworkController extends Controller
             }
 
             if (!$matrix_id) {
-                $prefix = config('ihook.prefix', 'ihook');
+                $prefix = config('services.ihook.prefix', 'ihook');
                 $matrix_id = \DB::table("{$prefix}_matrix_members_link_table")
                     ->where('members_id', $current_member_id)
                     ->orderBy('link_id')
@@ -113,7 +113,7 @@ class NetworkController extends Controller
                     $matrix_id  = $request->query('sub2');
                 }
             }
-             $prefix = config('ihook.prefix', 'ihook');
+             $prefix = config('services.ihook.prefix', 'ihook');
             if (empty($matrix_id)) {
                 $first = DB::table("{$prefix}_matrix_members_link_table")
                     ->where('members_id', $members_id)

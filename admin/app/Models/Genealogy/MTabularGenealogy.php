@@ -32,7 +32,7 @@ public static function getTabularGenealogyDetails($matrixId, $memberId, $request
       try {
 
 
-            $prefix       = config('ihook.prefix', 'ihook');
+            $prefix       = config('services.ihook.prefix', 'ihook');
             $rootMemberId = $memberId;
             $matrix_id    = $matrixId;
             // dd($matrix_id);

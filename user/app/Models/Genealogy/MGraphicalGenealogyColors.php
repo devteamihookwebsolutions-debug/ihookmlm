@@ -25,7 +25,7 @@ class MGraphicalGenealogyColors
 {
     public static function getRankcolors($matrix_id)
     {
-        $prefix = config('ihook.prefix', 'ihook'); // Laravel way
+        $prefix = config('services.ihook.prefix', 'ihook'); // Laravel way
 
         // Step 1: Get all rank titles
         $ranks = DB::table("{$prefix}_ranksetting")

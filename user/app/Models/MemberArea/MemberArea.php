@@ -32,7 +32,7 @@ class MemberArea
     public static function getRevenueData(int $memberId): string
     {
         // 1. All credit entries (commissions, bonuses, fund-received …)
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
         $credits = DB::table($prefix. '_history_table as h')
             ->join($prefix . '_history_type_table as t', 'h.history_type_id', '=', 't.history_type_id')
             ->where('h.history_member_id', $memberId)

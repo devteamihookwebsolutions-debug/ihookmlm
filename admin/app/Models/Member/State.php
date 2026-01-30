@@ -30,4 +30,18 @@ class State extends Model
         $prefix = config('services.ihook.prefix');
         $this->table = $prefix . '_state_table';
     }
+
+    public static function getStatesByCountryCode($country_sortname)
+     {
+          return self::where('country_code', $country_sortname)
+               ->orderBy('state_name', 'ASC')
+               ->get();
+     }
+
+     public function country()
+     {
+          return $this->belongsTo(
+               Country::class, 'country_code', 'sortname'
+          );
+     }
 }

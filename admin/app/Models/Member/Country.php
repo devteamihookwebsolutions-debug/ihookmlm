@@ -33,4 +33,17 @@ class Country extends Model
     }
     public $timestamps = false;
     protected $fillable = ['country_master_name', 'sortname'];
+
+    public static function getCountries()
+    {
+      return self::selectRaw('MIN(country_master_id) as country_master_id, country_master_name, sortname')
+        ->groupBy('country_master_name', 'sortname')
+        ->orderBy('country_master_name', 'ASC')
+        ->get();
+    }
+
+    public function states()
+    {
+      return $this->hasMany(  State::class, 'country_code', 'sortname' );
+    }
 }

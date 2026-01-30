@@ -28,9 +28,11 @@ use User\App\Http\Controllers\Network\NetworkController;
 use User\App\Http\Controllers\Network\MatrixMoreInfoController;
 use User\App\Http\Controllers\Network\DownlineLevelController;
 use User\App\Http\Controllers\Network\WaitingRoomController;
+use User\App\Http\Controllers\Wpautologin\WordpressAutoLoginController;
+use User\App\Http\Controllers\UserForgotPasswordController;
+use User\App\Http\Controllers\Lead\UserLeadController;
 
 use Illuminate\Support\Facades\Route;
-use User\App\Http\Controllers\Wpautologin\WordpressAutoLoginController;
 
 Route::prefix('user')->name('user.')->group(function () {
 
@@ -50,6 +52,50 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::match(['get', 'post'], 'logout', [RegisterController::class, 'logout'])->name('logout');
     Route::post('package', [PackageController::class, 'packageDetails'])->name('package');
     Route::post('/verify-epin', [RegisterController::class, 'verifyEpin'])->name('verifyEpin');
+     // user forgot password related routes
+
+    Route::get('forgot-password', [UserForgotPasswordController::class, 'showEmailForm'])
+        ->name('forgot.password');
+
+        // Send OTP
+    Route::post('forgot-password/send-otp', [UserForgotPasswordController::class, 'sendOtp'])
+        ->name('forgot.password.send');
+
+    Route::get('verify-otp', [UserForgotPasswordController::class, 'showOtpForm'])
+        ->name('forgot.password.verify');
+
+        // Show OTP verify form
+    Route::get('forgot-password/verify', [UserForgotPasswordController::class, 'showOtpForm'])
+        ->name('forgot.password.verify');
+
+        // Verify OTP
+    Route::post('forgot-password/verify', [UserForgotPasswordController::class, 'verifyOtp'])
+        ->name('forgot.password.verify.post');
+
+        // show reset password form
+    Route::get('forgot-password/reset', [UserForgotPasswordController::class, 'showResetForm'])
+        ->name('reset.password');
+
+        // Update password
+    Route::post('forgot-password/reset', [UserForgotPasswordController::class, 'resetPassword'])
+        ->name('reset.password.post');
+        // resend otp
+    Route::post('resend-otp', [UserForgotPasswordController::class, 'resendOtp'])
+        ->name('otp.resend');
+
+
+    // Lead related routes used below
+
+    Route::get('lead/add', [UserLeadController::class, 'create'])
+        ->name('lead.create');
+
+    Route::post('lead/store', [UserLeadController::class, 'store'])->name('lead.store');
+
+    /* Ajax for states */
+    Route::get('get-states/{country_sortname}', [UserLeadController::class, 'getStates'] )->name('lead.get.states');
+    Route::get('lead/check-email', [UserLeadController::class, 'checkEmail'])->name('user.lead.check-email');
+    Route::get('lead/leads', [UserLeadController::class, 'allLeads'])->name('lead.leads');
+
     // Auto login
     Route::post('autologin/opt', [MemberAutoLoginController::class, 'generateToken'])->name('autologin.token');
     Route::get('autologin/auto/{token}/{member_id}', [MemberAutoLoginController::class, 'autoLogin'])->name('autologin.auto');

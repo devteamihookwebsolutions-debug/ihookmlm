@@ -102,9 +102,9 @@
 
 
 
-        
+
     <script type="text/javascript">
-       
+
     const FORM_CONFIG = {
         REQUIRED_PATTERNS: {
           email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -112,36 +112,36 @@
           // Add more fields as needed
         },
       };
-      
+
       class FormHandler {
         constructor() {
           this.initializeElements();
           this.attachEventListeners();
         }
-      
+
         initializeElements() {
           this.elements = {
             form: document.querySelector('#newlist') // Ensure this selects the actual form
         };
 
         }
-      
+
         attachEventListeners() {
           this.elements.form?.addEventListener('submit', (e) => this.handleSubmit(e));
-      
+
           // Real-time validation
           document.querySelectorAll('input[required], textarea[required], select[required]').forEach((input) => {
             input.addEventListener('input', () => this.validateInput(input));
           });
         }
-      
+
         validateInput(input) {
           const value = input.value.trim();
           const pattern = FORM_CONFIG.REQUIRED_PATTERNS[input.name];
           const errorElement = document.getElementById(input.getAttribute('aria-describedby'));
-      
+
           let isValid = true;
-      
+
           if (!value && input.hasAttribute('required')) {
             isValid = false;
             this.showError(input, errorElement, 'This field is required.');
@@ -151,10 +151,10 @@
           } else {
             this.clearError(input, errorElement);
           }
-      
+
           return isValid;
         }
-      
+
         showError(input, errorElement, message) {
           input.classList.add('border-red-500');
           if (errorElement) {
@@ -162,22 +162,22 @@
             errorElement.classList.remove('hidden');
           }
         }
-      
-      
+
+
         clearError(input, errorElement) {
           input.classList.remove('border-red-500');
           if (errorElement) {
             errorElement.classList.add('hidden');
           }
         }
-      
-      
+
+
         handleSubmit(e) {
           e.preventDefault();
           const inputs = Array.from(this.elements.form.querySelectorAll('input[required], select[required]'));
           const allValid = inputs.every((input) => this.validateInput(input));
-      
-          if (allValid) {     
+
+          if (allValid) {
             HTMLFormElement.prototype.submit.call(this.elements.form);
 
           } else {
@@ -185,7 +185,7 @@
           }
         }
       }
-      
+
       document.addEventListener('DOMContentLoaded', () => {
         new FormHandler();
       });
@@ -246,7 +246,7 @@
                         $('#nolevelinputgift').html(levelinput);
                 }
             }
-                
+
            function deletemaillist(){
                 var totalgift1 = document.getElementById("totallevel").value;
                 if(totalgift1!=""){

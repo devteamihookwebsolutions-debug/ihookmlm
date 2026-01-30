@@ -29,6 +29,7 @@ public static function getcurrencyformat()
 {
     // Fetch the first record with id = 1
     $record = currencyformat::find(1);
+    $record = currencyFormat::find(1);
 // dd($record);
     // Return the record
     return $record; // or return as JSON if for API: return response()->json($record);
@@ -46,8 +47,6 @@ public static function allcurrency($curr)
 
 public static function insertcurrency($request)
 {
-     $prefix = config('services.ihook.prefix');
-
     // Validate input
     $request->validate([
         'currency' => 'required|string',
@@ -60,22 +59,9 @@ public static function insertcurrency($request)
     $decimalSeparator = $request->decimal_separator;
 
     // Get currency symbol
-    $currencyRecord = DB::table($prefix.'currencysettings_table')
+    $currencyRecord = DB::table('ihook_currencysettings_table')
         ->where('currency_value', $currencyValue)
         ->first();
-
-
-
-    //     $currencyRecord  DB::table($prefix.'currencysettings_table')
-    // ->updateOrInsert(
-    //     ['set_currency' => 1], // condition: active currency row
-    //     [
-    //         'currency' => $request->currency,
-    //         'thousand_seperator' => $request->thousands_separator,
-    //         'decimal_seperator' => $request->decimal_separator,
-    //         'updated_at' => now(), // current timestamp
-    //     ]
-    // );
 
     if (!$currencyRecord) {
         return back()->with('error_message', 'Selected currency not found.');
@@ -83,31 +69,15 @@ public static function insertcurrency($request)
 
     $currencySymbol = $currencyRecord->currency_symbol;
 
-
     // Insert/Update site currency
-    DB::table($prefix.'_sitesettings_table')
+    DB::table('ihook_sitesettings_table')
         ->updateOrInsert(
             ['sitesettings_name' => 'site_currency'],
-            ['sitesettings_value' => $currencySymbol
-
-
-            ]
-
+            ['sitesettings_value' => $currencySymbol]
         );
-
-
-//Insert/Update Curency Format in site setting
-$currvalue = $currencyRecord->currency_value;
-        DB::table($prefix.'_sitesettings_table')
-        ->updateOrInsert(
-            ['sitesettings_name' => 'currency_format'],
-            ['sitesettings_value' => $currvalue],
-
-        );
-
 
     // Insert/Update currency format
-    DB::table($prefix.'_currencyformat')
+    DB::table('ihook_currencyformat')
         ->updateOrInsert(
             ['id' => 1],
             [
@@ -117,9 +87,7 @@ $currvalue = $currencyRecord->currency_value;
                 'updated_date' => now(),
             ]
         );
-return back()->with('success', 'Format added successfully!');
-
+return back()->with('success_message', 'Format added successfully!');
 
 }
-
 }

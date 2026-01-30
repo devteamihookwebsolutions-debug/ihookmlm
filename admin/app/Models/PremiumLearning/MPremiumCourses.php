@@ -38,7 +38,7 @@ class MPremiumCourses extends Model
     {
         parent::__construct($attributes);
 
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
         $this->setTable($prefix . '_premium_courses');
     }
 
@@ -46,7 +46,7 @@ class MPremiumCourses extends Model
     public function deleteCourse(Request $request)
     {
         $id = $request->query('sub1');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         try {
             DB::beginTransaction();
@@ -75,7 +75,7 @@ class MPremiumCourses extends Model
     {
         $courseId = $request->input('course_id');
         $bannerPath = $request->input('hidden_banner');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         // Handle banner upload
         if ($request->hasFile('site_logo') && $request->file('site_logo')->isValid()) {
@@ -126,7 +126,7 @@ class MPremiumCourses extends Model
     // Get single course value
     public static function getCourses($id, $key)
     {
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
         return DB::table($prefix . '_premium_courses')
             ->where('course_id', $id)
             ->where('course_key', $key)
@@ -136,7 +136,7 @@ class MPremiumCourses extends Model
     // Get all courses for management
     public static function getManageCourses()
     {
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
         $courses = DB::table($prefix . '_premium_courses')
             ->select('course_id')
             ->groupBy('course_id')
@@ -150,7 +150,7 @@ class MPremiumCourses extends Model
     {
         $courseId = $request->query('sub1');
         $lessonId = $request->query('sub2');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         $record = DB::table($prefix . '_premium_courses_lesson')
             ->where('course_id', $courseId)
@@ -164,7 +164,7 @@ class MPremiumCourses extends Model
     public static function updateStatus(Request $request)
     {
         $courseId = session('course_id');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         foreach ($request->all() as $key => $value) {
             $value = ($key === 'user_type' || $key === 'course_status') ? ($value ?? '0') : $value;
@@ -202,7 +202,7 @@ class MPremiumCourses extends Model
     public static function updateEditStatus(Request $request)
     {
         $courseId = $request->query('sub1');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         foreach ($request->all() as $key => $value) {
             $value = ($key === 'user_type' || $key === 'course_status') ? ($value ?? '0') : $value;
@@ -220,7 +220,7 @@ class MPremiumCourses extends Model
     public static function checkTitle(Request $request)
     {
         $title = $request->input('title');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         $exists = DB::table($prefix . '_premium_courses')
             ->where('course_key', 'title')
@@ -234,7 +234,7 @@ class MPremiumCourses extends Model
     public static function addAnnouncement(Request $request)
     {
         $courseId = $request->query('sub1');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         foreach ($request->except('_token') as $key => $value) {
             DB::table($prefix . '_premium_courses_details')->updateOrInsert(
@@ -250,7 +250,7 @@ class MPremiumCourses extends Model
     public static function addCourcedetails(Request $request)
     {
         $courseId = $request->input('id');
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         DB::table($prefix . '_premium_courses_details')
             ->where('courses_id', $courseId)
@@ -273,7 +273,7 @@ class MPremiumCourses extends Model
 
 public static function getAnnouncement($id, $key)
 {
-   $prefix = config('ihook.prefix', 'ihook');
+   $prefix = config('services.ihook.prefix', 'ihook');
 
     return self::on(config("{$prefix}_premium_courses_details"))
                ->where('courses_id', $id)

@@ -48,7 +48,7 @@ class MBinaryCompactGenealogy
             $members_id = $auth_user_id;
         }
 
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         // Step 2: Determine matrix_id
         if (!$matrix_id || !is_numeric($matrix_id)) {

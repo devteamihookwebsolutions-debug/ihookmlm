@@ -51,7 +51,7 @@ class TabularGenealogyController extends Controller
                 abort(403);
             }
 
-            $prefix = config('ihook.prefix', 'ihook');
+            $prefix = config('services.ihook.prefix', 'ihook');
             // Fetch Member
             $member = DB::table("{$prefix}_members_table")
                 ->where('members_id', $memberId)

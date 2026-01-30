@@ -91,16 +91,20 @@
                       class="p-2 bg-white text-xs text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full border dark:border-gray-700">
                       <table id="default-table">
                         <thead>
-                           <tr>
-                                        <th class="px-4 py-3 border">{{ __('Plan Name') }}</th>
-                                        <th class="px-4 py-3 border">{{ __('Type') }}</th>
-                                        <th class="px-4 py-3 border">{{ __('Status') }}</th>
-                                        <th class="px-4 py-3 border">{{ __('Action') }}</th>
-                                    </tr>
+                            <tr>
+                              <th class="px-4 py-3 border">{{ __('Plan Name') }}</th>
+                              <th class="px-4 py-3 border">{{ __('Type') }}</th>
+                              <th class="px-4 py-3 border">{{ __('Status') }}</th>
+                              <th class="px-4 py-3 border">{{ __('Action') }}</th>
+                          </tr>
                         </thead>
 
                            <tbody>
                                     @if ($matrices && $matrices->isNotEmpty())
+                                     <?php
+                                        // echo '<pre>';
+                                        // print_r($matrices);exit();
+                                     ?>
                                         @foreach ($matrices as $matrix)
                                             <tr class="border-b hover:bg-gray-50">
                                                 <td class="px-4 py-2">{{ $matrix->matrix_name }}</td>

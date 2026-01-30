@@ -260,7 +260,7 @@ class MRegister
         if($paymenthistory_id > 0)
         {
             // dd($paymenthistory_id);
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
         $email_notification_user = MSiteDetails::getSiteSettingValue('email_notification_user');
         // dd($email_notification_user);
         $push_notification_admin = MSiteDetails::getSiteSettingValue('push_notification_admin');

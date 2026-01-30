@@ -131,13 +131,13 @@ class MPremiumLearningLessonInsert
         }
 
         // Check if lesson exists (for update or insert)
-        $exists = DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+        $exists = DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
             ->where('course_id', $course_id)
             ->where('courses_lesson_id', $courses_lesson_id)
             ->exists();
 
         if ($exists) {
-            DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+            DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
                 ->where('course_id', $course_id)
                 ->where('courses_lesson_id', $courses_lesson_id)
                 ->update([
@@ -157,7 +157,7 @@ class MPremiumLearningLessonInsert
                     'status' => $lesson_status,
                 ]);
         } else {
-            DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')->insert([
+            DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')->insert([
                 'course_id' => $course_id,
                 'courses_lesson_id' => $courses_lesson_id,
                 'video_duration' => $video_duration,
@@ -180,7 +180,7 @@ class MPremiumLearningLessonInsert
         }
 
         // Delete old paths and insert new embedded videos
-        DB::table(config('ihook.prefix', '') . 'premium_courses_lesson_path')
+        DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson_path')
             ->where('course_id', $course_id)
             ->where('sub_cource_id', $courses_lesson_id)
             ->delete();
@@ -190,7 +190,7 @@ class MPremiumLearningLessonInsert
             $title = $request->input("add_embed_name{$i}");
             $video = $request->input("add_embed_video{$i}");
             if ($title && $video) {
-                DB::table(config('ihook.prefix', '') . 'premium_courses_lesson_path')->insert([
+                DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson_path')->insert([
                     'course_title' => $title,
                     'course_key' => 'video_path',
                     'course_path' => $video,
@@ -228,7 +228,7 @@ class MPremiumLearningLessonInsert
             $answer = $request->input("faqanswer{$i}");
 
             if ($question) {
-                DB::table(config('ihook.prefix', '') . '_premium_courses_faq')
+                DB::table(config('services.ihook.prefix', '') . '_premium_courses_faq')
                     ->where('faq_question', $question)
                     ->where('courses_id', $course_id)
                     ->update(['faq_answer' => $answer]);
@@ -352,7 +352,7 @@ class MPremiumLearningLessonInsert
 
         foreach ($request->except(['do', 'action', 'sub1', 'sub2', 'sub3']) as $value) {
             if ($value !== '' && $value !== null) {
-                DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')->insert([
+                DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')->insert([
                     'course_id' => $course_id,
                     'courses_topics_id' => $courses_topics_id,
                     'lesson_title' => $value,
@@ -371,7 +371,7 @@ class MPremiumLearningLessonInsert
         $quiz_question = $request->input('quzvalues');
         $quiz_answer = $request->input('quizanswer');
 
-        DB::table(config('ihook.prefix', '') . 'premium_courses_quiz')->insert([
+        DB::table(config('services.ihook.prefix', '') . 'premium_courses_quiz')->insert([
             'quiz_question' => $quiz_question,
             'quiz_answer' => $quiz_answer,
             'courses_id' => $course_id,
@@ -409,13 +409,13 @@ class MPremiumLearningLessonInsert
             $uploadedconimageName = $namepath[1] ?? '';
         }
 
-        $exists = DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+        $exists = DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
             ->where('course_id', $course_id)
             ->where('courses_lesson_id', $courses_lesson_id)
             ->exists();
 
         if ($exists) {
-            DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+            DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
                 ->where('course_id', $course_id)
                 ->where('courses_lesson_id', $courses_lesson_id)
                 ->update([
@@ -428,7 +428,7 @@ class MPremiumLearningLessonInsert
         }
 
         // Delete and re-insert quiz questions
-        DB::table(config('ihook.prefix', '') . 'premium_courses_quiz')
+        DB::table(config('services.ihook.prefix', '') . 'premium_courses_quiz')
             ->where('courses_id', $course_id)
             ->delete();
 
@@ -437,7 +437,7 @@ class MPremiumLearningLessonInsert
             $question = $request->input("quizquestion{$i}");
             $answer = $request->input("quizanswer{$i}");
             if ($question) {
-                DB::table(config('ihook.prefix', '') . 'premium_courses_quiz')->insert([
+                DB::table(config('services.ihook.prefix', '') . 'premium_courses_quiz')->insert([
                     'quiz_question' => $question,
                     'quiz_answer' => $answer,
                     'courses_id' => $course_id,
@@ -452,7 +452,7 @@ class MPremiumLearningLessonInsert
         $quiz_cutoff = $request->input('quizpoint');
         $quiz_description = $request->input('quizdiscription');
 
-        $settingExists = DB::table(config('ihook.prefix', '') . 'premium_setting_quiz')
+        $settingExists = DB::table(config('services.ihook.prefix', '') . 'premium_setting_quiz')
             ->where('course_id', $course_id)
             ->where('courses_lesson_id', $courses_lesson_id)
             ->exists();
@@ -468,12 +468,12 @@ class MPremiumLearningLessonInsert
         ];
 
         if ($settingExists) {
-            DB::table(config('ihook.prefix', '') . 'premium_setting_quiz')
+            DB::table(config('services.ihook.prefix', '') . 'premium_setting_quiz')
                 ->where('course_id', $course_id)
                 ->where('courses_lesson_id', $courses_lesson_id)
                 ->update($data);
         } else {
-            DB::table(config('ihook.prefix', '') . 'premium_setting_quiz')->insert($data);
+            DB::table(config('services.ihook.prefix', '') . 'premium_setting_quiz')->insert($data);
         }
 
         return true;

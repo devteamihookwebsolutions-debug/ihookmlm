@@ -25,7 +25,7 @@ class MGraphicalGenealogy
 
     public static function updateGenealogyDetails($members_id, $matrix_id)
     {
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
 
         // Keep original IDs
         $memberId = $members_id;

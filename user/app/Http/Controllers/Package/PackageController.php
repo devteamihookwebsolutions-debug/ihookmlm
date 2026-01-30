@@ -26,7 +26,7 @@ class PackageController extends Controller
 {
     public function packageDetails()
     {
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
         $paidType = DB::table("{$prefix}_matrix_configuration_table")
             ->where('matrix_key', 'members_paid_account_type')
             ->value('matrix_value');
@@ -62,7 +62,7 @@ class PackageController extends Controller
         }
 
         // PAID PACKAGES MODE
-        $prefix = config('ihook.prefix', 'ihook');
+        $prefix = config('services.ihook.prefix', 'ihook');
         $packages = DB::table("{$prefix}_package_table")
             ->where('package_status', 1)
             ->select(

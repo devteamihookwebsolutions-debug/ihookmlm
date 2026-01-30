@@ -73,7 +73,7 @@
                                     $memberId = Session::get('members_id', 1);
                                     $matrixId = Session::get('matrix_id', 1);
 
-                                    $prefix = config('ihook.prefix', 'ihook');
+                                    $prefix = config('services.ihook.prefix', 'ihook');
 
                                     $matrix = DB::table("{$prefix}_matrix_table")
                                         ->where('matrix_id', $matrixId)
@@ -232,8 +232,13 @@
                                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Social
                                                 Users</a>
                                         </li>
+                                         <li>
+                                            <a href="{{route('subadmin')}}"
+                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                subadmin</a>
+                                        </li>
                                         <li>
-                                            <a href="team-leads.html"
+                                            <a href="{{route('leadsponsor') }}"
                                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Leads</a>
                                         </li>
                                         <li>

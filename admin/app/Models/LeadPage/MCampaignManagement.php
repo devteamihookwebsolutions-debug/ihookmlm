@@ -23,11 +23,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Mail;
-// use App\Mail\NewsletterMail;
-use Admin\App\Mail\NewsletterMail;
 
+use Admin\App\Models\Middleware\MSendMail;
+use Admin\App\Models\Middleware\MSendBulkMail;
 use Admin\App\Display\LeadPage\DCampaignManagement;
+
 class MCampaignManagement {
 
 public static function showNewsletterSettings()
@@ -209,309 +209,116 @@ public static function viewMailTemplate(Request $request, $id)
 
     return response($html)->header('Content-Type', 'text/html');
 }
-// public static function sendNewsletter(Request $request)
-// {
-//     $prefix = config('services.ihook.prefix');
-//     // dd($prefix);
-//     $request->validate([
-//         'cate_temp_id' => 'required',
-//         'news_subject' => 'required',
-//         'user_list'    => 'required|array',
-//     ]);
-
-//     // dd($request->all());
-//     // Prepare message content
-
-//     $categoryTemplate = DB::table($prefix . '_newsletter_buildertemplate_table')
-//         ->where('category_templates_id', trim($request->cate_temp_id))
-//         ->first();
-
-//    $catpath = str_replace(
-//     "uploads/templatesbuilderformnews/",
-//     "uploads/templatesbuilderformnews/body_",
-//     $categoryTemplate->category_templates_file_path
-// );
-
-// // If file is LOCAL
-// $fullPath = public_path($catpath);
-
-// if (!file_exists($fullPath)) {
-//     throw new \Exception("Newsletter template not found: {$fullPath}");
-// }
-
-// $message = file_get_contents($fullPath);
-// dd($message);
-
-//     $mailTemplate = DB::table($prefix . '_mailtemplates_table')
-//         ->where('mail_default_name', 'newsletter_notification')
-//         ->where('mail_status', 1)
-//         ->where('mail_lang', 1)
-//         ->first();
-
-//     $body = $mailTemplate->mail_content;
-//     $body = str_replace('[name]', 'User', $body);
-//     $body = str_replace('[mail_subject]', $request->news_subject, $body);
-//     $body = str_replace('[date]', now()->format('d-m-Y H:i'), $body);
-//     $body = str_replace('[msg]', $message, $body);
-
-//     // Send emails in chunks
-//     $chunks = array_chunk($request->user_list, 250);
-//     foreach ($chunks as $chunk) {
-//         foreach ($chunk as $email) {
-//             Mail::to($email)->queue(new NewsletterMail($request->news_subject, $body));
-//         }
-//     }
-
-//     return back()->with('success', 'Newsletter has been sent successfully.');
-// }
-
-// public static function sendNewsletter(Request $request)
-// {
-//     $prefix = config('services.ihook.prefix');
-
-//     $request->validate([
-//         'cate_temp_id' => 'required',
-//         'news_subject' => 'required',
-//         'user_list'    => 'required|array',
-//     ]);
-
-//     // Get template record
-//     $categoryTemplate = DB::table($prefix . '_newsletter_buildertemplate_table')
-//         ->where('category_templates_id', trim($request->cate_temp_id))
-//         ->first();
-
-//     if (!$categoryTemplate) {
-//         return back()->withErrors('Newsletter template record not found.');
-//     }
-//     $relativePath = ltrim($categoryTemplate->category_templates_file_path, '/');
-//     $fullPath = public_path($relativePath);
-//     if (!file_exists($fullPath)) {
-//         return back()->withErrors("Newsletter template file not found: {$relativePath}");
-//     }
-
-//     $message = file_get_contents($fullPath);
-//     // dd($message);
-//     // Get mail template
-//     $mailTemplate = DB::table($prefix . '_mailtemplates_table')
-//         ->where('mail_default_name', 'newsletter_notification')
-//         ->where('mail_status', 1)
-//         ->where('mail_lang', 1)
-//         ->first();
-
-//     if (!$mailTemplate) {
-//         return back()->withErrors('Mail wrapper template not found.');
-//     }
-
-//     // Replace placeholders
-//     $body = $mailTemplate->mail_content;
-//     $body = str_replace('[name]', 'User', $body);
-//     $body = str_replace('[mail_subject]', $request->news_subject, $body);
-//     $body = str_replace('[date]', now()->format('d-m-Y H:i'), $body);
-//     $body = str_replace('[msg]', $message, $body);
-
-//     // Send mails
-//     foreach (array_chunk($request->user_list, 250) as $chunk) {
-//         foreach ($chunk as $email) {
-//             Mail::to($email)->queue(
-//                 new NewsletterMail($request->news_subject, $body)
-//             );
-//         }
-//     }
-
-//     return back()->with('success', 'Newsletter has been sent successfully.');
-// }
-// public static function sendNewsletter(Request $request)
-//     {
-//         $prefix = config('services.ihook.prefix');
-
-//         // Get template record
-//         $categoryTemplate = DB::table($prefix . '_newsletter_buildertemplate_table')
-//             ->where('category_templates_id', trim($request->cate_temp_id))
-//             ->first();
-
-//         if (!$categoryTemplate) {
-//             throw new \Exception('Newsletter template record not found.');
-//         }
-
-//         $relativePath = ltrim($categoryTemplate->category_templates_file_path, '/');
-//         $fullPath = public_path($relativePath);
-
-//         if (!file_exists($fullPath)) {
-//             throw new \Exception("Newsletter template file not found: {$relativePath}");
-//         }
-
-//         $message = file_get_contents($fullPath);
-
-//         // Mail wrapper
-//         $mailTemplate = DB::table($prefix . '_mailtemplates_table')
-//             ->where('mail_default_name', 'newsletter_notification')
-//             ->where('mail_status', 1)
-//             ->where('mail_lang', 1)
-//             ->first();
-
-//             // dd($mailTemplate);
-//         if (!$mailTemplate) {
-//             throw new \Exception('Mail wrapper template not found.');
-//         }
-
-//         // Replace placeholders
-//         $body = str_replace(
-//             ['[name]', '[mail_subject]', '[date]', '[msg]'],
-//             ['User', $request->news_subject, now()->format('d-m-Y H:i'), $message],
-//             $mailTemplate->mail_content
-//         );
-//         // dd($body);
-//         // SEND MAIL (TEMP: send instead of queue)
-//         foreach ($request->user_list as $email) {
-//             Mail::to($email)->send(
-//                 new NewsletterMail($request->news_subject, $body)
-//             );
-//         }
-
-//         return true;
-//     }
 
 
 
-// public static function sendNewsletter(Request $request)
-// {
-//     $prefix = config('services.ihook.prefix');
+    public static function sendNewsletter(Request $request): bool
+    {
+        $prefix = config('services.ihook.prefix');
 
+        /* -------------------------------
+         | 1. Get Newsletter Template
+         * ------------------------------- */
+        $categoryTemplate = DB::table($prefix . '_newsletter_buildertemplate_table')
+            ->where('category_templates_id', trim($request->cate_temp_id))
+            ->first();
 
-//     $categoryTemplate = DB::table($prefix . '_newsletter_buildertemplate_table')
-//         ->where('category_templates_id', trim($request->cate_temp_id))
-//         ->first();
-
-//     // dd($categoryTemplate);
-//     if (!$categoryTemplate) {
-//         throw new \Exception('Newsletter template record not found.');
-//     }
-
-//     $relativePath = ltrim($categoryTemplate->category_templates_file_path, '/');
-//     $fullPath = public_path($relativePath);
-
-//     if (!file_exists($fullPath)) {
-//         throw new \Exception("Newsletter template file not found: {$relativePath}");
-//     }
-
-//     $message = file_get_contents($fullPath);
-//     $formatDate = now()->format('d-m-Y H:i');
-
-//     $mailTemplate = DB::table($prefix . '_mailtemplates_table')
-//         ->where('mail_default_name', 'newsletter_notification')
-//         ->where('mail_status', 1)
-//         ->where('mail_lang', 1)
-//         ->first();
-//     // dd($mailTemplate);
-
-//     if (!$mailTemplate) {
-//         throw new \Exception('Mail wrapper template not found.');
-//     }
-
-//     // -------------------------
-//     DB::table($prefix . '_mailtemplates_table')
-//         ->where('mail_default_name', 'newsletter_notification')
-//         ->update(['mail_subject' => $request->news_subject]);
-
-//     $bodyStep1   = str_replace('[name]', 'User', $mailTemplate->mail_content);
-//     // dd($bodyStep1);
-//     $bodyStep2   = str_replace('[mail_subject]', $request->news_subject, $bodyStep1);
-//     $bodyStep3   = str_replace('[date]', $formatDate, $bodyStep2);
-//     $finalBody   = str_replace('[msg]', $message, $bodyStep3);
-
-//     if ($request->listusers == 8) {
-//         // Single-send mode
-//         foreach ($request->user_list as $email) {
-//             Mail::to($email)->send(new NewsletterMail($request->news_subject, $finalBody));
-//         }
-//     } else {
-//         // Bulk-send mode: chunks of 250
-//         $userChunks = array_chunk($request->user_list, 250);
-
-//         foreach ($userChunks as $chunk) {
-//             foreach ($chunk as $email) {
-//                 Mail::to($email)->send(new NewsletterMail($request->news_subject, $finalBody));
-//             }
-//         }
-//     }
-
-//     return true;
-// }
-
-
-public static function sendNewsletter(Request $request)
-{
-    $prefix = config('services.ihook.prefix');
-
-    /* -------------------------------
-     | 1. Get Newsletter Template
-     * ------------------------------- */
-    $categoryTemplate = DB::table($prefix . '_newsletter_buildertemplate_table')
-        ->where('category_templates_id', trim($request->cate_temp_id))
-        ->first();
-
-    if (!$categoryTemplate) {
-        throw new \Exception('Newsletter template record not found.');
-    }
-
-    $relativePath = ltrim($categoryTemplate->category_templates_file_path, '/');
-    $fullPath = public_path($relativePath);
-
-    if (!file_exists($fullPath)) {
-        throw new \Exception("Newsletter template file not found: {$relativePath}");
-    }
-
-    $message = file_get_contents($fullPath);
-    $formatDate = now()->format('d-m-Y H:i');
-
-    $mailTemplate = DB::table($prefix . '_mailtemplates_table')
-        ->where('mail_default_name', 'newsletter_notification')
-        ->where('mail_status', 1)
-        ->where('mail_lang', 1)
-        ->first();
-
-    if (!$mailTemplate) {
-        throw new \Exception('Mail wrapper template not found.');
-    }
-
-
-    $bodyStep1 = str_replace('[name]', 'User', $mailTemplate->mail_content);
-    $bodyStep2 = str_replace('[mail_subject]', $request->news_subject, $bodyStep1);
-    $bodyStep3 = str_replace('[date]', $formatDate, $bodyStep2);
-    $finalBody = str_replace('[msg]', $message, $bodyStep3);
-
-    DB::table($prefix . '_mailtemplates_table')
-        ->where('mail_default_name', 'newsletter_notification')
-        ->where('mail_lang', 1)
-        ->update([
-            'mail_subject' => $request->news_subject,
-            'mail_content' => $finalBody,
-            'modified_at'  => now(),
-            'modified_by'  =>  1,
-        ]);
-
-
-    if ($request->listusers == 8) {
-
-        foreach ($request->user_list as $email) {
-            Mail::to($email)->send(
-                new NewsletterMail($request->news_subject, $finalBody)
-            );
+        if (!$categoryTemplate) {
+            throw new \Exception('Newsletter template record not found.');
         }
-    } else {
-        // Bulk send (250 per batch)
-        $userChunks = array_chunk($request->user_list, 250);
 
-        foreach ($userChunks as $chunk) {
-            foreach ($chunk as $email) {
-                Mail::to($email)->send(
-                    new NewsletterMail($request->news_subject, $finalBody)
+        $relativePath = ltrim($categoryTemplate->category_templates_file_path, '/');
+        $fullPath = public_path($relativePath);
+
+        if (!file_exists($fullPath)) {
+            throw new \Exception("Newsletter template file not found: {$relativePath}");
+        }
+
+        $message = file_get_contents($fullPath);
+        $formatDate = now()->format('d-m-Y H:i');
+
+        /* -------------------------------
+         | 2. Get Mail Wrapper Template
+         * ------------------------------- */
+        $mailTemplate = DB::table($prefix . '_mailtemplates_table')
+            ->where('mail_default_name', 'newsletter_notification')
+            ->where('mail_status', 1)
+            ->where('mail_lang', 1)
+            ->first();
+
+        if (!$mailTemplate) {
+            throw new \Exception('Mail wrapper template not found.');
+        }
+
+        /* -------------------------------
+         | 3. Replace placeholders
+         * ------------------------------- */
+        $body = str_replace(
+            ['[name]', '[mail_subject]', '[date]', '[msg]'],
+            ['User', $request->news_subject, $formatDate, $message],
+            $mailTemplate->mail_content
+        );
+
+        /* -------------------------------
+         | 4. Update mail template
+         * ------------------------------- */
+        DB::table($prefix . '_mailtemplates_table')
+            ->where('mail_default_name', 'newsletter_notification')
+            ->where('mail_lang', 1)
+            ->update([
+                'mail_subject' => $request->news_subject,
+                'mail_content' => $body,
+                'modified_at'  => now(),
+                'modified_by'  => 1,
+            ]);
+
+        /* -------------------------------
+         | 5. Prepare Mail Object
+         * ------------------------------- */
+
+        $recordsMail = (object) [
+            'mail_from'      => $mailTemplate->mail_from,
+            'mail_from_name' => $mailTemplate->mail_from_name,
+            'mail_subject'   => $request->news_subject,
+            'mail_content'   => $body
+        ];
+        // dd($recordsMail);
+        /* -------------------------------
+        | 6. Send Newsletter
+        * ------------------------------- */
+        $userList = (array) $request->user_list;
+        // dd($userList);
+        // dd($request->listusers);
+        if ($request->listusers == 8) {
+            // Single send
+            // dd('funcrion reached or not');
+
+            foreach ($userList as $email) {
+
+                MSendMail::send(
+                    $recordsMail,
+                    $email,
+                    $body,
+                    null,
+                    null
+                );
+            }
+        } else {
+            // Bulk send (250 per batch)
+            $userChunks = array_chunk($userList, 250);
+
+            foreach ($userChunks as $chunk) {
+                MSendBulkMail::send(
+                    $recordsMail,
+                    $chunk,
+                    $body,
+                    null,
+                    null
                 );
             }
         }
+
+        return true;
     }
-
-    return true;
 }
 
-}

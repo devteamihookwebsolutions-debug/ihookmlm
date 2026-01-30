@@ -41,7 +41,7 @@ class MPremiumLearningLessonUpdate
 
         $created_by = 1;
 
-        DB::table(config('ihook.prefix', '') . 'premium_courses_lesson_path')
+        DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson_path')
             ->where('course_id', $course_id)
             ->where('sub_cource_id', $courses_lesson_id)
             ->delete();
@@ -51,7 +51,7 @@ class MPremiumLearningLessonUpdate
             $editembedvideo = $request->input("edit_embed_video{$i}", '');
 
             if ($editembedtitle !== '' || $editembedvideo !== '') {
-                DB::table(config('ihook.prefix', '') . 'premium_courses_lesson_path')->insert([
+                DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson_path')->insert([
                     'course_title'  => $editembedtitle,
                     'course_key'    => 'video_path',
                     'course_path'   => $editembedvideo,
@@ -81,7 +81,7 @@ class MPremiumLearningLessonUpdate
                 $video_path = $request->input('edit_embed_video');
                 $uploadedName = '';
             } elseif ($video_mode == 2) {
-                $old = DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+                $old = DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
                     ->where('course_id', $course_id)
                     ->where('courses_lesson_id', $courses_lesson_id)
                     ->first();
@@ -101,7 +101,7 @@ class MPremiumLearningLessonUpdate
             $uploadeddocName = $file->getClientOriginalName();
             Storage::disk('s3')->put($doc_path, file_get_contents($file), 'public');
         } else {
-            $old = DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+            $old = DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
                 ->where('course_id', $course_id)
                 ->where('courses_lesson_id', $courses_lesson_id)
                 ->first();
@@ -120,7 +120,7 @@ class MPremiumLearningLessonUpdate
             $uploadedaudioName = $file->getClientOriginalName();
             Storage::disk('s3')->put($audio_path, file_get_contents($file), 'public');
         } else {
-            $old = DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+            $old = DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
                 ->where('course_id', $course_id)
                 ->where('courses_lesson_id', $courses_lesson_id)
                 ->first();
@@ -139,7 +139,7 @@ class MPremiumLearningLessonUpdate
             $uploadedimageName = $file->getClientOriginalName();
             Storage::disk('s3')->put($image_path, file_get_contents($file), 'public');
         } else {
-            $old = DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+            $old = DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
                 ->where('course_id', $course_id)
                 ->where('courses_lesson_id', $courses_lesson_id)
                 ->first();
@@ -163,7 +163,7 @@ class MPremiumLearningLessonUpdate
             $image_contpath = $parts[0] ?? '';
 
             if (empty($image_contpath)) {
-                $old = DB::table(config('ihook.prefix', '') . 'premium_courses_lesson')
+                $old = DB::table(config('services.ihook.prefix', '') . 'premium_courses_lesson')
                     ->where('course_id', $course_id)
                     ->where('courses_lesson_id', $courses_lesson_id)
                     ->first();
@@ -172,7 +172,7 @@ class MPremiumLearningLessonUpdate
             }
         }
 
-        $table = config('ihook.prefix', '') . 'premium_courses_lesson';
+        $table = config('services.ihook.prefix', '') . 'premium_courses_lesson';
 
         $exists = DB::table($table)
             ->where('course_id', $course_id)

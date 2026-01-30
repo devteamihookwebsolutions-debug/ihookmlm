@@ -39,7 +39,7 @@ class MTabularGenealogy
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
-            $prefix       = config('ihook.prefix', 'ihook');
+            $prefix       = config('services.ihook.prefix', 'ihook');
             $rootMemberId = $memberId;
             $matrix_id    = $matrixId;
 

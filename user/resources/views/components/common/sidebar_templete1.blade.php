@@ -67,7 +67,7 @@
 
                                             // Get default matrix_id if not set
                                             if (empty($matrix_id) && $members_id) {
-                                                $prefix = config('ihook.prefix', 'ihook');
+                                                $prefix = config('services.ihook.prefix', 'ihook');
                                                 $matrix_id = \DB::table("{$prefix}_matrix_members_link_table")
                                                     ->where('members_id', $members_id)
                                                     ->orderBy('link_id')
@@ -77,7 +77,7 @@
                                             $encryptedToken = \Admin\App\Models\Middleware\MURLCrypt::encode($members_id, $matrix_id);
 
                                             // Get matrix details to check matrix_type_id
-                                            $prefix = config('ihook.prefix', 'ihook');
+                                            $prefix = config('services.ihook.prefix', 'ihook');
                                             $matrix = \DB::table("{$prefix}_matrix_table")
                                                 ->where('matrix_id', $matrix_id)
                                                 ->first();

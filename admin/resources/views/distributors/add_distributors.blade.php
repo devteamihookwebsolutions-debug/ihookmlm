@@ -53,6 +53,12 @@
         <main class="flex-grow">
             <div class="">
 
+            <?php
+            //  $member_user = getAllMember();
+            //  echo '<pre>';
+            //     print_r($member_user);exit();
+             ?>
+
                 <!--alert-box-->
 
                 <!-- card -->
@@ -183,9 +189,8 @@
                                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 w-100"
                                                         type="tel" name="phone" required pattern="^\+?[1-9]\d{1,14}$"
                                                         placeholder="e.g. +1234567890" aria-describedby="phone-error" /> -->
-                           <input id="phone"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 w-100"
-                                    type="tel" name="phone" />
+                                                        <input id="phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 w-100"
+                                                        type="number" name="phone" />
                                                     <!-- Error message -->
                                                     <p id="phone-error"
                                                         class="error-message mt-2 text-sm text-red-600 dark:text-red-500 hidden">
@@ -196,10 +201,10 @@
                                                     <div class="mb-5">
                                                         <label for="name"
                                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country
-                                                            :</label>
-                                    @php
-                                        $countries = getAllCountries();
-                                    @endphp
+                                                                :</label>
+                                        @php
+                                            $countries = getAllCountries();
+                                        @endphp
 
                                                         <select id="country" name="country"
                                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500"
@@ -277,7 +282,10 @@
                                                 @php
                                                     $matrixList = getAllmatrixs();
                                                 @endphp
-
+                                                <?php
+                                                // echo '<pre>';
+                                                //     print_r($matrixList);exit();
+                                                ?>
                                                 <select name="plans" id="plans"
 
                                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 mt-3"
@@ -302,7 +310,9 @@
                                                 :</label>
                                             @php
                                                 $member_user = getAllMember();
+
                                             @endphp
+
 
                                         <select name="sponsor_id" id="sponsor_id"
 
@@ -421,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // circle.classList.add("bg-gray-500");
                      circle.classList.remove("bg-blue-600", "bg-blue-600");
                 circle.classList.add("bg-blue-600");
-                circle.innerHTML = "✓"; 
+                circle.innerHTML = "✓";
                 } else if (i === currentStep) {
                     // Active
                     // circle.classList.remove("bg-gray-300", "bg-gray-500");
